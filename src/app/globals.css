@@ -1,26 +1,219 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base */
+  --background: #f6f7fb;
+  --foreground: #1f2937;
+
+  /* Card & Surface */
+  --card: #ffffff;
+  --muted: #f1f3f9;
+  --border: #e6e8f0;
+
+  /* Brand (Golden Header) */
+  --brand: #e6c04f;
+  --brand-foreground: #ffffff;
+
+  /* Accent Pastels */
+  --blue: #3b82f6;
+  --blue-soft: #eaf2ff;
+
+  --green: #22c55e;
+  --green-soft: #eafaf1;
+
+  --orange: #f59e0b;
+  --orange-soft: #fff4e5;
+
+  --purple: #8b5cf6;
+  --purple-soft: #f3efff;
+
+  --red: #ef4444;
+  --red-soft: #ffecec;
+
+  --teal: #0d9488;
+  --teal-soft: #f0fdfa;
+
+  /* Text */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  /* Radius & Shadow */
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --shadow-soft: 0 4px 20px rgba(16, 24, 40, 0.06);
+  --shadow-card: 0 2px 10px rgba(16, 24, 40, 0.05);
 }
 
+/* =========================
+   DARK MODE (Manual + Auto)
+   ========================= */
+[data-theme="dark"] {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+
+  --card: #1e293b;
+  --muted: #1e293b;
+  --border: #334155;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --blue-soft: rgba(59, 130, 246, 0.15);
+  --green-soft: rgba(34, 197, 94, 0.15);
+  --orange-soft: rgba(245, 158, 11, 0.15);
+  --purple-soft: rgba(139, 92, 246, 0.15);
+  --red-soft: rgba(239, 68, 68, 0.15);
+  --teal-soft: rgba(13, 148, 136, 0.15);
+
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Auto dark fallback */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #0b0f19;
+    --foreground: #e5e7eb;
+    --card: #111827;
+    --muted: #0f172a;
+    --border: #1f2937;
+  }
+}
+
+/* =========================
+   Tailwind v4 Theme Mapping
+   ========================= */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+
+  --color-blue: var(--blue);
+  --color-blue-soft: var(--blue-soft);
+  --color-green: var(--green);
+  --color-green-soft: var(--green-soft);
+  --color-orange: var(--orange);
+  --color-orange-soft: var(--orange-soft);
+  --color-purple: var(--purple);
+  --color-purple-soft: var(--purple-soft);
+  --color-red: var(--red);
+  --color-red-soft: var(--red-soft);
+  --color-teal: var(--teal);
+  --color-teal-soft: var(--teal-soft);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --shadow-soft: var(--shadow-soft);
+  --shadow-card: var(--shadow-card);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =========================
+   Base Styles
+   ========================= */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background 0.3s ease, color 0.3s ease;
 }
+
+/* =========================
+   TAILWIND v4 UTILITIES (IMPORTANT FOR AUTOCOMPLETE)
+   ========================= */
+@utility dashboard-container {
+  @apply mx-auto max-w-[1400px] px-6;
+}
+
+@utility section-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-soft);
+}
+
+@utility stat-card {
+  @apply rounded-2xl p-5 transition-all duration-200;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+@utility stat-blue {
+  border-left: 4px solid var(--blue);
+}
+
+@utility stat-green {
+  border-left: 4px solid var(--green);
+}
+
+@utility stat-orange {
+  border-left: 4px solid var(--orange);
+}
+
+@utility stat-purple {
+  border-left: 4px solid var(--purple);
+}
+
+@utility stat-red {
+  border-left: 4px solid var(--red);
+}
+
+@utility soft-blue {
+  background: var(--blue-soft);
+}
+
+@utility soft-green {
+  background: var(--green-soft);
+}
+
+@utility soft-orange {
+  background: var(--orange-soft);
+}
+
+@utility soft-purple {
+  background: var(--purple-soft);
+}
+
+@utility soft-red {
+  background: var(--red-soft);
+}
+
+@utility executive-header {
+  background: linear-gradient(135deg, #e6c04f, #d4af37);
+  color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Scrollbar 
+::-webkit-scrollbar {
+  width: 0.5px;
+}
+::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 999px;
+}
+*/
