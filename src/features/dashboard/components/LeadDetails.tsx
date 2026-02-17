@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
+import { FileUploader } from '@/shared/FileUploader';
 
 interface LeadDetailsProps {
     lead: {
@@ -20,13 +21,57 @@ interface LeadDetailsProps {
     onClose: () => void;
 }
 
+const requiredDocs = [
+    { id: 'eid-front', label: 'Emirates ID (Front) *' },
+    { id: 'eid-back', label: 'Emirates ID (Back) *' },
+    { id: 'passport', label: 'Passport Copy *' },
+    { id: 'visa', label: 'Residence Visa *' },
+    { id: 'salary-cert', label: 'Salary Certificate *' },
+    { id: 'bank-statement-3', label: 'Bank Statements (Last 3 Months) *' },
+    { id: 'bank-statement-6', label: 'Bank Statements (Last 6 Months) *' },
+    { id: 'trade-license', label: 'Trade License *' },
+    { id: 'liability-letter', label: 'Liability Letter' },
+    { id: 'noc', label: 'NOC From Employer' },
+    { id: 'security-cheque', label: 'Security Cheque' },
+    { id: 'utility-bill', label: 'Utility Bill' },
+    { id: 'tenancy-contract', label: 'Tenancy Contract' },
+    { id: 'proof-of-address', label: 'Proof of Address' },
+    { id: 'last-3-months-payslip', label: 'Last 3 Months Payslip' },
+    { id: 'last-6-months-payslip', label: 'Last 6 Months Payslip' },
+    { id: 'company-id', label: 'Company ID Card' },
+    { id: 'labor-contract', label: 'Labor Contract' },
+    { id: 'employment-letter', label: "Employment Letter" },
+    { id: 'bank-account-statement', label: 'Bank Account Statement (Personal)' },
+    { id: 'credit-report', label: 'Credit Report' },
+    { id: 'existing-loan-statements', label: 'Existing Loan Statements' },
+    { id: 'property-documents', label: 'Property Documents (if applicable)' },
+    { id: 'vehicle-registration', label: 'Vehicle Registration (for Auto Loan)' },
+    { id: 'business-plan', label: 'Business Plan (for Business Loan)' },
+    { id: 'financial-statements', label: 'Financial Statements (Last 2 Years)' },
+    { id: 'tax-returns', label: 'Tax Returns' },
+    { id: 'moa', label: '(MOA) Memorandum of Association' },
+];
+
 export function LeadDetails({ lead, onClose }: LeadDetailsProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({ ...lead });
+    const [files, setFiles] = useState<{ [key: string]: File | null }>({});
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleFileChange = (id: string, file: File | null) => {
+        setFiles(prev => {
+            if (file) {
+                return { ...prev, [id]: file };
+            } else {
+                const next = { ...prev };
+                delete next[id];
+                return next;
+            }
+        });
     };
 
     const handleSave = () => {
@@ -37,7 +82,7 @@ export function LeadDetails({ lead, onClose }: LeadDetailsProps) {
 
     return (
         <Card noPadding className="h-full flex flex-col animate-in slide-in-from-right duration-300">
-            {/* Header */}
+            {/* ... header remains same ... */}
             <div className="bg-green-soft/30 dark:bg-green/10 p-4 border-b border-border flex justify-between items-center sticky top-0 z-10 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-green"><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M15 18a3 3 0 1 0-6 0" /><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z" /></svg>
@@ -52,7 +97,7 @@ export function LeadDetails({ lead, onClose }: LeadDetailsProps) {
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-10 custom-scrollbar">
-                {/* Customer Information */}
+                {/* Customer Information Section */}
                 <section className="space-y-6">
                     <div className="flex items-center justify-between">
                         <h4 className="text-base font-bold text-foreground">Customer Information</h4>
@@ -162,26 +207,19 @@ export function LeadDetails({ lead, onClose }: LeadDetailsProps) {
                     </div>
                 </section>
 
-                {/* Upload Documents */}
+                {/* Upload Documents Section */}
                 <section className="space-y-6">
                     <h4 className="text-base font-bold text-foreground">Upload Documents</h4>
                     <div className="grid grid-cols-1 gap-4">
-                        {[
-                            'Emirates ID (Front) *',
-                            'Emirates ID (Back) *',
-                            'Utility Bill (DEWA/ADDC)',
-                            'Tenancy Contract',
-                            'Proof of Address'
-                        ].map((doc) => (
-                            <div key={doc} className="p-4 rounded-xl border border-border bg-muted/30">
-                                <p className="text-[11px] font-bold text-foreground mb-3">{doc}</p>
-                                <div className="flex items-center gap-4">
-                                    <button className="px-4 py-2 bg-green-soft text-green rounded-lg text-xs font-bold hover:bg-green/10 transition-colors">
-                                        Choose File
-                                    </button>
-                                    <span className="text-[10px] text-text-muted font-medium">No file chosen</span>
-                                </div>
-                            </div>
+                        {requiredDocs.map((doc) => (
+                            <FileUploader
+                                key={doc.id}
+                                id={doc.id}
+                                label={doc.label}
+                                file={files[doc.id] || null}
+                                onChange={handleFileChange}
+                                color="blue"
+                            />
                         ))}
                     </div>
                 </section>

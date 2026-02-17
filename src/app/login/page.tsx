@@ -4,14 +4,11 @@ import { LoginForm } from './LoginForm';
 export default function LoginPage() {
     return (
         <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-background text-foreground">
-            {/* LEFT SIDE – BRAND (Desktop Only) - Server Rendered */}
             <div className="hidden lg:flex flex-col justify-between p-12 relative overflow-hidden border-r border-border">
-                {/* Background Effects */}
-                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 via-transparent to-blue-500/5" />
+                <div className="absolute inset-0 bg-linear-to-br from-brand/5 via-transparent to-blue-500/5" />
                 <div className="absolute -top-24 -left-24 w-96 h-96 bg-brand/20 rounded-full blur-[120px]" />
                 <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px]" />
 
-                {/* Logo */}
                 <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-16">
                         <div className="w-12 h-12 bg-brand rounded-2xl flex items-center justify-center shadow-xl shadow-brand/20">
@@ -22,7 +19,6 @@ export default function LoginPage() {
                         </h1>
                     </div>
 
-                    {/* Hero Content */}
                     <div className="max-w-lg">
                         <h2 className="text-5xl font-black leading-tight mb-6">
                             Executive <span className="text-brand">Finance</span> Portal
@@ -40,13 +36,11 @@ export default function LoginPage() {
                     </div>
                 </div>
 
-                {/* Footer */}
                 <p className="relative z-10 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                     © 2026 Dubai Finance. All Rights Reserved.
                 </p>
             </div>
 
-            {/* RIGHT SIDE – LOGIN FORM (Client Component) */}
             <LoginForm />
         </div>
     );

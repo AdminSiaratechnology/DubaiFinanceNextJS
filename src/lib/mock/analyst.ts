@@ -1,14 +1,87 @@
 export const analystStats = {
-    newCases: 0,
+    newCases: 2,
     pending: 3,
-    accepted: 1,
-    atBank: 6,
-    approved: 4,
-    rejected: 2,
-    total: 19,
+    accepted: 4,
+    atBank: 3,
+    approved: 2,
+    rejected: 1,
+    total: 15,
 };
 
 export const analystCases = [
+    // NEW CASES
+    {
+        id: 'CASE-101',
+        name: 'Omar Abdullah',
+        mobile: '+971 50 111 2222',
+        email: 'omar.abdullah@email.com',
+        emiratesId: '784-1990-1112222-1',
+        employer: 'Dubai Police',
+        salary: '22,000 AED',
+        product: 'Personal Loan',
+        amount: '150,000 AED',
+        date: 'Oct 20, 2023',
+        status: 'New',
+        step: 1
+    },
+    {
+        id: 'CASE-102',
+        name: 'Fatima Al Sayed',
+        mobile: '+971 55 222 3333',
+        email: 'fatima.sayed@email.com',
+        emiratesId: '784-1988-2223333-2',
+        employer: 'DHA',
+        salary: '19,500 AED',
+        product: 'Auto Loan',
+        amount: '85,000 AED',
+        date: 'Oct 21, 2023',
+        status: 'New',
+        step: 1
+    },
+    // PENDING ACCEPTANCE
+    {
+        id: 'CASE-201',
+        name: 'John Doe',
+        mobile: '+971 52 333 4444',
+        email: 'john.doe@email.com',
+        emiratesId: '784-1980-3334444-3',
+        employer: 'Amazon UAE',
+        salary: '15,000 AED',
+        product: 'Personal Loan',
+        amount: '50,000 AED',
+        date: 'Oct 15, 2023',
+        status: 'Pending Acceptance',
+        step: 2
+    },
+    {
+        id: 'CASE-202',
+        name: 'Jane Smith',
+        mobile: '+971 56 444 5555',
+        email: 'jane.smith@email.com',
+        emiratesId: '784-1995-4445555-4',
+        employer: 'Microsoft Dubai',
+        salary: '30,000 AED',
+        product: 'Mortgage',
+        amount: '2,000,000 AED',
+        date: 'Oct 16, 2023',
+        status: 'Pending Acceptance',
+        step: 2
+    },
+    {
+        id: 'CASE-203',
+        name: 'Ali Hassan',
+        mobile: '+971 50 555 6666',
+        email: 'ali.hassan@email.com',
+        emiratesId: '784-1985-5556666-5',
+        employer: 'Etisalat',
+        salary: '18,000 AED',
+        product: 'Auto Loan',
+        amount: '110,000 AED',
+        date: 'Oct 17, 2023',
+        status: 'Pending Acceptance',
+        step: 2
+    },
+    // UNDER REVIEW (ACCEPTED)
     {
         id: 'CASE-001',
         name: 'Ahmad Al Mazrouei',
@@ -20,10 +93,52 @@ export const analystCases = [
         product: 'Personal Loan',
         amount: '250,000 AED',
         date: 'Oct 12, 2023',
-        commission: '2,500',
         status: 'Under Review',
         step: 3
     },
+    {
+        id: 'CASE-302',
+        name: 'Zaid Khalid',
+        mobile: '+971 54 666 7777',
+        email: 'zaid.khalid@email.com',
+        emiratesId: '784-1982-6667777-6',
+        employer: 'DP World',
+        salary: '28,000 AED',
+        product: 'Personal Loan',
+        amount: '300,000 AED',
+        date: 'Oct 13, 2023',
+        status: 'Under Review',
+        step: 3
+    },
+    {
+        id: 'CASE-303',
+        name: 'Mariam Ali',
+        mobile: '+971 58 777 8888',
+        email: 'mariam.ali@email.com',
+        emiratesId: '784-1993-7778888-7',
+        employer: 'DEWA',
+        salary: '20,000 AED',
+        product: 'Auto Loan',
+        amount: '95,000 AED',
+        date: 'Oct 14, 2023',
+        status: 'Under Review',
+        step: 3
+    },
+    {
+        id: 'CASE-304',
+        name: 'Robert Brown',
+        mobile: '+971 52 888 9999',
+        email: 'robert.brown@email.com',
+        emiratesId: '784-1975-8889999-8',
+        employer: 'HSBC',
+        salary: '45,000 AED',
+        product: 'Mortgage',
+        amount: '3,500,000 AED',
+        date: 'Oct 15, 2023',
+        status: 'Under Review',
+        step: 3
+    },
+    // SUBMITTED TO BANK
     {
         id: 'CASE-002',
         name: 'Sara Ibrahim',
@@ -35,10 +150,38 @@ export const analystCases = [
         product: 'Auto Loan',
         amount: '120,000 AED',
         date: 'Oct 14, 2023',
-        commission: '1,200',
         status: 'Submitted to Bank',
         step: 4
     },
+    {
+        id: 'CASE-402',
+        name: 'Laila Mohamed',
+        mobile: '+971 55 999 0000',
+        email: 'laila.mohamed@email.com',
+        emiratesId: '784-1990-9990000-9',
+        employer: 'Etihad Airways',
+        salary: '21,000 AED',
+        product: 'Personal Loan',
+        amount: '180,000 AED',
+        date: 'Oct 18, 2023',
+        status: 'Submitted to Bank',
+        step: 4
+    },
+    {
+        id: 'CASE-403',
+        name: 'David Wilson',
+        mobile: '+971 50 000 1111',
+        email: 'david.wilson@email.com',
+        emiratesId: '784-1970-0001111-0',
+        employer: 'Shell UAE',
+        salary: '55,000 AED',
+        product: 'Mortgage',
+        amount: '5,000,000 AED',
+        date: 'Oct 19, 2023',
+        status: 'Submitted to Bank',
+        step: 4
+    },
+    // APPROVED
     {
         id: 'CASE-003',
         name: 'Michael Chen',
@@ -50,8 +193,36 @@ export const analystCases = [
         product: 'Mortgage',
         amount: '1,500,000 AED',
         date: 'Oct 10, 2023',
-        commission: '15,000',
         status: 'Approved',
         step: 5
+    },
+    {
+        id: 'CASE-502',
+        name: 'Hassan Raza',
+        mobile: '+971 52 111 3333',
+        email: 'hassan.raza@email.com',
+        emiratesId: '784-1983-1113333-1',
+        employer: 'Oracle GCC',
+        salary: '32,000 AED',
+        product: 'Personal Loan',
+        amount: '400,000 AED',
+        date: 'Oct 08, 2023',
+        status: 'Approved',
+        step: 5
+    },
+    // REJECTED
+    {
+        id: 'CASE-601',
+        name: 'Yusuf Ahmed',
+        mobile: '+971 56 222 4444',
+        email: 'yusuf.ahmed@email.com',
+        emiratesId: '784-1996-2224444-2',
+        employer: 'Careem',
+        salary: '12,000 AED',
+        product: 'Auto Loan',
+        amount: '60,000 AED',
+        date: 'Oct 05, 2023',
+        status: 'Rejected',
+        step: 6
     }
 ];

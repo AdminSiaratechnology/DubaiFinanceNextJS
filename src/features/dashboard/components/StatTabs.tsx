@@ -16,13 +16,19 @@ interface StatTabsProps {
     tabs: StatTab[];
     activeTab: string;
     baseUrl: string;
+    gridCols?: string;
 }
 
 /**
  * StatTabs - Client Component
  * Renders a grid of StatCards that act as navigation tabs.
  */
-export function StatTabs({ tabs, activeTab, baseUrl }: StatTabsProps) {
+export function StatTabs({
+    tabs,
+    activeTab,
+    baseUrl,
+    gridCols = "grid-cols-1 md:grid-cols-2 xl:grid-cols-4"
+}: StatTabsProps) {
     const router = useRouter();
 
     const handleTabChange = (id: string) => {
@@ -30,7 +36,7 @@ export function StatTabs({ tabs, activeTab, baseUrl }: StatTabsProps) {
     };
 
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <section className={`grid gap-6 ${gridCols}`}>
             {tabs.map((tab) => (
                 <StatCard
                     key={tab.id}

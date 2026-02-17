@@ -10,15 +10,6 @@ export default async function DashboardPage() {
 
     return (
         <main className="space-y-8 animate-in fade-in duration-500">
-            <section className="flex items-center gap-3 mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand">
-                    <circle cx="12" cy="12" r="10" />
-                    <circle cx="12" cy="12" r="6" />
-                    <circle cx="12" cy="12" r="2" />
-                </svg>
-                <h2 className="text-2xl font-light text-foreground">Executive Snapshot (Real-Time)</h2>
-            </section>
-
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                 {data.metrics.map((metric, index) => (
                     <StatCard

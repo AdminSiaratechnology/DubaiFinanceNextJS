@@ -61,7 +61,6 @@ export function DashboardSidebar() {
                 </div>
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
-
                     return (
                         <Link
                             key={item.name}

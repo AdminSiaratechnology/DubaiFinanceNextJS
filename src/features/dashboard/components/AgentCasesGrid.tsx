@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { CaseCard } from './CaseCard';
 // We can reuse LeadDetails or CaseDetailsAnalyst or make another one
 import { LeadDetails } from './LeadDetails';
+import { SearchBar } from '@/shared/SearchBar';
 
 interface AgentCasesGridProps {
     cases: any[];
@@ -34,14 +35,11 @@ export function AgentCasesGrid({ cases }: AgentCasesGridProps) {
             {/* List */}
             <div className="space-y-6">
                 <div className="bg-card/80 border border-border rounded-xl p-4 shadow-sm sticky top-0 z-20 backdrop-blur-md">
-                    <div className="relative">
-                        <svg className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-                        <input
-                            type="text"
-                            placeholder="Search by Case No, Mobile, Email, or Name..."
-                            className="w-full pl-12 pr-4 py-3 bg-muted border border-border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
-                        />
-                    </div>
+                    <SearchBar
+                        placeholder="Search by Case No, Mobile, Email, or Name..."
+                        className="pl-12 pr-4 py-3 bg-muted border border-border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
+                        iconSize={20}
+                    />
                 </div>
 
                 <div className="space-y-4">

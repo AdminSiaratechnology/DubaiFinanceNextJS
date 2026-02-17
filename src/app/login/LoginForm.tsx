@@ -130,33 +130,6 @@ export function LoginForm() {
                             />
                         </div>
 
-                        {/* Role Selector */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                                Select Role
-                            </label>
-                            <div className="grid grid-cols-3 gap-2 bg-muted p-1 rounded-xl border border-border">
-                                {roles.map((role) => (
-                                    <button
-                                        key={role}
-                                        type="button"
-                                        onClick={() =>
-                                            setFormData({ ...formData, role })
-                                        }
-                                        className={`
-                                            py-2 rounded-lg text-[11px] font-black uppercase tracking-wider transition-all
-                                            ${formData.role === role
-                                                ? 'bg-background text-brand border border-brand/30 shadow-sm'
-                                                : 'text-muted-foreground hover:text-foreground'
-                                            }
-                                        `}
-                                    >
-                                        {role}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
                         {/* Submit */}
                         <button
                             type="submit"
@@ -187,7 +160,6 @@ export function LoginForm() {
                             Register as Agent
                         </button>
                     </form>
-
                 </div>
             </div>
         </div>

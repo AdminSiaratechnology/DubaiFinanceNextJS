@@ -4,7 +4,7 @@ import { RegisterForm } from './RegisterForm';
 export default function RegisterPage() {
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#0b1120] py-6 sm:py-10">
-            <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+            <div className="mx-auto px-6 lg:px-12">
                 {/* Header Section - Server Rendered */}
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center p-2.5 bg-purple-soft rounded-xl mb-3 text-purple">
@@ -15,7 +15,7 @@ export default function RegisterPage() {
                             <line x1="16" y1="11" x2="22" y2="11" />
                         </svg>
                     </div>
-                    <h1 className="text-2xl font-bold text-foreground tracking-tight mb-1 uppercase">Agent Registration</h1>
+                    <h1 className="text-2xl font-bold text-foreground tracking-tight mb-1 uppercase ">Agent Registration</h1>
                     <p className="text-[11px] font-semibold text-text-muted">
                         Earn competitive commissions by referring customers for financial products.
                         Complete the registration to get your unique referral code.
