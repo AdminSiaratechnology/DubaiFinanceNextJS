@@ -18,6 +18,8 @@ export interface CommissionForm {
     coordinatorShare: number;
     effectiveFrom: string;
     status: 'active' | 'inactive';
+    bankName?: string | undefined;
+    productName?: string | undefined;
 }
 
 interface CommissionFormProps {

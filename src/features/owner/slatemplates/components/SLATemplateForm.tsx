@@ -7,12 +7,12 @@ import { Label, Input, Select } from '@/components/ui/Form';
 
 export interface SLATemplate {
     id?: string;
-    name: string;
-    telecallerActionTime: number;
-    coordinatorVerificationTime: number;
-    submissionTimeLimit: number;
-    escalationAfter: number;
-    autoRevert: boolean;
+    name?: string;
+    telecallerActionTime?: number;
+    coordinatorVerificationTime?: number;
+    submissionTimeLimit?: number;
+    escalationAfter?: number;
+    autoRevert?: boolean;
     status: 'active' | 'inactive';
 }
 
