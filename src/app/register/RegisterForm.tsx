@@ -39,9 +39,7 @@ export function RegisterForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-card border border-border rounded-[2rem] p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-black/20 space-y-8">
-
-            {/* Personal Details */}
+        <form onSubmit={handleSubmit} className="bg-card border border-border rounded-4xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-black/20 space-y-8">
             <div className="space-y-4">
                 <div className="flex items-center gap-3">
                     <span className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-soft text-purple text-[10px] font-black">1</span>
@@ -101,7 +99,6 @@ export function RegisterForm() {
                 </div>
             </div>
 
-            {/* Professional Details */}
             <div className="space-y-4 pt-2">
                 <div className="flex items-center gap-3">
                     <span className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-soft text-purple text-[10px] font-black">2</span>
@@ -128,8 +125,6 @@ export function RegisterForm() {
                     </div>
                 </div>
             </div>
-
-            {/* Financial Details */}
             <div className="space-y-4 pt-2">
                 <div className="flex items-center gap-3">
                     <span className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-soft text-purple text-[10px] font-black">3</span>
@@ -168,8 +163,6 @@ export function RegisterForm() {
                     </div>
                 </div>
             </div>
-
-            {/* Compact Commission Structure */}
             <div className="bg-purple-soft/30 dark:bg-purple-900/10 rounded-2xl p-5 border border-purple/10">
                 <div className="flex items-center justify-between mb-4">
                     <h4 className="text-[10px] font-black text-purple uppercase tracking-widest">Global Commission Structure</h4>
@@ -189,8 +182,6 @@ export function RegisterForm() {
                     ))}
                 </div>
             </div>
-
-            {/* Refined Terms */}
             <div className="grid grid-cols-1 gap-3">
                 <label className="flex items-start gap-3 p-3 bg-muted/10 border border-border rounded-xl cursor-pointer hover:bg-muted/20 transition-all group">
                     <input
@@ -215,8 +206,6 @@ export function RegisterForm() {
                     </span>
                 </label>
             </div>
-
-            {/* Actions - High Density */}
             <div className="flex items-center gap-4 pt-2">
                 <button
                     type="button"

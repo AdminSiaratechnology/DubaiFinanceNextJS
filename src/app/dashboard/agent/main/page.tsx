@@ -6,7 +6,7 @@ import { CaseCard } from '@/features/dashboard/components/CaseCard';
 import { CommissionCalculator } from '@/features/dashboard/components/CommissionCalculator';
 import { SubmitLead } from '@/features/dashboard/components/SubmitLead';
 import { SubmitCase } from '@/features/dashboard/components/SubmitCase';
-import { AgentCasesGrid } from '@/features/dashboard/components/AgentCasesGrid';
+import { SearchBar } from '@/shared/SearchBar';
 
 const agentTabs = [
     { id: 'dashboard', label: 'Dashboard', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg> },
@@ -83,7 +83,22 @@ export default async function AgentDashboardPage({
             ) : activeTab === 'submit-case' ? (
                 <SubmitCase />
             ) : activeTab === 'my-cases' ? (
-                <AgentCasesGrid cases={agentCases} />
+                <>
+                    <div className="px-6 pt-4">
+                        <SearchBar
+                            placeholder="Search by Case No, Name, Mobile..."
+                            syncWithUrl
+                            paramKey="q"
+                            preserveParams={['tab']} // VERY IMPORTANT for your tab system
+                            debounce={300}
+                        />
+                    </div>
+                    <div className="px-6 space-y-6">
+                        {agentCases.map((c) => (
+                            <CaseCard key={c.id} {...c} />
+                        ))}
+                    </div>
+                </>
             ) : (
                 <div className="flex flex-col items-center justify-center h-64 text-text-muted italic bg-card border border-border rounded-2xl">
                     <p>{agentTabs.find(t => t.id === activeTab)?.label} section is coming soon...</p>

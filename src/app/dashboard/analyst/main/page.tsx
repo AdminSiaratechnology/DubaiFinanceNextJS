@@ -5,11 +5,12 @@ import { StatTabs } from '@/features/dashboard/components/StatTabs';
 import { AnalystMainGrid } from '@/features/dashboard/components/AnalystMainGrid';
 
 const analystTabs = [
-    { id: 'new', title: 'New Cases', value: analystStats.newCases, color: 'blue' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg> },
-    { id: 'pending', title: 'Pending', value: analystStats.pending, color: 'orange' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> },
-    { id: 'review', title: 'Under Review', value: analystStats.accepted, color: 'purple' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><circle cx="10" cy="14" r="2" /><path d="m14 18-2.5-2.5" /></svg> },
-    { id: 'bank', title: 'Submitted to Bank', value: analystStats.atBank, color: 'blue' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> },
-    { id: 'approved', title: 'Approved', value: analystStats.approved, color: 'green' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="10" /></svg> },
+    { id: 'new', title: `New Cases`, value: analystStats.newCases, color: 'blue' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg> },
+    { id: 'pending', title: `Pending Acceptance`, value: analystStats.pending, color: 'orange' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> },
+    { id: 'accepted', title: `Accepted & Under Review`, value: analystStats.accepted, color: 'purple' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><circle cx="10" cy="14" r="2" /><path d="m14 18-2.5-2.5" /></svg> },
+    { id: 'bank', title: `Submitted to Bank`, value: analystStats.atBank, color: 'teal' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> },
+    { id: 'approved', title: `Approved`, value: analystStats.approved, color: 'green' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="10" /></svg> },
+    { id: 'rejected', title: `Rejected`, value: analystStats.rejected, color: 'red' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg> },
 ];
 
 export default async function AnalystDashboardPage({
@@ -20,17 +21,26 @@ export default async function AnalystDashboardPage({
     const params = await searchParams;
     const activeTab = params.tab || 'new';
 
+    const filteredCases = analystCases.filter(c => {
+        if (activeTab === 'new') return c.status === 'New';
+        if (activeTab === 'pending') return c.status === 'Pending Acceptance';
+        if (activeTab === 'accepted') return c.status === 'Under Review';
+        if (activeTab === 'bank') return c.status === 'Submitted to Bank';
+        if (activeTab === 'approved') return c.status === 'Approved';
+        if (activeTab === 'rejected') return c.status === 'Rejected';
+        return true;
+    });
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            {/* Nav Tabs using StatTabs */}
             <StatTabs
                 tabs={analystTabs}
                 activeTab={activeTab}
                 baseUrl="/dashboard/analyst/main"
+                gridCols="grid-cols-1 sm:grid-cols-3 xl:grid-cols-6"
             />
 
-            {/* Main Content: Case Queue & Detail View */}
-            <AnalystMainGrid cases={analystCases} />
+            <AnalystMainGrid cases={filteredCases} />
 
             {/* How It Works Section */}
             <section className="section-card bg-card border-border border shadow-sm rounded-2xl p-8">

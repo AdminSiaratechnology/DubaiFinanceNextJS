@@ -33,14 +33,14 @@ export function StatCard({
         ? `${colorMap[color]} shadow-lg ring-2 ring-offset-2 ring-offset-background ring-current scale-[1.02] z-10`
         : 'bg-card border-border text-text-muted hover:bg-muted hover:shadow-md';
 
-    const baseClasses = `p-5 rounded-2xl border flex items-center gap-4 transition-all duration-300 ${onClick ? 'cursor-pointer text-left w-full' : 'shadow-sm'}`;
+    const baseClasses = `bg-${color}-soft p-5 rounded-2xl border-${color}/10 flex items-center gap-4 transition-all duration-300 ${onClick ? 'cursor-pointer text-left w-full' : 'shadow-sm'}`;
 
     const content = (
         <>
             {icon && (
                 <div className={`
                     p-3 rounded-xl backdrop-blur-sm shadow-sm
-                    ${isActive ? 'bg-white/60 dark:bg-black/20' : 'bg-muted dark:bg-zinc-800'}
+                    ${isActive ? 'bg-color-soft/60 dark:bg-black/20' : 'bg-muted dark:bg-zinc-800'}
                 `}>
                     {icon}
                 </div>

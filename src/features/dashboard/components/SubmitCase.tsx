@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
 
+import { FileUploader } from '@/shared/FileUploader';
+
 const productOptions = [
     { value: 'personal-loan', label: 'Personal Loan' },
     { value: 'business-loan', label: 'Business Loan' },
@@ -17,8 +19,29 @@ const requiredDocs = [
     { id: 'passport', label: 'Passport Copy *' },
     { id: 'visa', label: 'Residence Visa *' },
     { id: 'salary-cert', label: 'Salary Certificate *' },
-    { id: 'bank-statement-3', label: 'Bank Statements (3M) *' },
-    { id: 'bank-statement-6', label: 'Bank Statements (6M) *' },
+    { id: 'bank-statement-3', label: 'Bank Statements (Last 3 Months) *' },
+    { id: 'bank-statement-6', label: 'Bank Statements (Last 6 Months) *' },
+    { id: 'trade-license', label: 'Trade License *' },
+    { id: 'liability-letter', label: 'Liability Letter' },
+    { id: 'noc', label: 'NOC From Employer' },
+    { id: 'security-cheque', label: 'Security Cheque' },
+    { id: 'utility-bill', label: 'Utility Bill' },
+    { id: 'tenancy-contract', label: 'Tenancy Contract' },
+    { id: 'proof-of-address', label: 'Proof of Address' },
+    { id: 'last-3-months-payslip', label: 'Last 3 Months Payslip' },
+    { id: 'last-6-months-payslip', label: 'Last 6 Months Payslip' },
+    { id: 'company-id', label: 'Company ID Card' },
+    { id: 'labor-contract', label: 'Labor Contract' },
+    { id: 'employment-letter', label: "Employment Letter" },
+    { id: 'bank-account-statement', label: 'Bank Account Statement (Personal)' },
+    { id: 'credit-report', label: 'Credit Report' },
+    { id: 'existing-loan-statements', label: 'Existing Loan Statements' },
+    { id: 'property-documents', label: 'Property Documents (if applicable)' },
+    { id: 'vehicle-registration', label: 'Vehicle Registration (for Auto Loan)' },
+    { id: 'business-plan', label: 'Business Plan (for Business Loan)' },
+    { id: 'financial-statements', label: 'Financial Statements (Last 2 Years)' },
+    { id: 'tax-returns', label: 'Tax Returns' },
+    { id: 'moa', label: '(MOA) Memorandum of Association' },
 ];
 
 export function SubmitCase() {
@@ -41,10 +64,16 @@ export function SubmitCase() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setFiles(prev => ({ ...prev, [id]: e.target.files![0] }));
-        }
+    const handleFileChange = (id: string, file: File | null) => {
+        setFiles(prev => {
+            if (file) {
+                return { ...prev, [id]: file };
+            } else {
+                const next = { ...prev };
+                delete next[id];
+                return next;
+            }
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -145,30 +174,14 @@ export function SubmitCase() {
 
                         <div className="space-y-3">
                             {requiredDocs.map((doc) => (
-                                <div key={doc.id} className="group transition-all">
-                                    <Label>{doc.label}</Label>
-                                    <div className={`relative border-2 border-dashed rounded-xl p-4 transition-all duration-200 ${files[doc.id] ? 'border-purple/30 bg-purple-soft/30' : 'border-border hover:border-purple/20'}`}>
-                                        <div className="flex items-center justify-between gap-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${files[doc.id] ? 'bg-purple text-white shadow-md' : 'bg-muted text-text-muted'}`}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                        {files[doc.id] ? <path d="M20 6 9 17l-5-5" /> : <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></>}
-                                                    </svg>
-                                                </div>
-                                                <div>
-                                                    <p className={`text-xs font-bold ${files[doc.id] ? 'text-purple' : 'text-foreground'}`}>{files[doc.id] ? files[doc.id]?.name : 'Choose File'}</p>
-                                                    <p className="text-[10px] text-text-muted font-medium">{files[doc.id] ? `${(files[doc.id]!.size / 1024).toFixed(1)} KB` : 'No file chosen'}</p>
-                                                </div>
-                                            </div>
-                                            <input type="file" id={doc.id} className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => handleFileChange(doc.id, e)} />
-                                            {files[doc.id] && (
-                                                <button type="button" onClick={(e) => { e.preventDefault(); setFiles(prev => { const n = { ...prev }; delete n[doc.id]; return n; }); }} className="p-2 hover:bg-red-50 hover:text-red-500 rounded-lg text-text-muted z-10">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
+                                <FileUploader
+                                    key={doc.id}
+                                    id={doc.id}
+                                    label={doc.label}
+                                    file={files[doc.id] || null}
+                                    onChange={handleFileChange}
+                                    color="purple"
+                                />
                             ))}
                         </div>
                     </div>
