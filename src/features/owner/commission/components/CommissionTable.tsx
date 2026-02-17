@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { CommissionForm } from './CommissionForm';
 import { CommissionSearch } from './CommissionSearch';
@@ -26,7 +26,9 @@ export function CommissionTable({ rules }: CommissionTableProps) {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
                 <div className="w-full sm:w-auto">
-                    <CommissionSearch />
+                    <Suspense fallback={<div className="h-10 w-80 bg-muted/30 rounded-xl animate-pulse" />}>
+                        <CommissionSearch />
+                    </Suspense>
                 </div>
 
                 <Link
@@ -92,12 +94,14 @@ export function CommissionTable({ rules }: CommissionTableProps) {
                                         <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-9 h-9 rounded-lg bg-blue-soft text-blue flex items-center justify-center font-bold text-xs border border-blue/20 p-1">
-                                                    {rule.bankName
-                                                        .substring(0, 2)
-                                                        .toUpperCase()}
+                                                    {rule?.bankName
+                                                        ? rule.bankName
+                                                            .substring(0, 2)
+                                                            .toUpperCase()
+                                                        : 'Unknown'}
                                                 </div>
                                                 <p className="text-xs sm:text-sm font-bold text-foreground">
-                                                    {rule.bankName}
+                                                    {rule?.bankName}
                                                 </p>
                                             </div>
                                         </td>
@@ -145,18 +149,16 @@ export function CommissionTable({ rules }: CommissionTableProps) {
                                         <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-2">
                                                 <span
-                                                    className={`w-2 h-2 rounded-full ${
-                                                        rule.status === 'active'
-                                                            ? 'bg-green'
-                                                            : 'bg-red'
-                                                    }`}
+                                                    className={`w-2 h-2 rounded-full ${rule.status === 'active'
+                                                        ? 'bg-green'
+                                                        : 'bg-red'
+                                                        }`}
                                                 />
                                                 <span
-                                                    className={`text-xs font-bold ${
-                                                        rule.status === 'active'
-                                                            ? 'text-green'
-                                                            : 'text-red'
-                                                    }`}
+                                                    className={`text-xs font-bold ${rule.status === 'active'
+                                                        ? 'text-green'
+                                                        : 'text-red'
+                                                        }`}
                                                 >
                                                     {rule.status === 'active'
                                                         ? 'Active'
