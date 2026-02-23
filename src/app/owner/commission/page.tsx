@@ -1,6 +1,7 @@
 import React from 'react';
+import { PageHeader } from '@/components/PageHeader';
 import { CommissionTable } from '@/features/owner/commission/components/CommissionTable';
-import { mockCommissionRules} from '@/lib/mock/commissionRules'
+import { mockCommissionRules } from '@/lib/mock/commissionRules'
 
 export default async function CommissionRulesPage({
     searchParams,
@@ -23,15 +24,10 @@ export default async function CommissionRulesPage({
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
             {/* Header */}
-            <header className="flex flex-col gap-1">
-                <h1 className="text-2xl font-light text-foreground">
-                    Commission Rules Management
-                </h1>
-                <p className="text-xs text-text-muted italic">
-                    Configure bank and product-wise commission distribution,
-                    agent share, telecaller share, and coordinator share rules.
-                </p>
-            </header>
+            <PageHeader
+                title="Commission Rules Management"
+                description="Configure bank and product-wise commission distribution, agent share, telecaller share, and coordinator share rules."
+            />
 
             {/* Table Section */}
             <CommissionTable rules={filteredRules} />

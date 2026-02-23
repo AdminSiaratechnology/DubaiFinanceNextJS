@@ -135,7 +135,7 @@ export function LoginForm() {
                             type="submit"
                             disabled={isLoading}
                             className={`
-                                w-full py-4 rounded-2xl font-black uppercase tracking-widest text-xs
+                                w-full py-3 rounded-2xl font-black uppercase tracking-widest text-xs
                                 bg-brand text-white shadow-xl shadow-brand/20
                                 transition-all duration-300 flex items-center justify-center gap-3
                                 ${isLoading
@@ -152,13 +152,23 @@ export function LoginForm() {
                         </button>
                         <button
                             type="button"
+                            onClick={() => router.push('/forgot-password')}
+                            className="w-full py-3 rounded-2xl font-black tracking-widest text-xs
+                        bg-gray-300 text-black shadow-xl shadow-brand/20
+                        transition-all duration-300 flex items-center justify-center gap-3"
+                        >
+                            Forgot Password
+                        </button>
+                        <button
+                            type="button"
                             onClick={() => router.push('/register')}
-                            className="w-full py-4 rounded-2xl font-black tracking-widest text-xs
+                            className="w-full py-3 rounded-2xl font-black tracking-widest text-xs
                         bg-gray-500 text-black shadow-xl shadow-brand/20
                         transition-all duration-300 flex items-center justify-center gap-3"
                         >
                             Register as Agent
                         </button>
+
                     </form>
                 </div>
             </div>

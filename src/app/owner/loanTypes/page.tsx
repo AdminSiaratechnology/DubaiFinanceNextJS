@@ -1,5 +1,6 @@
 import React from 'react';
 import { mockLoanTypes } from '@/lib/mock/loanTypes';
+import { PageHeader } from '@/components/PageHeader';
 import { LoanTypeTable } from '@/features/owner/loantypes/components/LoanTypeTable';
 
 export default async function LoanTypesPage({
@@ -17,10 +18,10 @@ export default async function LoanTypesPage({
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            <header className="flex flex-col gap-1">
-                <h1 className="text-2xl font-light text-foreground">Loan Types Management</h1>
-                <p className="text-xs text-text-muted italic">Manage available loan product types and their configurations.</p>
-            </header>
+            <PageHeader
+                title="Loan Types Management"
+                description="Manage available loan product types and their configurations."
+            />
 
             <LoanTypeTable loanTypes={filteredLoanTypes} />
         </div>

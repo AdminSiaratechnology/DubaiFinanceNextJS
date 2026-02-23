@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface TopHeaderProps {
@@ -11,7 +11,7 @@ interface TopHeaderProps {
 export function TopHeader({ onMenuClick }: TopHeaderProps) {
     const pathname = usePathname();
     const parts = pathname.split('/');
-    const role = parts[1] === 'owner' ? 'owner' : parts[2]; // /owner/... or /dashboard/[role]/...
+    const role = parts[1] === 'owner' ? 'owner' : parts[2];
 
     const roleTitle: Record<string, string> = {
         agent: 'Agent Portal',
@@ -29,11 +29,11 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
 
     const currentRoleTitle = roleTitle[role] || 'Finance Portal';
     const currentUserName = userName[role] || 'User';
-
+    const router = useRouter();
     return (
         <header className="
             h-20
-            bg-background/80
+            bg-white
             border-b border-border
             flex items-center justify-between
             px-4 sm:px-6 lg:px-8
@@ -54,7 +54,7 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-brand text-white shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                 </div>
-                <div className="leading-tight">
+                <div className="leading-tight cursor-pointer" onClick={() => router.push('/profile')}>
                     <h1 className="text-sm sm:text-lg font-bold text-foreground tracking-tight">
                         {currentRoleTitle}
                     </h1>

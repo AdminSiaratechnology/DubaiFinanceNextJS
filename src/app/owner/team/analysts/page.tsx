@@ -1,5 +1,6 @@
 import React from 'react';
 import { mockAnalysts } from '@/lib/mock/team';
+import { PageHeader } from '@/components/PageHeader';
 import { TeamTable } from '@/features/owner/team/components/TeamTable';
 
 export default async function AnalystsPage({
@@ -18,10 +19,10 @@ export default async function AnalystsPage({
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            <header className="flex flex-col gap-1">
-                <h1 className="text-2xl font-light text-foreground">Analysts Management</h1>
-                <p className="text-xs text-text-muted italic">Review and manage your credit analysts and case handlers.</p>
-            </header>
+            <PageHeader
+                title="Analysts Management"
+                description="Review and manage your credit analysts and case handlers."
+            />
 
             <TeamTable members={filteredMembers} role="analyst" />
         </div>

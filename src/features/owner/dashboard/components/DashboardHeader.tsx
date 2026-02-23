@@ -1,10 +1,18 @@
+'use client';
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 interface DashboardHeaderProps {
     onMenuClick?: () => void;
 }
 
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
+    const router = useRouter();
+
+    const handleViewProfile = () => {
+        router.push('/profile');
+    };
     return (
         <header className="rounded-xl executive-header p-4 sm:p-6 mb-8 flex items-center justify-between gap-4 shadow-lg mx-0 sm:mx-6 mt-6 text-white overflow-hidden relative group">
             <div className="flex items-center gap-4">
@@ -28,7 +36,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             </div>
 
             {/* Right Side Icons (Optional for desktop) */}
-            <div className="hidden sm:flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-3 cursor-pointer" onClick={handleViewProfile}>
                 <div className="flex flex-col items-end">
                     <p className="text-xs font-bold">Johnathan Doe</p>
                     <p className="text-[10px] text-white/70">Chief Financial Officer</p>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { mockBanks } from '@/lib/mock/banks';
+import { PageHeader } from '@/components/PageHeader';
 import { BankTable } from '@/features/owner/bank/components/BankTable';
 
 export default async function BanksPage({
@@ -18,10 +19,10 @@ export default async function BanksPage({
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            <header className="flex flex-col gap-1">
-                <h1 className="text-2xl font-light text-foreground">Bank Management</h1>
-                <p className="text-xs text-text-muted italic">Manage your partner banks and their loan products.</p>
-            </header>
+            <PageHeader
+                title="Bank Management"
+                description="Manage your partner banks and their loan products."
+            />
 
             <BankTable banks={filteredBanks} />
         </div>

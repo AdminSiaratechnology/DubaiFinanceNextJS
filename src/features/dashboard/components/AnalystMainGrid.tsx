@@ -30,8 +30,10 @@ export function AnalystMainGrid({ cases }: AnalystMainGridProps) {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-8 items-start min-h-[850px]">
-            <div className={`lg:col-span-3 bg-card dark:bg-card/80 border border-border rounded-3xl overflow-hidden flex flex-col h-[850px] shadow-sm`}>
-                <div className="p-6 border-b border-border bg-card/30 backdrop-blur-md flex items-center justify-between">
+            <div
+                className={`${selectedId ? "lg:col-span-2" : "lg:col-span-3"
+                    } bg-card dark:bg-card/80 border border-border rounded-3xl overflow-hidden flex flex-col h-[850px] shadow-sm transition-all duration-500`}
+            >                <div className="p-6 border-b border-border bg-card/30 backdrop-blur-md flex items-center justify-between">
                     <div>
                         <h3 className="text-sm font-black text-foreground uppercase tracking-widest">Case Queue</h3>
                         <p className="text-[10px] text-text-muted font-bold mt-1 uppercase">{cases.length} Cases Available</p>
@@ -62,26 +64,27 @@ export function AnalystMainGrid({ cases }: AnalystMainGridProps) {
                 </div>
             </div>
 
-            {/* Right: Detailed View / Action Panel */}
-            <div className="lg:col-span-3 h-[850px] transition-all duration-500 bg-card dark:bg-card/80 rounded-3xl border border-border">
-                {selectedId && selectedCase ? (
-                    <div className="h-full animate-in slide-in-from-right-4 duration-500">
-                        <CaseDetailsAnalyst
-                            caseData={selectedCase}
-                            onClose={handleClose}
-                        />
+            <div
+                className={`${selectedId ? "lg:col-span-4" : "lg:col-span-3"
+                    } h-[850px] transition-all duration-500 bg-card dark:bg-card/80 rounded-3xl border border-border`}
+            >                {selectedId && selectedCase ? (
+                <div className="h-full animate-in slide-in-from-right-4 duration-500">
+                    <CaseDetailsAnalyst
+                        caseData={selectedCase}
+                        onClose={handleClose}
+                    />
+                </div>
+            ) : (
+                <div className="bg-card/30 border-2 border-dashed border-border dark:border-border/50 rounded-3xl h-full flex flex-col items-center justify-center p-12 text-center transition-all">
+                    <div className="w-24 h-24 rounded-3xl bg-brand/5 dark:bg-brand/10 flex items-center justify-center mb-8 border border-brand/10">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-brand opacity-60"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg>
                     </div>
-                ) : (
-                    <div className="bg-card/30 border-2 border-dashed border-border dark:border-border/50 rounded-3xl h-full flex flex-col items-center justify-center p-12 text-center transition-all">
-                        <div className="w-24 h-24 rounded-3xl bg-brand/5 dark:bg-brand/10 flex items-center justify-center mb-8 border border-brand/10">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-brand opacity-60"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg>
-                        </div>
-                        <h4 className="text-2xl font-black text-foreground uppercase tracking-widest">Select a Case</h4>
-                        <p className="max-w-xs mt-3 text-sm font-medium text-text-muted leading-relaxed">
-                            Pick a client from the queue to start the analysis process or update status.
-                        </p>
-                    </div>
-                )}
+                    <h4 className="text-2xl font-black text-foreground uppercase tracking-widest">Select a Case</h4>
+                    <p className="max-w-xs mt-3 text-sm font-medium text-text-muted leading-relaxed">
+                        Pick a client from the queue to start the analysis process or update status.
+                    </p>
+                </div>
+            )}
             </div>
         </div>
     );

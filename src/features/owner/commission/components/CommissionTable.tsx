@@ -11,16 +11,6 @@ interface CommissionTableProps {
 }
 
 export function CommissionTable({ rules }: CommissionTableProps) {
-    const getBankName = (bankId: string) => {
-        return mockBanks.find((b) => b.id === bankId)?.bankName || 'Unknown Bank';
-    };
-
-    const getProductName = (productId: string) => {
-        return (
-            mockBankProducts.find((p) => p.id === productId)?.productName ||
-            'Unknown Product'
-        );
-    };
 
     return (
         <div className="space-y-6">
