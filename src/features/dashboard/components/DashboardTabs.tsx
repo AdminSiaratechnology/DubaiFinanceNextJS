@@ -10,14 +10,14 @@ interface DashboardTabsProps {
 
 export function DashboardTabs({ tabs, activeTab, onTabChange }: DashboardTabsProps) {
     return (
-        <div className="flex border-b border-border overflow-x-auto gap-8 mb-6 no-scrollbar sticky top-0 bg-background/80 backdrop-blur-md z-30">
+        <div className="flex overflow-x-auto gap-8 mb-6 no-scrollbar sticky top-0 bg-white/80 z-30 p-2">
             {tabs.map((tab) => (
                 <button
                     key={tab.id}
                     onClick={() => onTabChange(tab.id)}
-                    className={`pb-4 px-2 text-sm font-bold transition-all relative flex items-center gap-2.5 whitespace-nowrap group ${activeTab === tab.id
+                    className={`pb-2 px-2 text-sm transition-all relative flex items-center gap-2.5 whitespace-nowrap group ${activeTab === tab.id
                         ? 'text-blue'
-                        : 'text-text-muted hover:text-text-secondary'
+                        : 'text-black/90 hover:text-text-secondary'
                         }`}
                 >
                     {tab.icon && (
@@ -40,7 +40,7 @@ export function DashboardTabs({ tabs, activeTab, onTabChange }: DashboardTabsPro
                         </span>
                     )}
                     {activeTab === tab.id && (
-                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue rounded-t-full shadow-[0_-2px_8px_rgba(59,130,246,0.5)] dark:shadow-[0_-2px_10px_rgba(59,130,246,0.3)]" />
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue rounded-t-full" />
                     )}
                 </button>
             ))}

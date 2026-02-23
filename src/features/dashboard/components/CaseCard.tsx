@@ -96,12 +96,12 @@ export function CaseCard({
             </div>
 
             {/* Expected Commission Banner */}
-            <div className="p-4 bg-orange-soft border-t border-orange/10 flex justify-between items-center">
-                <div className="flex items-center gap-2 text-orange">
+            <div className="p-4 bg-blue-soft border-t border-blue/10 flex justify-between items-center">
+                <div className="flex items-center gap-2 text-blue">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg>
                     <span className="text-xs font-bold uppercase tracking-wider">Expected Commission</span>
                 </div>
-                <div className="text-orange font-bold tracking-tight">AED {commission}</div>
+                <div className="text-blue font-bold tracking-tight">AED {commission}</div>
             </div>
         </div>
     );

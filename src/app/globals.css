@@ -133,7 +133,7 @@ body {
 }
 
 body {
-  background: var(--background);
+  background: stone-50;
   color: var(--text-primary);
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -206,6 +206,10 @@ body {
   background: linear-gradient(135deg, #e6c04f, #d4af37);
   color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@utility stat-hover {
+  @apply hover:shadow-soft hover:-translate-y-0.5 transition-all duration-300;
 }
 
 /* Scrollbar 

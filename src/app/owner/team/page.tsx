@@ -2,13 +2,15 @@ import React from 'react';
 import { Card } from '@/components/ui/Card';
 import Link from 'next/link';
 
+import { PageHeader } from '@/components/PageHeader';
+
 export default function TeamOverviewPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-2xl font-light text-foreground mb-2">Team Overview</h1>
-        <p className="text-sm text-text-muted italic">Manage your organizational workforce and track performance.</p>
-      </div>
+      <PageHeader
+        title="Team Overview"
+        description="Manage your organizational workforce and track performance."
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Link href="/owner/team/analysts">
