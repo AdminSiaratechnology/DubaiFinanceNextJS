@@ -33,7 +33,7 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
     return (
         <header className="
             h-20
-            bg-white
+            bg-background
             border-b border-border
             flex items-center justify-between
             px-4 sm:px-6 lg:px-8

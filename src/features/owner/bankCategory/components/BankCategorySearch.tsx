@@ -3,15 +3,15 @@
 import React from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-interface LoanTypeSearchProps {
+interface BankCategorySearchProps {
     showFilter?: boolean;
     filterOptions?: string[];
 }
 
-export function LoanTypeSearch({
+export function BankCategorySearch({
     showFilter = false,
     filterOptions = ['active', 'inactive'],
-}: LoanTypeSearchProps) {
+}: BankCategorySearchProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
 

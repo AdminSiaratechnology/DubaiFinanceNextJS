@@ -55,27 +55,24 @@ const navItems = [
             </svg>
         )
     },
-    {
-        name: 'Settings',
-        href: '/owner/settings',
-        icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.72v.18a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                <circle cx="12" cy="12" r="3" />
-            </svg>
-        )
-    },
+    // {
+    //     name: 'Settings',
+    //     href: '/owner/settings',
+    //     icon: (
+    //         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    //             <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.72v.18a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+    //             <circle cx="12" cy="12" r="3" />
+    //         </svg>
+    //     )
+    // },
     {
         name: 'Loan Types',
         href: '/owner/loanTypes',
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 6h13" />
-                <path d="M8 12h13" />
-                <path d="M8 18h13" />
-                <path d="M3 6h.01" />
-                <path d="M3 12h.01" />
-                <path d="M3 18h.01" />
+                <rect width="20" height="12" x="2" y="6" rx="2" />
+                <circle cx="12" cy="12" r="2" />
+                <path d="M6 12h.01M18 12h.01" />
             </svg>
         )
     },
@@ -84,12 +81,20 @@ const navItems = [
         href: '/owner/bankproducts',
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 6h13" />
-                <path d="M8 12h13" />
-                <path d="M8 18h13" />
-                <path d="M3 6h.01" />
-                <path d="M3 12h.01" />
-                <path d="M3 18h.01" />
+                <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                <rect width="20" height="14" x="2" y="6" rx="2" />
+            </svg>
+        )
+    },
+    {
+        name: "Bank Categories",
+        href: "/owner/bankCategory",
+        icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="7" height="7" x="3" y="3" rx="1" />
+                <rect width="7" height="7" x="14" y="3" rx="1" />
+                <rect width="7" height="7" x="14" y="14" rx="1" />
+                <rect width="7" height="7" x="3" y="14" rx="1" />
             </svg>
         )
     },
@@ -98,12 +103,12 @@ const navItems = [
         href: '/owner/sla',
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 6h13" />
-                <path d="M8 12h13" />
-                <path d="M8 18h13" />
-                <path d="M3 6h.01" />
-                <path d="M3 12h.01" />
-                <path d="M3 18h.01" />
+                <rect width="8" height="4" x="8" y="2" rx="1" />
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                <path d="M12 11h4" />
+                <path d="M12 16h4" />
+                <path d="M8 11h.01" />
+                <path d="M8 16h.01" />
             </svg>
         )
     },
@@ -128,9 +133,10 @@ import { useRouter } from 'next/navigation';
 interface DashboardSidebarProps {
     isOpen?: boolean;
     onClose?: () => void;
+    onHoverChange?: (hovered: boolean) => void;
 }
 
-export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
+export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
 
@@ -157,6 +163,11 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
         );
     };
 
+    const handleHover = (hovered: boolean) => {
+        setIsHovered(hovered);
+        onHoverChange?.(hovered);
+    };
+
     // Determine if sidebar should be collapsed (desktop only, when not hovered)
     const isCollapsed = !isOpen && !isHovered;
 
@@ -173,17 +184,17 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
             <aside
                 className={`
                     fixed inset-y-0 left-0 z-60 bg-card border-r border-border shadow-2xl transition-all duration-300
-                    lg:translate-x-0 lg:static lg:flex lg:flex-col lg:shadow-none
+                    lg:translate-x-0 lg:flex lg:flex-col lg:shadow-none
                     ${isOpen ? 'translate-x-0' : '-translate-x-full'}
                     ${isCollapsed ? 'w-20' : 'w-72'}
                 `}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseEnter={() => handleHover(true)}
+                onMouseLeave={() => handleHover(false)}
             >
                 {/* Logo / Branding */}
                 <div className={`p-8 pb-4 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
                     <div className={`flex items-center ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
-                        <div className="w-10 h-10 rounded-xl executive-header flex items-center justify-center shadow-md flex-shrink-0">
+                        <div className="w-10 h-10 rounded-xl executive-header flex items-center justify-center shadow-md shrink-0">
                             <span className="text-white font-bold text-xl">D</span>
                         </div>
                         {!isCollapsed && (
@@ -193,7 +204,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                             </div>
                         )}
                     </div>
-                    
+
                     {/* Mobile Close Button */}
                     <button
                         onClick={onClose}
@@ -201,13 +212,13 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                     </button>
-                    
+
                     {!isCollapsed && (
                         <div className="hidden lg:block">
                             <ThemeToggle />
                         </div>
                     )}
-                    
+
                     {/* {isCollapsed && (
                         <div className="absolute right-0 top-8 hidden lg:block">
                             <ThemeToggle />

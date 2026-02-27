@@ -17,8 +17,8 @@ export function StatCard({ title, value, subtitle, color }: StatCardProps) {
     }[color];
 
     return (
-        <div className={`stat-card ${borderClass} flex flex-col justify-between h-full min-h-[120px] p-4! group hover:-translate-y-1 transition-all duration-300`}>
-            <h3 className="text-[10px] font-semibold text-text-muted uppercase tracking-[0.15em] mb-3 truncate" title={title}>
+        <div className={`stat-card ${borderClass} flex flex-col justify-between h-full min-h-[120px] p-4! group hover:-translate-y-1 transition-all duration-300 shadow-md`}>
+            <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.15em] mb-3 truncate " title={title}>
                 {title}
             </h3>
             <div className="mt-auto">

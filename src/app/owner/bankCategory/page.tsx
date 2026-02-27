@@ -1,9 +1,9 @@
 import React from 'react';
 import { PageHeader } from '@/components/PageHeader';
-import { LoanTypeTable } from '@/features/owner/loantypes/components/LoanTypeTable';
-import { getLoanTypes } from '@/features/owner/loantypes/api/loanTypes.api';
+import { BankCategoryTable } from '@/features/owner/bankCategory/components/BankCategoryTable';
+import { getBankCategories } from '@/features/owner/bankCategory/api/bankCategory.api';
 
-export default async function LoanTypesPage({
+export default async function BankCategoriesPage({
   searchParams,
 }: {
   searchParams: Promise<{ query?: string; page?: string; status?: string }>;
@@ -14,7 +14,7 @@ export default async function LoanTypesPage({
   const page = Number(params.page || 1);
   const status = params.status || ''; // <-- NEW
 
-  const data = await getLoanTypes({
+  const data = await getBankCategories({
     page,
     limit: 5,
     search: query,
@@ -24,12 +24,12 @@ export default async function LoanTypesPage({
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-10">
       <PageHeader
-        title="Loan Types Management"
-        description="Manage available loan product types and their configurations."
+        title="Bank Categories Management"
+        description="Manage available bank categories and their configurations."
       />
 
-      <LoanTypeTable
-        loanTypes={data.items}
+      <BankCategoryTable
+        bankCategories={data.items}
         page={data.page}
         total={data.total}
         limit={data.limit}

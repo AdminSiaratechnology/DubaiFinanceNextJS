@@ -1,21 +1,29 @@
 import React from 'react';
 
-export function Label({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-    return (
-        <label className={`text-[10px] font-black text-text-muted uppercase tracking-widest pl-1 mb-1.5 block ${className}`}>
-            {children}
-        </label>
-    );
+interface LabelProps {
+  children: React.ReactNode;
+  className?: string;
+  required?: boolean;
 }
 
+export function Label({ children, className = '', required = false }: LabelProps) {
+  return (
+    <label className={`block pl-1 mb-1.5 text-[10px] font-black text-secondary uppercase tracking-widest transition-colors ${className}`}>
+      {children}
+      {required && (
+        <span className="text-red-500 ml-1 font-bold">*</span>
+      )}
+    </label>
+  );
+}
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> { }
 
 export function Input({ className = '', ...props }: InputProps) {
     return (
-        <input
-            {...props}
-            className={`w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-purple-500 outline-none transition-all placeholder:text-text-muted/50 ${className}`}
-        />
+            <input
+                {...props}
+                className={`w-full px-4 py-2.5 pr-8 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all placeholder:text-text-muted/50 ${className}`}
+            />
     );
 }
 
@@ -28,7 +36,7 @@ export function Select({ options, className = '', ...props }: SelectProps) {
         <div className="relative">
             <select
                 {...props}
-                className={`w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-purple-500 outline-none transition-all appearance-none cursor-pointer ${className}`}
+                className={`w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none cursor-pointer ${className}`}
             >
                 {options.map((opt) => (
                     <option key={opt.value} value={opt.value}>
