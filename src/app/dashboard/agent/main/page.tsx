@@ -26,7 +26,6 @@ export default async function AgentDashboardPage({
 
     return (
         <main className="space-y-8 animate-in fade-in duration-500 pb-10">
-            {/* Nav Tabs - Interactivity contained here */}
             <TabSwitcher
                 tabs={agentTabs}
                 activeTab={activeTab}
@@ -35,7 +34,6 @@ export default async function AgentDashboardPage({
 
             {activeTab === 'dashboard' ? (
                 <>
-                    {/* StatCards: Server Rendered */}
                     <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         <StatCard
                             title="Total Cases"
@@ -63,7 +61,6 @@ export default async function AgentDashboardPage({
                         />
                     </section>
 
-                    {/* CaseCards: Server Rendered */}
                     <section className="section-card bg-card border-border border shadow-sm rounded-2xl overflow-hidden">
                         <div className="p-6 border-b border-border flex items-center justify-between">
                             <h3 className="text-lg font-bold text-foreground">Recent Cases</h3>
@@ -89,7 +86,7 @@ export default async function AgentDashboardPage({
                             placeholder="Search by Case No, Name, Mobile..."
                             syncWithUrl
                             paramKey="q"
-                            preserveParams={['tab']} // VERY IMPORTANT for your tab system
+                            preserveParams={['tab']}
                             debounce={300}
                         />
                     </div>

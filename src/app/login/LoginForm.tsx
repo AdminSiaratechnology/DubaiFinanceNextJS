@@ -3,59 +3,52 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/ThemeToggle';
-
-type Role = 'agent' | 'analyst' | 'owner';
-
+import { adminLogin } from '@/features/owner/api/auth.api';
+import { useAuthStore } from '@/store/useAuthStore';
+import { getMe } from '@/features/owner/api/auth.api';
 export function LoginForm() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        role: 'agent' as Role,
     });
-
+    const { setUser } = useAuthStore();
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setIsLoading(true);
 
         try {
-            // Simulate API delay (replace with real API later)
-            await new Promise((res) => setTimeout(res, 1200));
-
-            // Role-based routing (SSR friendly structure)
-            switch (formData.role) {
-                case 'agent':
-                    router.push('/dashboard/agent/main');
-                    break;
-                case 'analyst':
-                    router.push('/dashboard/analyst/main');
-                    break;
-                case 'owner':
-                    router.push('/owner/dashboard');
-                    break;
-                default:
-                    router.push('/dashboard/agent/main');
+            const response = await adminLogin(formData);
+            const role = response.data.user.role
+            const me = await getMe();
+            setUser(me.data);
+            if (role === 'admin') {
+                router.push('/owner/dashboard');
+            } else {
+                router.push('/user');
             }
-        } catch (err) {
-            setError('Authentication failed. Please try again.');
+        } catch (err: any) {
+            const errorDetail = err?.response?.data?.detail;
+            if (errorDetail) {
+                setError(errorDetail);
+            } else {
+                setError(err?.response?.data?.message || err?.message || 'Authentication failed. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
-    const roles: Role[] = ['agent', 'analyst', 'owner'];
-
     return (
         <div className="flex items-center justify-center p-6 sm:p-10 relative">
-            {/* Top Controls */}
             <div className="absolute top-6 right-6">
                 <ThemeToggle />
             </div>
 
-            {/* Subtle Background Grid */}
             <div className="absolute inset-0 opacity-40 pointer-events-none">
                 <div
                     className="absolute inset-0"
@@ -67,10 +60,8 @@ export function LoginForm() {
                 />
             </div>
 
-            {/* Card */}
             <div className="w-full max-w-md relative z-10">
                 <div className="bg-card border border-border rounded-3xl p-8 sm:p-10 shadow-2xl backdrop-blur-xl">
-                    {/* Mobile Logo */}
                     <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
                         <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center shadow-lg">
                             <span className="text-white font-bold">D</span>
@@ -78,7 +69,6 @@ export function LoginForm() {
                         <h1 className="text-2xl font-black">Dubai Finance</h1>
                     </div>
 
-                    {/* Header */}
                     <div className="text-center mb-8">
                         <h3 className="text-3xl font-black tracking-tight">
                             Portal Access
@@ -88,7 +78,6 @@ export function LoginForm() {
                         </p>
                     </div>
 
-                    {/* Error */}
                     {error && (
                         <div className="mb-6 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 text-sm font-semibold">
                             {error}
@@ -96,10 +85,9 @@ export function LoginForm() {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Email */}
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                                Email / Username
+                                Email
                             </label>
                             <input
                                 type="text"
@@ -112,25 +100,35 @@ export function LoginForm() {
                                 }
                             />
                         </div>
-
-                        {/* Password */}
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                                 Password
                             </label>
-                            <input
-                                type="password"
-                                required
-                                placeholder="••••••••"
-                                className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-brand focus:border-brand outline-none transition-all text-sm font-semibold"
-                                value={formData.password}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, password: e.target.value })
-                                }
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    required
+                                    placeholder="••••••••"
+                                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-brand focus:border-brand outline-none transition-all text-sm font-semibold pr-11"
+                                    value={formData.password}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, password: e.target.value })
+                                    }
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88 12 12s.12 0 .12 0" /><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" /><line x1="2" x2="22" y1="2" y2="22" /><circle cx="12" cy="12" r="3" /></svg>
+                                    )}
+                                </button>
+                            </div>
                         </div>
 
-                        {/* Submit */}
                         <button
                             type="submit"
                             disabled={isLoading}
@@ -168,7 +166,6 @@ export function LoginForm() {
                         >
                             Register as Agent
                         </button>
-
                     </form>
                 </div>
             </div>

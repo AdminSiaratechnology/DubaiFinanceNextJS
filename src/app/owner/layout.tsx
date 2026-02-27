@@ -1,5 +1,6 @@
 import React from 'react';
 import { OwnerLayoutClient } from '@/features/owner/dashboard/components/OwnerLayoutClient';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function DashboardLayout({
     children,
@@ -7,8 +8,10 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <OwnerLayoutClient>
-            {children}
-        </OwnerLayoutClient>
+        <ProtectedRoute allowedRoles={['admin']}>
+            <OwnerLayoutClient>
+                {children}
+            </OwnerLayoutClient>
+        </ProtectedRoute>
     );
 }

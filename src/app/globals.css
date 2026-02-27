@@ -2,7 +2,7 @@
 
 :root {
   /* Base */
-  --background: #f6f7fb;
+  --background: #ffffff;
   --foreground: #1f2937;
 
   /* Card & Surface */
@@ -133,7 +133,7 @@ body {
 }
 
 body {
-  background: stone-50;
+  background: var(--background);
   color: var(--text-primary);
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
