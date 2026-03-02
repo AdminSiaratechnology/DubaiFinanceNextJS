@@ -1,6 +1,9 @@
+export const dynamic = 'force-dynamic'; // important for dashboards
+
 import React from 'react';
 import { OwnerLayoutClient } from '@/features/owner/dashboard/components/OwnerLayoutClient';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import AuthInitializer from '@/components/auth/AuthInitializer';
 
 export default function DashboardLayout({
     children,
@@ -8,10 +11,12 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <ProtectedRoute allowedRoles={['admin']}>
-            <OwnerLayoutClient>
-                {children}
-            </OwnerLayoutClient>
-        </ProtectedRoute>
+        <AuthInitializer>
+            <ProtectedRoute allowedRoles={['admin']}>
+                <OwnerLayoutClient>
+                    {children}
+                </OwnerLayoutClient>
+            </ProtectedRoute>
+        </AuthInitializer>
     );
 }
