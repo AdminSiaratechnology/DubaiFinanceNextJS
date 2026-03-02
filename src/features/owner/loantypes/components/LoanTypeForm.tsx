@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createLoanType, LoanType, updateLoanType, CreateLoanTypePayload } from '@/features/owner/loantypes/api/loanTypes.api';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
+import { toast } from 'sonner';
 
 interface LoanTypeFormProps {
   loanType?: LoanType;
@@ -35,11 +36,16 @@ export function LoanTypeForm({
   };
 
   const onSave = async (data: CreateLoanTypePayload) => {
-    if (loanTypeId) {
-      await updateLoanType(loanTypeId, data);
-    } else {
-      await createLoanType(data);
-    }
+    const apiCall = loanTypeId
+      ? updateLoanType(loanTypeId, data)
+      : createLoanType(data);
+
+    await toast.promise(apiCall, {
+      success: loanTypeId
+        ? 'Loan type updated successfully'
+        : 'Loan type created successfully',
+      error: 'Failed to save loan type',
+    });
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

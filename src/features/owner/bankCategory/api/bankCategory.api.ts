@@ -5,6 +5,7 @@ export interface BankCategory {
   name: string;
   description: string;
   status: string;
+  [key: string]: unknown;
 }
 
 export interface BankCategoryResponse {
@@ -25,21 +26,39 @@ export const getBankCategories = async ({
   search?: string;
   status?: string;
 }): Promise<BankCategoryResponse> => {
-  const params = new URLSearchParams({
-    page: String(page),
-    limit: String(limit),
-    status,
-  });
+  try {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
 
-  if (search) {
-    params.append('search', search);
+    if (status) {
+      params.append('status', status);
+    }
+
+    if (search) {
+      params.append('search', search);
+    }
+
+    const res = await apiClient.get(
+      `/category?${params.toString()}`,
+    );
+
+    return res.data;
+  } catch (error: any) {
+    console.error("Error in getBankCategories:", {
+      status: error?.response?.status,
+      data: error?.response?.data,
+      message: error?.message,
+    });
+
+    return {
+      items: [],
+      total: 0,
+      page: page,
+      limit: limit,
+    } as BankCategoryResponse;
   }
-
-  const res = await apiClient.get(
-    `/category?${params.toString()}`,
-  );
-
-  return res.data;
 };
 
 export interface CreateBankCategoryPayload {
@@ -51,17 +70,41 @@ export interface CreateBankCategoryPayload {
 export const createBankCategory = async (
   payload: CreateBankCategoryPayload
 ) => {
-  const res = await apiClient.post('/category', payload);
-  return res.data;
+  try {
+    const res = await apiClient.post('/category', payload);
+    return res.data;
+  } catch (error) {
+    console.error("Error in createBankCategory:", error);
+    throw error;
+  }
 };
 
 export const getBankCategoryById = async (category_id: number) => {
-  console.log(category_id)
-  const res = await apiClient.get(`/category/${category_id}`);
-  return res.data;
+  try {
+    const res = await apiClient.get(`/category/${category_id}`);
+    return res.data;
+  } catch (error) {
+    console.error(`Error in getBankCategoryById for ID ${category_id}:`, error);
+    throw error;
+  }
 };
 
 export const updateBankCategory = async (category_id: number, payload: CreateBankCategoryPayload) => {
-  const res = await apiClient.put(`/category/${category_id}`, payload);
-  return res.data;
+  try {
+    const res = await apiClient.put(`/category/${category_id}`, payload);
+    return res.data;
+  } catch (error) {
+    console.error(`Error in updateBankCategory for ID ${category_id}:`, error);
+    throw error;
+  }
+};
+
+export const deleteBankCategory = async (category_id: number) => {
+  try {
+    const res = await apiClient.delete(`/category/${category_id}`);
+    return res.data;
+  } catch (error) {
+    console.error(`Error in deleteBankCategory for ID ${category_id}:`, error);
+    throw error;
+  }
 };

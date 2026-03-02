@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createBankCategory, BankCategory, updateBankCategory, CreateBankCategoryPayload } from '@/features/owner/bankCategory/api/bankCategory.api';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
-
+import { toast } from 'sonner'; 
 interface BankCategoryFormProps {
     bankCategory?: BankCategory;
     bankCategoryId?: number;
@@ -35,11 +35,16 @@ export function BankCategoryForm({
     };
 
     const onSave = async (data: CreateBankCategoryPayload) => {
-        if (bankCategoryId) {
-            await updateBankCategory(bankCategoryId, data);
-        } else {
-            await createBankCategory(data);
-        }
+        const apiCall = bankCategoryId
+            ? updateBankCategory(bankCategoryId, data)
+            : createBankCategory(data);
+
+        await toast.promise(apiCall, {
+            success: bankCategoryId
+                ? 'Bank category updated successfully'
+                : 'Bank category created successfully',
+            error: 'Failed to save bank category',
+        });
     };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -83,12 +88,6 @@ export function BankCategoryForm({
                 <Card className="p-4 sm:p-8 border-brand/10 shadow-sm overflow-visible">
                     <div className="space-y-8">
                         <div className="space-y-4">
-                            {/* <div className="flex items-center gap-3 border-b border-border pb-3">
-                                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">
-                                    Bank Category Details
-                                </h4>
-                            </div> */}
-
                             {error && (
                                 <div className="text-red text-sm font-semibold bg-red/10 border border-red/20 rounded-lg p-3">
                                     {error}
@@ -97,7 +96,7 @@ export function BankCategoryForm({
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>
                                         Bank Category Name
                                     </Label>
                                     <Input
@@ -134,7 +133,6 @@ export function BankCategoryForm({
                                         onChange={handleChange}
                                         placeholder="Describe this loan type, its purpose, and typical use cases..."
                                         rows={4}
-                                        required
                                         className="w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-purple-500 outline-none transition-all placeholder:text-text-muted/50 resize-none"
                                     />
                                 </div>

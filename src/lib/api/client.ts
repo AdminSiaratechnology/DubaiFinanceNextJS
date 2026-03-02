@@ -7,7 +7,6 @@ const getBaseURL = () => {
   if (typeof window !== "undefined") {
     return "/api";
   }
-
   // Server → must use absolute URL
   return process.env.NEXT_PUBLIC_APP_URL
     ? `${process.env.NEXT_PUBLIC_APP_URL}/api`
@@ -16,9 +15,6 @@ const getBaseURL = () => {
 
 export const apiClient = axios.create({
   baseURL: getBaseURL(),
-  headers: {
-    "Content-Type": "application/json",
-  },
   withCredentials: true,
 });
 

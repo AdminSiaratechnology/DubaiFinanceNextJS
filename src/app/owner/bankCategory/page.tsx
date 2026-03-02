@@ -12,7 +12,7 @@ export default async function BankCategoriesPage({
 
   const query = params.query || '';
   const page = Number(params.page || 1);
-  const status = params.status || ''; // <-- NEW
+  const status = params.status || '';
 
   const data = await getBankCategories({
     page,

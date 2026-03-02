@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
 
+export const runtime = "nodejs";
+
 const BACKEND_URL = process.env.BACKEND_URL || "http://13.127.153.218/api";
 
 async function handler(
@@ -9,32 +11,51 @@ async function handler(
     const { path } = await context.params;
     const { searchParams } = new URL(req.url);
 
-    const url = `${BACKEND_URL}/${path.join("/")}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+    const url = `${BACKEND_URL}/${path.join("/")}${searchParams.toString() ? `?${searchParams.toString()}` : ""
+        }`;
 
+    // 1) Safely read the exact raw binary of the request (works perfectly for multipart/form-data)
     const body =
         req.method !== "GET" && req.method !== "HEAD"
-            ? await req.arrayBuffer()
+            ? await req.blob()
             : undefined;
+
+    // 2) Only forward headers that actually exist
+    const headers: Record<string, string> = {};
+    const contentType = req.headers.get("content-type");
+    if (contentType) headers["content-type"] = contentType;
+
+    const cookie = req.headers.get("cookie");
+    if (cookie) headers["cookie"] = cookie;
+
+    const auth = req.headers.get("authorization");
+    if (auth) headers["authorization"] = auth;
 
     const backendRes = await fetch(url, {
         method: req.method,
-        headers: {
-            "Content-Type": req.headers.get("content-type") || "application/json",
-            Cookie: req.headers.get("cookie") || "",
-        },
+        headers,
         body,
-        credentials: "include",
         cache: "no-store",
+        // duplex: "half" is only needed if body is a stream, but we are sending a Buffer
     });
 
     const data = await backendRes.text();
 
-    // 🔥 CRITICAL: Preserve MULTIPLE Set-Cookie headers
     const responseHeaders = new Headers();
-
     backendRes.headers.forEach((value, key) => {
-        if (key.toLowerCase() === "set-cookie") {
-            // append instead of set (VERY IMPORTANT)
+        const lowerKey = key.toLowerCase();
+
+        // 🔥 Skip problematic hop-by-hop / auto-managed headers
+        if (
+            lowerKey === "content-length" ||
+            lowerKey === "transfer-encoding" ||
+            lowerKey === "connection" ||
+            lowerKey === "content-encoding"
+        ) {
+            return;
+        }
+
+        if (lowerKey === "set-cookie") {
             responseHeaders.append("set-cookie", value);
         } else {
             responseHeaders.set(key, value);

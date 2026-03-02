@@ -2,17 +2,31 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useConfirmAction } from '@/hooks/use-confirm-action';
+import { deleteLoanType } from '../api/loanTypes.api';
 
 interface LoanTypeActionsProps {
-    id: string;
+    id: number;
 }
 
 export function LoanTypeActions({ id }: LoanTypeActionsProps) {
-    const handleDelete = () => {
-        if (confirm('Are you sure you want to delete this loan type?')) {
-            console.log('Deleting loan type:', id);
-            // TODO: Add delete logic
-        }
+    const router = useRouter();
+    const { confirmAction } = useConfirmAction();
+    const handleDelete = async () => {
+        if (!id) return;
+        await confirmAction({
+            title: 'Delete Loan Type',
+            description:
+                'Are you sure you want to delete this loan type? This action cannot be undone.',
+            confirmText: 'Delete',
+            action: () => deleteLoanType(id),
+            successMessage: 'Loan type deleted successfully.',
+            errorMessage: 'Failed to delete loan type.',
+            onSuccess: () => {
+                router.refresh();
+            },
+        });
     };
 
     return (

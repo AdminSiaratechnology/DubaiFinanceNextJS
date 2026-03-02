@@ -1,34 +1,22 @@
 import React from 'react';
 import Link from 'next/link';
-import { Bank } from '@/lib/mock/banks';
+import { Bank } from '../api/bank.api';
 import { BankActions } from './BankActions';
 import { BankSearch } from './BankSearch';
-
+import { Pagination } from '@/components/ui/Pagination';
 interface BankTableProps {
     banks: Bank[];
+    page?: number;
+    total?: number;
+    limit?: number;
 }
 
-const categoryLabels = {
-    retail: 'Retail',
-    sme: 'SME',
-    mortgage: 'Mortgage'
-};
-
-const loanTypeLabels: Record<string, string> = {
-    'personal': 'Personal',
-    'business': 'Business',
-    'auto': 'Auto',
-    'mortgage': 'Mortgage',
-    'credit-card': 'Credit Card',
-    'sme': 'SME'
-};
-
-export function BankTable({ banks }: BankTableProps) {
+export function BankTable({ banks, page, total, limit }: BankTableProps) {
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
                 <div className="w-full sm:w-auto">
-                    <BankSearch />
+                    <BankSearch showFilter />
                 </div>
                 <Link
                     href="/owner/bank/new"
@@ -44,6 +32,7 @@ export function BankTable({ banks }: BankTableProps) {
                     <table className="w-full text-left border-collapse min-w-[900px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Bank Name</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Category</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Loan Types</th>
@@ -57,46 +46,41 @@ export function BankTable({ banks }: BankTableProps) {
                                 banks.map((bank) => (
                                     <tr key={bank.id} className="hover:bg-muted/30 transition-colors group">
                                         <td className="p-3 sm:p-4">
+                                            <p>{bank.id}</p>
+                                        </td>
+                                        <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-2 sm:gap-3">
                                                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-brand/10 text-brand flex items-center justify-center font-bold text-xs border border-brand/20">
-                                                    {bank.shortCode}
+                                                    {bank.logo_url ? <img src={bank.logo_url} alt={bank.name} className="w-full h-full object-cover" /> : bank.short_code}
                                                 </div>
                                                 <div>
-                                                    <p className="text-xs sm:text-sm font-bold text-foreground leading-tight">{bank.bankName}</p>
-                                                    <p className="text-[9px] sm:text-[10px] text-text-muted mt-0.5">Added: {bank.createdDate}</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-foreground leading-tight">{bank.name}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4">
-                                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${bank.category === 'retail'
-                                                    ? 'bg-blue-soft text-blue border-blue/10'
-                                                    : bank.category === 'sme'
-                                                        ? 'bg-purple-soft text-purple border-purple/10'
-                                                        : 'bg-green-soft text-green border-green/10'
-                                                }`}>
-                                                {categoryLabels[bank.category]}
-                                            </span>
+                                            <p>{bank.category?.name}</p>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="flex flex-wrap gap-1">
-                                                {bank.supportedLoanTypes.slice(0, 2).map(type => (
+                                                {bank.loan_types?.slice(0, 2).map((lt) => (
                                                     <span
-                                                        key={type}
+                                                        key={lt.id}
                                                         className="px-2 py-0.5 bg-orange-soft text-orange rounded text-[9px] font-bold border border-orange/10"
                                                     >
-                                                        {loanTypeLabels[type]}
+                                                        {lt.name}
                                                     </span>
                                                 ))}
-                                                {bank.supportedLoanTypes.length > 2 && (
+                                                {(bank.loan_types?.length || 0) > 2 && (
                                                     <span className="px-2 py-0.5 bg-muted text-text-muted rounded text-[9px] font-bold">
-                                                        +{bank.supportedLoanTypes.length - 2}
+                                                        +{(bank.loan_types?.length || 0) - 2}
                                                     </span>
                                                 )}
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4 text-center">
                                             <span className="px-3 py-1 bg-teal-soft text-teal rounded-lg text-[10px] font-bold border border-teal/10">
-                                                {bank.defaultTAT} days
+                                                {bank.default_tat_days} days
                                             </span>
                                         </td>
                                         <td className="p-3 sm:p-4">
@@ -108,7 +92,7 @@ export function BankTable({ banks }: BankTableProps) {
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4 text-right">
-                                            <BankActions id={bank.id} />
+                                            <BankActions id={String(bank.id)} />
                                         </td>
                                     </tr>
                                 ))
@@ -123,6 +107,7 @@ export function BankTable({ banks }: BankTableProps) {
                     </table>
                 </div>
             </div>
+            <Pagination page={page || 1} total={total || 0} limit={limit || 10} />
         </div>
     );
 }
