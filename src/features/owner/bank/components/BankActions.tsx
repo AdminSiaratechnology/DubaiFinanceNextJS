@@ -2,17 +2,28 @@
 
 import React from 'react';
 import Link from 'next/link';
-
+import { useConfirmAction } from '@/hooks/use-confirm-action';
+import { deleteBank } from '../api/bank.api';
+import { useRouter } from 'next/navigation';
 interface BankActionsProps {
     id: string;
 }
 
 export function BankActions({ id }: BankActionsProps) {
+    const router = useRouter();
+    const { confirmAction } = useConfirmAction();
     const handleDelete = () => {
-        if (confirm('Are you sure you want to delete this bank?')) {
-            console.log('Deleting bank:', id);
-            // TODO: Add delete logic
-        }
+        confirmAction({
+            title: 'Delete Bank',
+            description: 'Are you sure you want to delete this bank? This action cannot be undone.',
+            confirmText: 'Delete',
+            action: () => deleteBank(Number(id)),
+            successMessage: 'Bank deleted successfully.',
+            errorMessage: 'Failed to delete bank.',
+            onSuccess: () => {
+                router.refresh();
+            },
+        });
     };
 
     return (

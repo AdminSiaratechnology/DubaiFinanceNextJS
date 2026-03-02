@@ -55,6 +55,28 @@ const navItems = [
             </svg>
         )
     },
+    {
+        name: "Bank Categories",
+        href: "/owner/bankCategory",
+        icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="7" height="7" x="3" y="3" rx="1" />
+                <rect width="7" height="7" x="14" y="3" rx="1" />
+                <rect width="7" height="7" x="14" y="14" rx="1" />
+                <rect width="7" height="7" x="3" y="14" rx="1" />
+            </svg>
+        )
+    },
+    {
+        name: 'Bank Products',
+        href: '/owner/bankproducts',
+        icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                <rect width="20" height="14" x="2" y="6" rx="2" />
+            </svg>
+        )
+    },
     // {
     //     name: 'Settings',
     //     href: '/owner/settings',
@@ -73,28 +95,6 @@ const navItems = [
                 <rect width="20" height="12" x="2" y="6" rx="2" />
                 <circle cx="12" cy="12" r="2" />
                 <path d="M6 12h.01M18 12h.01" />
-            </svg>
-        )
-    },
-    {
-        name: 'Bank Products',
-        href: '/owner/bankproducts',
-        icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                <rect width="20" height="14" x="2" y="6" rx="2" />
-            </svg>
-        )
-    },
-    {
-        name: "Bank Categories",
-        href: "/owner/bankCategory",
-        icon: (
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="7" height="7" x="3" y="3" rx="1" />
-                <rect width="7" height="7" x="14" y="3" rx="1" />
-                <rect width="7" height="7" x="14" y="14" rx="1" />
-                <rect width="7" height="7" x="3" y="14" rx="1" />
             </svg>
         )
     },
@@ -148,12 +148,6 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
             .map(item => item.name)
             .sort((a, b) => a.localeCompare(b));
     });
-
-    const sortedNavItems = React.useMemo(() => {
-        return [...navItems].sort((a, b) =>
-            a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-        );
-    }, []);
 
     const toggleExpand = (name: string) => {
         setExpandedItems(prev =>
@@ -228,7 +222,7 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
 
                 {/* Navigation */}
                 <nav className="flex-1 px-4 mt-8 space-y-2 overflow-y-auto no-scrollbar">
-                    {sortedNavItems.map((item) => {
+                    {navItems.map((item) => {
                         const hasSubItems = item.subItems && item.subItems.length > 0;
                         const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                         const isExpanded = expandedItems.includes(item.name);

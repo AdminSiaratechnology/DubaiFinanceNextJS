@@ -2,17 +2,33 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useConfirmAction } from '@/hooks/use-confirm-action';
+import { deleteBankCategory } from '../api/bankCategory.api';
 
 interface BankCategoryActionsProps {
     id: number;
 }
 
 export function BankCategoryActions({ id }: BankCategoryActionsProps) {
-    const handleDelete = () => {
-        if (confirm('Are you sure you want to delete this bank category?')) {
-            console.log('Deleting bank category:', id);
-            // TODO: Add delete logic
-        }
+    const router = useRouter();
+    const { confirmAction } = useConfirmAction();
+
+    const handleDelete = async () => {
+        if (!id) return;
+
+        await confirmAction({
+            title: 'Delete Bank Category',
+            description:
+                'Are you sure you want to delete this bank category? This action cannot be undone.',
+            confirmText: 'Delete',
+            action: () => deleteBankCategory(id),
+            successMessage: 'Bank category deleted successfully.',
+            errorMessage: 'Failed to delete bank category.',
+            onSuccess: () => {
+                router.refresh();
+            },
+        });
     };
 
     return (

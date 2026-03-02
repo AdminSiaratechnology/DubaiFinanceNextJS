@@ -1,18 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
-import { SLATemplate } from '@/lib/mock/slaTemplates';
 import { SLATemplateSearch } from './SLATemplateSearch';
 import { SLATemplateActions } from './SLATemplateActions';
+import { SLA } from '../api/sla.api';
 interface Props {
-  templates: SLATemplate[];
+  templates: SLA[];
+  page: number;
+  total: number;
+  limit: number;
 }
 
-export function SLATemplateTable({ templates }: Props) {
+export function SLATemplateTable({ templates, page, total, limit }: Props) {
   return (
     <div className="space-y-6">
-      {/* Top Bar (Search + Add) */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <SLATemplateSearch />
+        <SLATemplateSearch showFilter={true} />
 
         <Link
           href="/owner/sla/new"
@@ -43,19 +45,18 @@ export function SLATemplateTable({ templates }: Props) {
               {templates.length > 0 ? (
                 templates.map((t) => (
                   <tr key={t.id} className="hover:bg-muted/30 transition">
-                    <td className="p-4 text-sm font-bold">{t.name}</td>
-                    <td className="p-4 text-sm">{t.telecallerTime}h</td>
-                    <td className="p-4 text-sm">{t.coordinatorTime}h</td>
-                    <td className="p-4 text-sm">{t.submissionLimit}h</td>
-                    <td className="p-4 text-sm">{t.escalationAfter}h</td>
+                    <td className="p-4 text-sm font-bold">{t.template_name}</td>
+                    <td className="p-4 text-sm">{t.telecaller_action_time}h</td>
+                    <td className="p-4 text-sm">{t.coordinator_verification_time}h</td>
+                    <td className="p-4 text-sm">{t.submission_time_limit}h</td>
+                    <td className="p-4 text-sm">{t.escalation_after}h</td>
                     <td className="p-4 text-sm">
-                      {t.autoRevert ? 'Enabled' : 'Disabled'}
+                      {t.auto_revert_enabled ? 'Enabled' : 'Disabled'}
                     </td>
                     <td className="p-4">
                       <span
-                        className={`text-xs font-bold ${
-                          t.status === 'active' ? 'text-green' : 'text-red'
-                        }`}
+                        className={`text-xs font-bold ${t.status === 'active' ? 'text-green' : 'text-red'
+                          }`}
                       >
                         {t.status}
                       </span>

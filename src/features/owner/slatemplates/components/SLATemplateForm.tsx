@@ -4,41 +4,30 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
-
-export interface SLATemplate {
-    id?: string;
-    name?: string;
-    telecallerActionTime?: number;
-    coordinatorVerificationTime?: number;
-    submissionTimeLimit?: number;
-    escalationAfter?: number;
-    autoRevert?: boolean;
-    status: 'active' | 'inactive';
-}
+import { CreateSLAPayload, SLA, createSLA, updateSLA } from '../api/sla.api';
+import { toast } from 'sonner';
 
 interface SLATemplateFormProps {
-    slaTemplate?: SLATemplate;
-    onSave: (data: SLATemplate) => void;
+    slaTemplate?: SLA;
     title: string;
-    onCancel: () => void;
+    slaId?: number;
 }
 
 export function SLATemplateForm({
     slaTemplate,
-    onSave,
     title,
-    onCancel,
+    slaId,
 }: SLATemplateFormProps) {
     const router = useRouter();
 
-    const [formData, setFormData] = useState<SLATemplate>(
+    const [formData, setFormData] = useState<SLA>(
         slaTemplate || {
-            name: '',
-            telecallerActionTime: 0,
-            coordinatorVerificationTime: 0,
-            submissionTimeLimit: 0,
-            escalationAfter: 0,
-            autoRevert: false,
+            template_name: '',
+            telecaller_action_time: 0,
+            coordinator_verification_time: 0,
+            submission_time_limit: 0,
+            escalation_after: 0,
+            auto_revert_enabled: false,
             status: 'active',
         }
     );
@@ -48,20 +37,19 @@ export function SLATemplateForm({
     ) => {
         const { name, value } = e.target;
 
-        if (name === 'autoRevert') {
+        if (name === 'auto_revert_enabled') {
             setFormData((prev) => ({
                 ...prev,
-                autoRevert: value === 'true',
+                auto_revert_enabled: value === 'true',
             }));
             return;
         }
 
-        // Convert numeric fields properly
         const numericFields = [
-            'telecallerActionTime',
-            'coordinatorVerificationTime',
-            'submissionTimeLimit',
-            'escalationAfter',
+            'telecaller_action_time',
+            'coordinator_verification_time',
+            'submission_time_limit',
+            'escalation_after',
         ];
 
         if (numericFields.includes(name)) {
@@ -77,14 +65,38 @@ export function SLATemplateForm({
         }
     };
 
+    const handleSave = async (data: CreateSLAPayload) => {
+        const apiCall = slaId
+            ? updateSLA(slaId, data)
+            : createSLA(data);
+
+        await toast.promise(apiCall, {
+            success: slaId
+                ? 'SLA template updated successfully'
+                : 'SLA template created successfully',
+            error: (err: any) =>
+                err?.response?.data?.message ||
+                err?.message ||
+                'Failed to save SLA template',
+        });
+
+        // Small delay so user actually sees success toast (good UX)
+        setTimeout(() => {
+            router.push('/owner/sla');
+        }, 600);
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSave(formData);
+        handleSave(formData);
+    };
+
+    const onCancel = () => {
+        router.push('/owner/sla');
     };
 
     return (
         <div className="max-w-6xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* Header */}
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-light text-foreground">
@@ -118,11 +130,9 @@ export function SLATemplateForm({
                 </button>
             </header>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Card className="p-4 sm:p-8 border-brand/10 shadow-sm overflow-visible">
                     <div className="space-y-8">
-                        {/* SLA Template Details */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 border-b border-border pb-3">
                                 <div className="p-2 rounded-lg bg-blue-soft text-blue">
@@ -147,88 +157,86 @@ export function SLATemplateForm({
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
-                                {/* Template Name */}
                                 <div className="space-y-2 md:col-span-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">
                                         Template Name
                                     </Label>
                                     <Input
-                                        name="name"
-                                        value={formData.name}
+                                        name="template_name"
+                                        value={formData.template_name}
                                         onChange={handleChange}
                                         placeholder="e.g. Default Credit Card SLA"
                                         required
                                     />
                                 </div>
 
-                                {/* Telecaller Action Time */}
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">
                                         Telecaller Action Time (Hours)
                                     </Label>
                                     <Input
                                         type="number"
-                                        name="telecallerActionTime"
-                                        value={formData.telecallerActionTime}
+                                        name="telecaller_action_time"
+                                        value={formData.telecaller_action_time}
                                         onChange={handleChange}
                                         min={0}
                                         required
+                                        onFocus={(e) => e.target.value = ''}
                                     />
                                 </div>
 
-                                {/* Coordinator Verification Time */}
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">
                                         Coordinator Verification Time (Hours)
                                     </Label>
                                     <Input
                                         type="number"
-                                        name="coordinatorVerificationTime"
-                                        value={formData.coordinatorVerificationTime}
+                                        name="coordinator_verification_time"
+                                        value={formData.coordinator_verification_time}
                                         onChange={handleChange}
                                         min={0}
                                         required
+                                        onFocus={(e) => e.target.value = ''}
                                     />
                                 </div>
 
-                                {/* Submission Time Limit */}
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">
                                         Submission Time Limit (Hours)
                                     </Label>
                                     <Input
                                         type="number"
-                                        name="submissionTimeLimit"
-                                        value={formData.submissionTimeLimit}
+                                        name="submission_time_limit"
+                                        value={formData.submission_time_limit}
                                         onChange={handleChange}
                                         min={0}
                                         required
+                                        onFocus={(e) => e.target.value = ''}
                                     />
                                 </div>
 
-                                {/* Escalation After */}
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">
                                         Escalation After (Hours)
                                     </Label>
                                     <Input
                                         type="number"
-                                        name="escalationAfter"
-                                        value={formData.escalationAfter}
+                                        name="escalation_after"
+                                        value={formData.escalation_after}
                                         onChange={handleChange}
                                         min={0}
                                         required
+                                        onFocus={(e) => e.target.value = ''}
                                     />
                                 </div>
 
-                                {/* Auto Revert */}
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">
                                         Auto Revert Enabled
                                     </Label>
                                     <Select
-                                        name="autoRevert"
-                                        value={String(formData.autoRevert)}
+                                        name="auto_revert_enabled"
+                                        value={String(formData.auto_revert_enabled)}
                                         onChange={handleChange}
                                         options={[
                                             { value: 'true', label: 'Yes (Enabled)' },
@@ -237,7 +245,6 @@ export function SLATemplateForm({
                                     />
                                 </div>
 
-                                {/* Status */}
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">
                                         Status
@@ -257,7 +264,6 @@ export function SLATemplateForm({
                     </div>
                 </Card>
 
-                {/* Actions */}
                 <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
                     <button
                         type="button"

@@ -5,6 +5,7 @@ export interface LoanType {
   name: string;
   description: string;
   status: string;
+  [key: string]: unknown;
 }
 
 export interface LoanTypeResponse {
@@ -25,21 +26,39 @@ export const getLoanTypes = async ({
   search?: string;
   status?: string;
 }): Promise<LoanTypeResponse> => {
-  const params = new URLSearchParams({
-    page: String(page),
-    limit: String(limit),
-    status,
-  });
+  try {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
 
-  if (search) {
-    params.append('search', search);
+    if (status) {
+      params.append('status', status);
+    }
+
+    if (search) {
+      params.append('search', search);
+    }
+
+    const res = await apiClient.get(
+      `/loantype?${params.toString()}`,
+    );
+
+    return res.data;
+  } catch (error: any) {
+    console.error("Error in getLoanTypes:", {
+      status: error?.response?.status,
+      data: error?.response?.data,
+      message: error?.message,
+    });
+
+    return {
+      items: [],
+      total: 0,
+      page: page,
+      limit: limit,
+    } as LoanTypeResponse;
   }
-
-  const res = await apiClient.get(
-    `/loantype?${params.toString()}`,
-  );
-
-  return res.data;
 };
 
 export interface CreateLoanTypePayload {
@@ -51,17 +70,41 @@ export interface CreateLoanTypePayload {
 export const createLoanType = async (
   payload: CreateLoanTypePayload
 ) => {
-  const res = await apiClient.post('/loantype', payload);
-  return res.data;
+  try {
+    const res = await apiClient.post('/loantype', payload);
+    return res.data;
+  } catch (error) {
+    console.error("Error in createLoanType:", error);
+    throw error;
+  }
 };
 
 export const getLoanTypeById = async (loan_type_id: number) => {
-  console.log(loan_type_id)
-  const res = await apiClient.get(`/loantype/${loan_type_id}`);
-  return res.data;
+  try {
+    const res = await apiClient.get(`/loantype/${loan_type_id}`);
+    return res.data;
+  } catch (error) {
+    console.error(`Error in getLoanTypeById for ID ${loan_type_id}:`, error);
+    throw error;
+  }
 };
 
 export const updateLoanType = async (loan_type_id: number, payload: CreateLoanTypePayload) => {
-  const res = await apiClient.put(`/loantype/${loan_type_id}`, payload);
-  return res.data;
+  try {
+    const res = await apiClient.put(`/loantype/${loan_type_id}`, payload);
+    return res.data;
+  } catch (error) {
+    console.error(`Error in updateLoanType for ID ${loan_type_id}:`, error);
+    throw error;
+  }
+};
+
+export const deleteLoanType = async (loan_type_id: number) => {
+  try {
+    const res = await apiClient.delete(`/loantype/${loan_type_id}`);
+    return res.data;
+  } catch (error) {
+    console.error(`Error in deleteLoanType for ID ${loan_type_id}:`, error);
+    throw error;
+  }
 };

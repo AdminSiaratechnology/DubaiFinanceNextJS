@@ -16,8 +16,6 @@ export default function NewBankPage() {
     return (
         <BankForm
             title="Add New Bank"
-            onSave={handleSave}
-            onCancel={() => router.push('/owner/bank')}
         />
     );
 }
