@@ -68,7 +68,7 @@ export default function AuthInitializer({
     return (
         <>
             {isInitializing && (
-                <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background p-4">
+                <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-background p-4">
                     <div className="relative flex items-center justify-center">
                         <div className="h-16 w-16 animate-spin rounded-full border-b-2 border-l-2 border-brand"></div>
                         <div className="absolute h-10 w-10 animate-pulse rounded-full bg-brand/20"></div>

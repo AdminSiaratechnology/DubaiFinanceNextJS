@@ -35,7 +35,6 @@ export default function ProtectedRoute({
       router.replace('/unauthorized'); // optional page
     }
   }, [user, router, allowedRoles, redirectTo, isInitializing]);
-
   // Prevent UI flash while checking auth
   if (isInitializing || !user) {
     return (
