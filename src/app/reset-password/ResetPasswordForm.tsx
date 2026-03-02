@@ -1,14 +1,12 @@
 'use client';
 
 import { resetPassword } from '@/features/owner/api/auth.api';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
-export default function ResetPasswordForm() {
-    const searchParams = useSearchParams();
+export default function ResetPasswordForm({ token }: { token: string | null }) {
     const router = useRouter();
-    const token = searchParams.get('token');
 
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');

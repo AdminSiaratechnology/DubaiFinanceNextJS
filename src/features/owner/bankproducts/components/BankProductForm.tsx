@@ -6,9 +6,6 @@ import { BankProduct } from '@/lib/mock/bankProducts';
 import { mockBanks } from '@/lib/mock/banks';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
-import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
-import { getLoanTypes } from '../../loantypes/api/loanTypes.api';
-import { getBanks } from '../../bank/api/bank.api';
 
 interface BankProductFormProps {
     bankProduct?: BankProduct;
@@ -118,16 +115,12 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
-                                      <ApiSearchableSelect
-                                        label="Bank"
-                                        fetchFn={getBanks}
-                                        labelKey="name"
-                                        valueKey="id"
-                                        extraParams={{ status: 'active' }}
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Bank</Label>
+                                    <Select
+                                        name="bankId"
                                         value={formData.bankId}
-                                        // initialOptions={mockBanks}
-                                        onChange={(val) => setFormData(prev => ({ ...prev, bankId: Number(val) }))}
-                                        placeholder="Select bank category…"
+                                        onChange={handleChange}
+                                        options={mockBanks.map(bank => ({ value: bank.id, label: bank.bankName }))}
                                         required
                                     />
                                 </div>
@@ -142,17 +135,12 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <ApiSearchableSelect
-                                        label="Loan Type"
-                                        fetchFn={getLoanTypes}
-                                        labelKey="name"
-                                        valueKey="id"
-                                        extraParams={{ status: 'active' }}
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Loan Type</Label>
+                                    <Select
+                                        name="loanTypeId"
                                         value={formData.loanTypeId}
-                                        // initialOptions={loanTypes}
-                                        onChange={(val) => setFormData(prev => ({ ...prev, loanTypeId: Number(val) }))}
-                                        placeholder="Select bank category…"
-                                        required
+                                        onChange={handleChange}
+                                        options={loanTypes.map(type => ({ value: type.id, label: type.label }))}
                                     />
                                 </div>
                                 <div className="space-y-2">

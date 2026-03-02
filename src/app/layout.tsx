@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Roboto } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import AuthInitializer from "@/components/auth/AuthInitializer";
+// import AuthInitializer from "@/components/auth/AuthInitializer";
 import { ConfirmProvider } from '@/components/providers/confirm-provider';
 import { Toaster } from "sonner"; 
 
@@ -52,7 +52,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${roboto.variable} antialiased`}>
-        <AuthInitializer>
+        {/* <AuthInitializer> */}
           <ThemeProvider>
             <ConfirmProvider>
                 {children}
@@ -66,7 +66,7 @@ export default function RootLayout({
               />
             </ConfirmProvider>
           </ThemeProvider>
-        </AuthInitializer>
+        {/* </AuthInitializer> */}
       </body>
     </html>
   );
