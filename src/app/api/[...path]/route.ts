@@ -30,7 +30,10 @@ async function handler(
 
     const auth = req.headers.get("authorization");
     if (auth) headers["authorization"] = auth;
-
+    console.log("🔁 PROXY FORWARDING:");
+    console.log("➡️ Incoming API:", req.url);
+    console.log("🎯 Forwarding To Backend:", url);
+    console.log("🍪 Cookies:", req.headers.get("cookie"));
     const backendRes = await fetch(url, {
         method: req.method,
         headers,
