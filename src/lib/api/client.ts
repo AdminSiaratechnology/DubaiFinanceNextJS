@@ -3,16 +3,18 @@ import { redirect } from "next/navigation";
 
 // 🔥 Universal origin resolver (production safe)
 const getBaseURL = () => {
-  // Browser → use proxy
   if (typeof window !== "undefined") {
     return "/api";
   }
-  // Server → must use absolute URL
-  return process.env.NEXT_PUBLIC_APP_URL
-    ? `${process.env.NEXT_PUBLIC_APP_URL}/api`
-    : "http://localhost:3000/api";
-};
 
+  // Netlify provides this automatically
+  const siteUrl =
+    process.env.URL || // Netlify
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    "http://localhost:3000";
+  return `${siteUrl}/api`;
+};
+ 
 export const apiClient = axios.create({
   baseURL: getBaseURL(),
   withCredentials: true,
@@ -21,6 +23,15 @@ export const apiClient = axios.create({
 // 🔥 SSR Cookie Forwarding
 apiClient.interceptors.request.use(async (config) => {
   if (typeof window === "undefined") {
+    const fullURL = `${config.baseURL || ""}${config.url || ""}`;
+  console.log("🌍 API REQUEST →", {
+    baseURL: config.baseURL,
+    url: config.url,
+    fullURL,
+    method: config.method,
+    env: typeof window === "undefined" ? "SERVER (SSR)" : "CLIENT (Browser)",
+  });
+
     try {
       const { cookies } = await import("next/headers");
       const cookieStore = await cookies();
