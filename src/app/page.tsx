@@ -37,8 +37,12 @@ export default function HomePage() {
   const redirectByRole = (role: string) => {
     if (role === 'admin') {
       router.replace('/owner/dashboard');
-    } else if (role === 'user') {
-      router.replace('/user');
+    } else if (role === 'analyst') {
+      router.replace('/dashboard/analyst/main');
+    } else if (role === 'telecaller') {
+      router.replace('/dashboard/telecaller/main');
+    } else if (role === 'coordinator') {
+      router.replace('/dashboard/coordinator/main');
     } else {
       router.replace('/login');
     }

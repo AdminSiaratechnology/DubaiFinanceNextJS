@@ -9,8 +9,7 @@ const getBaseURL = () => {
 
   // Netlify provides this automatically
   const siteUrl =
-    process.env.URL || // Netlify
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    process.env.URL ||
     "http://localhost:3000";
   return `${siteUrl}/api`;
 };
@@ -24,13 +23,14 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(async (config) => {
   if (typeof window === "undefined") {
     const fullURL = `${config.baseURL || ""}${config.url || ""}`;
-  console.log("🌍 API REQUEST →", {
-    baseURL: config.baseURL,
-    url: config.url,
-    fullURL,
-    method: config.method,
-    env: typeof window === "undefined" ? "SERVER (SSR)" : "CLIENT (Browser)",
-  });
+  // console.log("🌍 API REQUEST →", {
+  //   baseURL: config.baseURL,
+  //   url: config.url,
+  //   fullURL,
+  //   method: config.method,
+  //   env: typeof window === "undefined" ? "SERVER (SSR)" : "CLIENT (Browser)",
+  //   cookies: typeof window === "undefined" ? "SSR REQUEST" : document.cookie
+  // });
 
     try {
       const { cookies } = await import("next/headers");

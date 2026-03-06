@@ -41,13 +41,21 @@ export default function AuthInitializer({
             try {
                 const response = await getMe();
                 const userData = response.data;
-
                 if (userData) {
                     setUser(userData);
 
                     // Redirect logged-in users away from auth pages
                     if (isPublicRoute && !['/forgot-password', '/reset-password'].includes(pathname)) {
-                        router.push(userData.role === 'admin' ? '/owner/dashboard' : '/user');
+                        const role = userData.role;
+                        if (role === 'admin') {
+                            router.push('/owner/dashboard');
+                        } else if (role === 'coordinator') {
+                            router.push('/dashboard/analyst/main');
+                        } else if (role === 'telecaller') {
+                            router.push('/dashboard/telecaller/main');
+                        } else {
+                            router.push('/user');
+                        }
                     }
                 }
             } catch (error) {

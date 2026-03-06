@@ -1,12 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { Coordinator } from '../api/analyst.api';
+import { Telecaller } from '../api/telecaller.api';
 import { TeamActions } from './TeamActions';
 import { TeamSearch } from './TeamSearch';
 import { Pagination } from '@/components/ui/Pagination';
 
 interface TeamTableProps {
-    members: Coordinator[];
+    members: (Coordinator | Telecaller)[];
     role: 'analyst' | 'telecaller';
     page: number;
     total: number;
@@ -14,6 +15,7 @@ interface TeamTableProps {
 }
 
 export function TeamTable({ members, role, page, total, limit }: TeamTableProps) {
+    console.log(members)
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">

@@ -3,6 +3,9 @@
 import React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useAuthStore } from '@/store/useAuthStore';
+import { adminLogout } from '@/features/owner/api/auth.api';
+import { toast } from 'sonner';
 
 interface TopHeaderProps {
     onMenuClick?: () => void;
@@ -10,26 +13,45 @@ interface TopHeaderProps {
 
 export function TopHeader({ onMenuClick }: TopHeaderProps) {
     const pathname = usePathname();
+    const router = useRouter();
+    const { user, clearUser } = useAuthStore();
     const parts = pathname.split('/');
     const role = parts[1] === 'owner' ? 'owner' : parts[2];
-
+    console.log(user);
     const roleTitle: Record<string, string> = {
         agent: 'Agent Portal',
         telecaller: 'Telecaller Portal',
         analyst: 'Analyst Portal',
+        coordinator: 'Analyst Portal',
         owner: 'Executive Portal',
     };
 
-    const userName: Record<string, string> = {
-        agent: 'Sarah Johnson',
-        telecaller: 'Mohammed Hassan',
-        analyst: 'Fatima Al Ali',
-        owner: 'Johnathan Doe',
+    const currentRoleTitle = roleTitle[role] || 'Finance Portal';
+
+    // Extract display name from nested profiles or top-level name
+    const getDisplayName = () => {
+        if (!user) return 'User';
+        if (user.name) return user.name;
+        if (user.role === 'telecaller' && user.telecaller_profile) return user.telecaller_profile.name;
+        if (user.role === 'coordinator' && user.coordinator_profile) return user.coordinator_profile.name;
+        return user.email.split('@')[0];
     };
 
-    const currentRoleTitle = roleTitle[role] || 'Finance Portal';
-    const currentUserName = userName[role] || 'User';
-    const router = useRouter();
+    const currentUserName = getDisplayName();
+
+    const handleLogout = async () => {
+        try {
+            await adminLogout();
+            clearUser();
+            router.push('/login');
+            toast.success('Logged out successfully');
+        } catch (error) {
+            toast.error('Logout failed');
+            // Even if API fails, clear local state
+            clearUser();
+            router.push('/login');
+        }
+    };
     return (
         <header className="
             h-20
@@ -69,6 +91,7 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
                 <ThemeToggle />
 
                 <button
+                    onClick={handleLogout}
                     className="
                         flex items-center gap-2
                         px-3 py-2 sm:px-4 sm:py-2

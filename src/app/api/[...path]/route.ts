@@ -13,8 +13,7 @@ async function handler(
 
     const pathString = path.join("/").replace(/\/$/, "");
 
-    const url = `${BACKEND_URL}/${pathString}/${searchParams.toString() ? `?${searchParams.toString()}` : ""
-        }`;
+    const url = `${BACKEND_URL}/${pathString}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
     // 1) Safely read the exact raw binary of the request (works perfectly for multipart/form-data)
     const body =

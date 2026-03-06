@@ -32,6 +32,9 @@ export function LoginForm() {
             else if (role === 'coordinator') {
                 router.push('/dashboard/analyst/main');
             }
+            else if (role === 'telecaller') {
+                router.push('/dashboard/telecaller/main');
+            }
             else {
                 router.push('/user');
             }

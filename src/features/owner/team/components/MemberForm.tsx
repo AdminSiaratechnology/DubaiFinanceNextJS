@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
 import { Coordinator, CoordinatorCreate, createCoordinator, updateCoordinator } from '../api/analyst.api';
+import { Telecaller, TelecallerCreate, createTelecaller, updateTelecaller } from '../api/telecaller.api';
 import { toast } from 'sonner';
 import CountrySearchableSelect from '@/shared/CountrySearchableSelect';
 
 interface MemberFormProps {
-    member?: Coordinator;
+    member?: Coordinator | Telecaller;
     title: string;
     role: 'analyst' | 'telecaller';
     memberId?: number;
@@ -22,7 +23,7 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
         router.push(`/owner/team/${role}s`);
     };
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState<CoordinatorCreate>({
+    const [formData, setFormData] = useState<CoordinatorCreate | TelecallerCreate>({
         name: member?.name || '',
         email: member?.email || '',
         phone: member?.phone || '',
@@ -55,7 +56,11 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                 const { password, ...payload } = formData;
                 // Only send password if it's not empty
                 const updatePayload = password ? formData : payload;
-                await updateCoordinator(memberId, updatePayload);
+                if (role === 'analyst') {
+                    await updateCoordinator(memberId, updatePayload as CoordinatorCreate);
+                } else {
+                    await updateTelecaller(memberId, updatePayload as TelecallerCreate);
+                }
                 toast.success('Member updated successfully');
             } else {
                 // Create
@@ -64,7 +69,11 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                     setIsSubmitting(false);
                     return;
                 }
-                await createCoordinator(formData);
+                if (role === 'analyst') {
+                    await createCoordinator(formData as CoordinatorCreate);
+                } else {
+                    await createTelecaller(formData as TelecallerCreate);
+                }
                 toast.success('Member created successfully');
             }
             router.push(`/owner/team/${role}s`);

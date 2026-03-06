@@ -14,13 +14,26 @@ export async function proxy(request: NextRequest) {
             url.pathname = '/login';
             return NextResponse.redirect(url);
         }
+        let meRes: Response | null = null;
+        try {
+            meRes = await fetch(`${BACKEND_URL}/account/me`, {
+                headers: {
+                    Cookie: cookies,
+                },
+                cache: 'no-store',
+            });
+        } catch (err) {
+            console.error("Backend unreachable:", err);
 
-        const meRes = await fetch(`${BACKEND_URL}/account/me`, {
-            headers: {
-                Cookie: cookies,
-            },
-            cache: 'no-store',
-        });
+            const url = request.nextUrl.clone();
+            url.pathname = '/login';
+            return NextResponse.redirect(url);
+        }
+        if (!meRes) {
+            const url = request.nextUrl.clone();
+            url.pathname = '/login';
+            return NextResponse.redirect(url);
+        }
 
         if (meRes.status === 401) {
             try {
@@ -70,5 +83,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/owner/:path*', '/user/:path*'],
+    matcher: ['/owner/:path*', '/dashboard/:path*'],
 };
