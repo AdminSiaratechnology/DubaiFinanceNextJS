@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 interface SLATemplateSearchProps {
@@ -14,29 +14,39 @@ export function SLATemplateSearch({
 }: SLATemplateSearchProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const query = searchParams.get('query') || '';
+    const [searchValue, setSearchValue] = useState(searchParams.get('query') || '');
     const status = searchParams.get('status') || '';
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const updateParams = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
-        if (e.target.value) {
-            params.set('query', e.target.value);
+
+        params.set('page', '1');
+
+        if (value) {
+            params.set(key, value);
         } else {
-            params.delete('query');
+            params.delete(key);
         }
+
         router.push(`?${params.toString()}`);
+    };
+
+    // debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            updateParams('query', searchValue);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchValue]);
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchValue(e.target.value);
     };
 
     const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const params = new URLSearchParams(searchParams.toString());
-        if (e.target.value) {
-            params.set('status', e.target.value);
-        } else {
-            params.delete('status');
-        }
-        router.push(`?${params.toString()}`);
+        updateParams('status', e.target.value);
     };
-
     return (
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             {/* Search Input */}
@@ -59,7 +69,7 @@ export function SLATemplateSearch({
 
                 <input
                     type="search"
-                    value={query}
+                    value={searchValue}
                     onChange={handleSearch}
                     placeholder="Search SLA templates..."
                     className="w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all placeholder:text-text-muted/50"

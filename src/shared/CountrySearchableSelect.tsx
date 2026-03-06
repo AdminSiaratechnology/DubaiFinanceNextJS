@@ -2,6 +2,7 @@
 import Select, { StylesConfig } from "react-select";
 import { Country } from "country-state-city";
 import { useMemo } from "react";
+import { Label } from "@/components/ui/Form";
 
 interface Option {
     label: string;
@@ -45,8 +46,8 @@ export default function CountrySearchableSelect({
     const customStyles: StylesConfig<Option, false> = {
         control: (base, state) => ({
             ...base,
-            minHeight: "48px",
-            borderRadius: "0.75rem",
+            minHeight: "44px",
+            borderRadius: "1rem",
             backgroundColor: "var(--card)",
             borderColor: state.isFocused ? "var(--brand)" : "var(--border)",
             boxShadow: state.isFocused ? "0 0 0 2px rgba(230, 192, 79, 0.2)" : "none",
@@ -99,7 +100,8 @@ export default function CountrySearchableSelect({
     };
 
     return (
-        <div className={`flex flex-col gap-1.5 ${className}`}>
+        <div className={`flex flex-col ${className}`}>
+            <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>{label}</Label>
             <Select
                 value={selectedOption}
                 options={countryOptions}
@@ -110,7 +112,7 @@ export default function CountrySearchableSelect({
                 styles={customStyles}
                 classNamePrefix="react-select"
                 formatOptionLabel={(option: any) => (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                         {/* <span className="text-lg leading-none">{option.flag}</span> */}
                         <span>{option.label}</span>
                     </div>

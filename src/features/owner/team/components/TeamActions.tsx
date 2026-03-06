@@ -2,14 +2,38 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useConfirmAction } from '@/hooks/use-confirm-action';
+import { deleteCoordinator } from '../api/analyst.api';
 
 interface TeamActionsProps {
     id: string;
     role: 'analyst' | 'telecaller';
-    onDelete?: (id: string) => void;
 }
 
-export function TeamActions({ id, role, onDelete }: TeamActionsProps) {
+export function TeamActions({ id, role }: TeamActionsProps) {
+    const router = useRouter();
+    const { confirmAction } = useConfirmAction();
+
+    const handleDelete = async () => {
+        if (role === 'analyst') {
+            await confirmAction({
+                title: 'Delete Team Member',
+                description: 'Are you sure you want to delete this analyst? This action cannot be undone.',
+                confirmText: 'Delete',
+                action: () => deleteCoordinator(Number(id)),
+                successMessage: 'Analyst deleted successfully.',
+                errorMessage: 'Failed to delete analyst.',
+                onSuccess: () => {
+                    router.refresh();
+                },
+            });
+        } else {
+            // Placeholder for telecaller delete if API exists later
+            console.warn('Telecaller delete not implemented in API yet');
+        }
+    };
+
     return (
         <div className="flex justify-end gap-2">
             <Link
@@ -20,7 +44,7 @@ export function TeamActions({ id, role, onDelete }: TeamActionsProps) {
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
             </Link>
             <button
-                onClick={() => onDelete?.(id)}
+                onClick={handleDelete}
                 className="p-2.5 hover:bg-red-soft text-text-muted hover:text-red-500 rounded-lg transition-colors border border-transparent hover:border-red-100"
                 title="Delete Member"
             >

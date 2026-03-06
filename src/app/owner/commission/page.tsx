@@ -1,24 +1,23 @@
 import React from 'react';
 import { PageHeader } from '@/components/PageHeader';
 import { CommissionTable } from '@/features/owner/commission/components/CommissionTable';
-import { mockCommissionRules } from '@/lib/mock/commissionRules'
+import { getCommissions } from '@/features/owner/commission/api/commission.api';
 
 export default async function CommissionRulesPage({
     searchParams,
 }: {
-    searchParams: { query?: string };
+    searchParams: Promise<{ query?: string; page?: string; limit?: string }>;
 }) {
-    const query = searchParams.query?.toLowerCase() || '';
+    const params = await searchParams;
+    const query = params.query || '';
+    const page = Number(params.page) || 1;
+    const limit = Number(params.limit) || 5;
 
-    // 🔍 SSR Filtering (matches LoanTypes pattern)
-    const filteredRules = mockCommissionRules.filter((rule) => {
-        const bankName = rule.bankName?.toLowerCase() || '';
-        const productName = rule.productName?.toLowerCase() || '';
-
-        return (
-            bankName.includes(query) ||
-            productName.includes(query)
-        );
+    // Fetch from real API
+    const response = await getCommissions({
+        page,
+        limit,
+        search: query,
     });
 
     return (
@@ -30,7 +29,7 @@ export default async function CommissionRulesPage({
             />
 
             {/* Table Section */}
-            <CommissionTable rules={filteredRules} />
+            <CommissionTable rules={response.items} total={response.total} page={response.page} limit={response.limit}/>
         </div>
     );
 }

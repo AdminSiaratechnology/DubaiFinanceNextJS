@@ -30,14 +30,15 @@ export function SLATemplateTable({ templates, page, total, limit }: Props) {
           <table className="w-full text-left min-w-[900px]">
             <thead className="bg-muted/50 border-b border-border">
               <tr>
-                <th className="p-4 text-[10px] font-bold uppercase">Template</th>
-                <th className="p-4 text-[10px] font-bold uppercase">Telecaller (hrs)</th>
-                <th className="p-4 text-[10px] font-bold uppercase">Coordinator (hrs)</th>
-                <th className="p-4 text-[10px] font-bold uppercase">Submission Limit</th>
-                <th className="p-4 text-[10px] font-bold uppercase">Escalation</th>
-                <th className="p-4 text-[10px] font-bold uppercase">Auto Revert</th>
-                <th className="p-4 text-[10px] font-bold uppercase">Status</th>
-                <th className="p-4 text-right text-[10px] font-bold uppercase">Actions</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Template</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Telecaller (hrs)</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Coordinator (hrs)</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Submission Limit</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Escalation</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Auto Revert</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Status</th>
+                <th className="p-4 text-right text-[10px] font-bold text-text-muted uppercase">Actions</th>
               </tr>
             </thead>
 
@@ -45,6 +46,7 @@ export function SLATemplateTable({ templates, page, total, limit }: Props) {
               {templates.length > 0 ? (
                 templates.map((t) => (
                   <tr key={t.id} className="hover:bg-muted/30 transition">
+                    <td className="p-4 text-sm">{t.id}</td>
                     <td className="p-4 text-sm font-bold">{t.template_name}</td>
                     <td className="p-4 text-sm">{t.telecaller_action_time}h</td>
                     <td className="p-4 text-sm">{t.coordinator_verification_time}h</td>

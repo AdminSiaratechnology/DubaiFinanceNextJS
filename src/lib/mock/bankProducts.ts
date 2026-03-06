@@ -1,10 +1,10 @@
 export interface BankProduct {
-    id: string;
-    bankId: string;
-    bankName: string;
-    productName: string;
-    loanTypeId: string;
-    loanTypeName: string;
+    id: string | null;
+    bankId: string | null;
+    bankName: string | null;
+    productName: string | null;
+    loanTypeId: string | null;
+    loanTypeName: string | null;
     customerSegment: 'salaried' | 'self-employed' | 'sme';
     minLoanAmount: number;
     maxLoanAmount: number;
@@ -13,7 +13,7 @@ export interface BankProduct {
     processingFeePercent: number;
     status: 'active' | 'inactive';
     priorityScore: number;
-    defaultSLATemplate: string;
+    defaultSLATemplate: string | null;
     internalNotes: string;
     createdDate: string;
 }

@@ -1,48 +1,80 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { TeamMember } from '@/lib/mock/team';
 import { Card } from '@/components/ui/Card';
-import { Label, Input } from '@/components/ui/Form';
+import { Label, Input, Select } from '@/components/ui/Form';
+import { Coordinator, CoordinatorCreate, createCoordinator, updateCoordinator } from '../api/analyst.api';
+import { toast } from 'sonner';
+import CountrySearchableSelect from '@/shared/CountrySearchableSelect';
 
 interface MemberFormProps {
-    member?: TeamMember;
-    onSave: (data: Partial<TeamMember>) => void;
+    member?: Coordinator;
     title: string;
     role: 'analyst' | 'telecaller';
-    onCancel: () => void;
+    memberId?: number;
 }
 
-export function MemberForm({ member, onSave, title, role, onCancel }: MemberFormProps) {
+export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
     const router = useRouter();
-    const [formData, setFormData] = useState<Partial<TeamMember>>(
-        member || {
-            fullName: '',
-            email: '',
-            mobile: '',
-            emiratesId: '',
-            nationality: '',
-            companyName: '',
-            experience: '',
-            accountHolder: '',
-            bankName: '',
-            accountNumber: '',
-            iban: '',
-            status: 'active'
-        }
-    );
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleCancel = () => {
+        router.push(`/owner/team/${role}s`);
+    };
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formData, setFormData] = useState<CoordinatorCreate>({
+        name: member?.name || '',
+        email: member?.email || '',
+        phone: member?.phone || '',
+        emirates_id: member?.emirates_id || '',
+        nationality: member?.nationality || '',
+        experience: Number(member?.experience) || 0,
+        account_holder_name: member?.account_holder_name || '',
+        bank_name: member?.bank_name || '',
+        account_number: member?.account_number || '',
+        iban: member?.iban || '',
+        status: member?.status || 'active',
+        password: '',
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => ({
+            ...prev,
+            [name]: name === 'experience' ? Number(value) : value
+        }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSave(formData);
-        // In this mock setup, we just go back
-        router.push(`/owner/team/${role}s`);
+        setIsSubmitting(true);
+
+        try {
+            if (memberId) {
+                // Update
+                const { password, ...payload } = formData;
+                // Only send password if it's not empty
+                const updatePayload = password ? formData : payload;
+                await updateCoordinator(memberId, updatePayload);
+                toast.success('Member updated successfully');
+            } else {
+                // Create
+                if (!formData.password) {
+                    toast.error('Password is required for new members');
+                    setIsSubmitting(false);
+                    return;
+                }
+                await createCoordinator(formData);
+                toast.success('Member created successfully');
+            }
+            router.push(`/owner/team/${role}s`);
+            router.refresh();
+        } catch (error: any) {
+            console.error('Save failed:', error);
+            toast.error(error?.response?.data?.detail || 'Failed to save member');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -53,7 +85,8 @@ export function MemberForm({ member, onSave, title, role, onCancel }: MemberForm
                     <p className="text-[10px] sm:text-xs text-text-muted italic mt-1">Fill in the details below to manage your team member.</p>
                 </div>
                 <button
-                    onClick={onCancel}
+                    onClick={handleCancel}
+                    type="button"
                     className="flex items-center justify-center gap-2 px-4 py-2 bg-muted/50 hover:bg-muted rounded-xl text-xs font-bold text-text-muted hover:text-foreground transition-all sm:w-auto w-full"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
@@ -73,28 +106,54 @@ export function MemberForm({ member, onSave, title, role, onCancel }: MemberForm
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Full Name</Label>
-                                    <Input name="fullName" value={formData.fullName} onChange={handleChange} placeholder="e.g. John Doe" required />
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Full Name</Label>
+                                    <Input name="name" value={formData.name} onChange={handleChange} placeholder="e.g. John Doe" required />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Email Address</Label>
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Email Address</Label>
                                     <Input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="john@example.com" required />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Mobile Number</Label>
-                                    <Input name="mobile" value={formData.mobile} onChange={handleChange} placeholder="+971 -- --- ----" required />
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Phone Number</Label>
+                                    <Input name="phone" value={formData.phone} onChange={handleChange} placeholder="6394497861" required />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Emirates ID</Label>
-                                    <Input name="emiratesId" value={formData.emiratesId} onChange={handleChange} placeholder="784-XXXX-XXXXXXX-X" required />
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Emirates ID</Label>
+                                    <Input name="emirates_id" value={formData.emirates_id} onChange={handleChange} placeholder="784-XXXX-XXXXXXX-X" required />
+                                </div>
+                                <CountrySearchableSelect
+                                    label="Nationality"
+                                    value={formData.nationality}
+                                    onChange={(value) => setFormData({ ...formData, nationality: value })}
+                                    placeholder="Select Nationality"
+                                    required
+                                />
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Experience (Years)</Label>
+                                    <Input name="experience" type="number" value={formData.experience} onChange={handleChange} placeholder="e.g. 5" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Nationality</Label>
-                                    <Input name="nationality" value={formData.nationality} onChange={handleChange} placeholder="e.g. UAE" required />
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required={!memberId}>Password</Label>
+                                    <Input
+                                        name="password"
+                                        type="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        placeholder={memberId ? "Leave blank to keep current" : "Enter password"}
+                                        required={!memberId}
+                                    />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Experience</Label>
-                                    <Input name="experience" value={formData.experience} onChange={handleChange} placeholder="e.g. 5 Years" />
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Status</Label>
+                                    <Select
+                                        name="status"
+                                        value={formData.status}
+                                        onChange={handleChange}
+                                        options={[
+                                            { value: 'active', label: 'Active' },
+                                            { value: 'inactive', label: 'Inactive' },
+                                        ]}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -110,15 +169,15 @@ export function MemberForm({ member, onSave, title, role, onCancel }: MemberForm
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Account Holder Name</Label>
-                                    <Input name="accountHolder" value={formData.accountHolder} onChange={handleChange} placeholder="Full Name as per Bank" />
+                                    <Input name="account_holder_name" value={formData.account_holder_name} onChange={handleChange} placeholder="Full Name as per Bank" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Bank Name</Label>
-                                    <Input name="bankName" value={formData.bankName} onChange={handleChange} placeholder="e.g. Emirates NBD" />
+                                    <Input name="bank_name" value={formData.bank_name} onChange={handleChange} placeholder="e.g. Emirates NBD" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Account Number</Label>
-                                    <Input name="accountNumber" value={formData.accountNumber} onChange={handleChange} placeholder="Bank Account Number" />
+                                    <Input name="account_number" value={formData.account_number} onChange={handleChange} placeholder="Bank Account Number" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">IBAN</Label>
@@ -132,16 +191,18 @@ export function MemberForm({ member, onSave, title, role, onCancel }: MemberForm
                 <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
                     <button
                         type="button"
-                        onClick={onCancel}
+                        onClick={handleCancel}
+                        disabled={isSubmitting}
                         className="w-full sm:w-auto px-8 py-3 rounded-xl border border-border font-bold text-sm text-text-muted hover:bg-muted transition-all order-2 sm:order-1"
                     >
                         Discard Changes
                     </button>
                     <button
                         type="submit"
-                        className="w-full sm:w-auto px-10 py-3 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand/90 transition-all shadow-lg active:scale-[0.98] order-1 sm:order-2"
+                        disabled={isSubmitting}
+                        className="w-full sm:w-auto px-10 py-3 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand/90 transition-all shadow-lg active:scale-[0.98] order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Save Team Member
+                        {isSubmitting ? 'Saving...' : 'Save Team Member'}
                     </button>
                 </div>
             </form>

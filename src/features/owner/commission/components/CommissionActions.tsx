@@ -2,17 +2,32 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useConfirmAction } from '@/hooks/use-confirm-action';
+import { deleteCommission } from '../api/commission.api';
 
 interface CommissionActionsProps {
-    id: string;
+    id: number;
 }
 
 export function CommissionActions({ id }: CommissionActionsProps) {
-    const handleDelete = () => {
-        if (confirm('Are you sure you want to delete this commission?')) {
-            console.log('Deleting commission:', id);
-            // TODO: Add delete logic
-        }
+    const router = useRouter();
+    const { confirmAction } = useConfirmAction();
+
+    const handleDelete = async () => {
+        if (!id) return;
+
+        await confirmAction({
+            title: 'Delete Commission Rule',
+            description: 'Are you sure you want to delete this commission rule? This action cannot be undone.',
+            confirmText: 'Delete',
+            action: () => deleteCommission(id),
+            successMessage: 'Commission rule deleted successfully.',
+            errorMessage: 'Failed to delete commission rule.',
+            onSuccess: () => {
+                router.refresh();
+            },
+        });
     };
 
     return (

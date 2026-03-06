@@ -2,88 +2,81 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BankProduct } from '@/lib/mock/bankProducts';
-import { mockBanks } from '@/lib/mock/banks';
+import { BankProduct, createBankProduct, updateBankProduct } from '../api/bankproducts.api';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
+import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
+import { getBanks } from '@/features/owner/bank/api/bank.api';
+import { getLoanTypes } from '@/features/owner/loantypes/api/loanTypes.api';
+import { getSLAs } from '@/features/owner/slatemplates/api/sla.api';
+import { toast } from 'sonner';
 
 interface BankProductFormProps {
     bankProduct?: BankProduct;
-    onSave: (data: Partial<BankProduct>) => void;
     title: string;
-    onCancel: () => void;
+    bankProductId?: number;
 }
 
-const loanTypes = [
-    { id: 'personal', label: 'Personal Loan' },
-    { id: 'business', label: 'Business Loan' },
-    { id: 'auto', label: 'Auto Loan' },
-    { id: 'mortgage', label: 'Mortgage' },
-    { id: 'credit-card', label: 'Credit Card' },
-    { id: 'sme', label: 'SME Loan' },
-];
-
-const slaTemplates = [
-    { value: 'Standard - 3 Days', label: 'Standard - 3 Days' },
-    { value: 'Standard - 5 Days', label: 'Standard - 5 Days' },
-    { value: 'Extended - 7 Days', label: 'Extended - 7 Days' },
-    { value: 'Extended - 10 Days', label: 'Extended - 10 Days' },
-    { value: 'Express - 24 Hours', label: 'Express - 24 Hours' },
-];
-
-export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankProductFormProps) {
+export function BankProductForm({ bankProduct, title, bankProductId }: BankProductFormProps) {
     const router = useRouter();
-    const [formData, setFormData] = useState<Partial<BankProduct>>(
-        bankProduct || {
-            bankId: '',
+    const [formData, setFormData] = useState<any>(
+        bankProduct ? {
+            ...bankProduct,
+            bank_id: bankProduct.bank?.id,
+            bankName: bankProduct.bank?.name,
+            loan_type_id: bankProduct.loan_type?.id,
+            loanTypeName: bankProduct.loan_type?.name,
+            sla_template_id: bankProduct.sla_template?.id,
+            defaultSLATemplateName: bankProduct.sla_template?.template_name,
+        } : {
+            bank_id: undefined,
             bankName: '',
-            productName: '',
-            loanTypeId: 'personal',
-            loanTypeName: 'Personal Loan',
-            customerSegment: 'salaried',
-            minLoanAmount: 0,
-            maxLoanAmount: 0,
-            minTenure: 12,
-            maxTenure: 60,
-            processingFeePercent: 0,
+            product_name: '',
+            loan_type_id: undefined,
+            loanTypeName: '',
+            customer_segment: 'Salaried',
+            min_loan_amount: 0,
+            max_loan_amount: 0,
+            min_tenure: 12,
+            max_tenure: 60,
+            processing_fee: 0,
             status: 'active',
-            priorityScore: 50,
-            defaultSLATemplate: 'Standard - 5 Days',
-            internalNotes: '',
+            priority_score: 50,
+            sla_template_id: undefined,
+            defaultSLATemplateName: '',
+            internal_notes: '',
         }
     );
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-
-        // Handle bank selection
-        if (name === 'bankId') {
-            const selectedBank = mockBanks.find(b => b.id === value);
-            setFormData(prev => ({
-                ...prev,
-                bankId: value,
-                bankName: selectedBank?.bankName || ''
-            }));
-            return;
-        }
-
-        // Handle loan type selection
-        if (name === 'loanTypeId') {
-            const selectedLoanType = loanTypes.find(lt => lt.id === value);
-            setFormData(prev => ({
-                ...prev,
-                loanTypeId: value,
-                loanTypeName: selectedLoanType?.label || ''
-            }));
-            return;
-        }
-
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev: any) => ({ ...prev, [name]: value }));
     };
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSave(formData);
+
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+
+        try {
+            if (bankProductId) {
+                await updateBankProduct(bankProductId, formData);
+                toast.success('Bank Product updated successfully');
+            } else {
+                await createBankProduct(formData);
+                toast.success('Bank Product created successfully');
+            }
+            router.push('/owner/bankproducts');
+        } catch (error) {
+            toast.error('Failed to save Bank Product');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+    const onCancel = () => {
+        router.push('/owner/bankproducts');
     };
 
     return (
@@ -105,7 +98,6 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Card className="p-4 sm:p-8 border-brand/10 shadow-sm overflow-visible">
                     <div className="space-y-8">
-                        {/* Basic Information */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 border-b border-border pb-3">
                                 <div className="p-2 rounded-lg bg-teal-soft text-teal">
@@ -115,44 +107,53 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Bank</Label>
-                                    <Select
-                                        name="bankId"
-                                        value={formData.bankId}
-                                        onChange={handleChange}
-                                        options={mockBanks.map(bank => ({ value: bank.id, label: bank.bankName }))}
+                                    {/* <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Bank</Label> */}
+                                    <ApiSearchableSelect
+                                        label='Bank'
+                                        fetchFn={getBanks as any}
+                                        valueKey="id"
+                                        labelKey="name"
+                                        value={formData.bank_id ? Number(formData.bank_id) : undefined}
+                                        onChange={(val) => setFormData((prev: any) => ({ ...prev, bank_id: Number(val) }))}
+                                        initialOptions={formData.bank_id && formData.bankName ? [{ id: Number(formData.bank_id), name: formData.bankName } as any] : []}
+                                        placeholder="Select a bank..."
                                         required
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Product Name</Label>
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Product Name</Label>
                                     <Input
-                                        name="productName"
-                                        value={formData.productName}
+                                        name="product_name"
+                                        value={formData.product_name}
                                         onChange={handleChange}
                                         placeholder="e.g. Personal Loan - Gold"
                                         required
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Loan Type</Label>
-                                    <Select
-                                        name="loanTypeId"
-                                        value={formData.loanTypeId}
-                                        onChange={handleChange}
-                                        options={loanTypes.map(type => ({ value: type.id, label: type.label }))}
+                                    {/* <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Loan Type</Label> */}
+                                    <ApiSearchableSelect
+                                        label='Loan type'
+                                        fetchFn={getLoanTypes as any}
+                                        valueKey="id"
+                                        labelKey="name"
+                                        value={formData.loan_type_id ? Number(formData.loan_type_id) : undefined}
+                                        onChange={(val) => setFormData((prev: any) => ({ ...prev, loan_type_id: Number(val) }))}
+                                        initialOptions={formData.loan_type_id && formData.loanTypeName ? [{ id: Number(formData.loan_type_id), name: formData.loanTypeName } as any] : []}
+                                        placeholder="Select a loan type..."
+                                        required
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Customer Segment</Label>
                                     <Select
-                                        name="customerSegment"
-                                        value={formData.customerSegment}
+                                        name="customer_segment"
+                                        value={formData.customer_segment}
                                         onChange={handleChange}
                                         options={[
-                                            { value: 'salaried', label: 'Salaried' },
-                                            { value: 'self-employed', label: 'Self-employed' },
-                                            { value: 'sme', label: 'SME' },
+                                            { value: 'Salaried', label: 'Salaried' },
+                                            { value: 'Self-employed', label: 'Self-employed' },
+                                            { value: 'SME', label: 'SME' },
                                         ]}
                                     />
                                 </div>
@@ -171,9 +172,9 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Min Loan Amount (AED)</Label>
                                     <Input
-                                        name="minLoanAmount"
+                                        name="min_loan_amount"
                                         type="number"
-                                        value={formData.minLoanAmount?.toString() || ''}
+                                        value={formData.min_loan_amount?.toString() || ''}
                                         onChange={handleChange}
                                         placeholder="e.g. 10000"
                                         required
@@ -182,9 +183,9 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Max Loan Amount (AED)</Label>
                                     <Input
-                                        name="maxLoanAmount"
+                                        name="max_loan_amount"
                                         type="number"
-                                        value={formData.maxLoanAmount?.toString() || ''}
+                                        value={formData.max_loan_amount?.toString() || ''}
                                         onChange={handleChange}
                                         placeholder="e.g. 500000"
                                         required
@@ -193,9 +194,9 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Min Tenure (Months)</Label>
                                     <Input
-                                        name="minTenure"
+                                        name="min_tenure"
                                         type="number"
-                                        value={formData.minTenure?.toString() || ''}
+                                        value={formData.min_tenure?.toString() || ''}
                                         onChange={handleChange}
                                         placeholder="e.g. 12"
                                         required
@@ -204,9 +205,9 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Max Tenure (Months)</Label>
                                     <Input
-                                        name="maxTenure"
+                                        name="max_tenure"
                                         type="number"
-                                        value={formData.maxTenure?.toString() || ''}
+                                        value={formData.max_tenure?.toString() || ''}
                                         onChange={handleChange}
                                         placeholder="e.g. 60"
                                         required
@@ -225,12 +226,12 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Processing Fee (%)</Label>
+                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Processing Fee</Label>
                                     <Input
-                                        name="processingFeePercent"
+                                        name="processing_fee"
                                         type="number"
                                         step="0.1"
-                                        value={formData.processingFeePercent?.toString() || ''}
+                                        value={formData.processing_fee?.toString() || ''}
                                         onChange={handleChange}
                                         placeholder="e.g. 1.5"
                                         required
@@ -239,23 +240,27 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Priority Score (0-100)</Label>
                                     <Input
-                                        name="priorityScore"
+                                        name="priority_score"
                                         type="number"
                                         min="0"
                                         max="100"
-                                        value={formData.priorityScore?.toString() || ''}
+                                        value={formData.priority_score?.toString() || ''}
                                         onChange={handleChange}
                                         placeholder="e.g. 85"
                                         required
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Default SLA Template</Label>
-                                    <Select
-                                        name="defaultSLATemplate"
-                                        value={formData.defaultSLATemplate}
-                                        onChange={handleChange}
-                                        options={slaTemplates}
+                                    <ApiSearchableSelect
+                                        label='Default SLA Template'
+                                        fetchFn={getSLAs as any}
+                                        valueKey="id"
+                                        labelKey="template_name"
+                                        value={formData.sla_template_id ? Number(formData.sla_template_id) : undefined}
+                                        onChange={(val) => setFormData((prev: any) => ({ ...prev, sla_template_id: Number(val) }))}
+                                        initialOptions={formData.sla_template_id && formData.defaultSLATemplateName ? [{ id: Number(formData.sla_template_id), template_name: formData.defaultSLATemplateName } as any] : []}
+                                        placeholder="Select an SLA template..."
+                                        required
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -273,8 +278,8 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                                 <div className="space-y-2 md:col-span-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Internal Notes</Label>
                                     <textarea
-                                        name="internalNotes"
-                                        value={formData.internalNotes}
+                                        name="internal_notes"
+                                        value={formData.internal_notes}
                                         onChange={handleChange}
                                         placeholder="Add any internal notes about this product..."
                                         rows={4}
@@ -294,11 +299,19 @@ export function BankProductForm({ bankProduct, onSave, title, onCancel }: BankPr
                     >
                         Discard Changes
                     </button>
+
                     <button
                         type="submit"
-                        className="w-full sm:w-auto px-10 py-3 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand/90 transition-all shadow-lg active:scale-[0.98] order-1 sm:order-2"
+                        className="w-full sm:w-auto px-10 py-3 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand/90 transition-all shadow-lg active:scale-[0.98] order-1 sm:order-2 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        disabled={isSubmitting}
                     >
-                        Save Product
+                        {isSubmitting && (
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        )}
+                        {isSubmitting ? 'Saving...' : 'Save Product'}
                     </button>
                 </div>
             </form>

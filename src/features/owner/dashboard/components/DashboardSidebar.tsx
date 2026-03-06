@@ -187,16 +187,14 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
             >
                 {/* Logo / Branding */}
                 <div className={`p-8 pb-4 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
-                    <div className={`flex items-center ${isCollapsed ? 'gap-0' : 'gap-3'}`}>
+                    <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl executive-header flex items-center justify-center shadow-md shrink-0">
                             <span className="text-white font-bold text-xl">D</span>
                         </div>
-                        {!isCollapsed && (
-                            <div className="transition-opacity duration-200">
-                                <h2 className="text-lg font-bold tracking-tight text-foreground">Dubai Finance</h2>
-                                <p className="text-[10px] text-text-muted uppercase tracking-[0.2em] font-medium">Wealth Management</p>
-                            </div>
-                        )}
+                        <div className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed ? 'w-0 opacity-0' : 'w-32 opacity-100'}`}>
+                            <h2 className="text-lg font-bold tracking-tight text-foreground">Dubai Finance</h2>
+                            <p className="text-[10px] text-text-muted uppercase tracking-[0.2em] font-medium">Wealth Management</p>
+                        </div>
                     </div>
 
                     {/* Mobile Close Button */}
@@ -227,69 +225,43 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                         const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
                         const isExpanded = expandedItems.includes(item.name);
 
-                        // For collapsed state, only show icons
-                        if (isCollapsed) {
-                            return (
-                                <div key={item.name} className="relative group">
-                                    {hasSubItems ? (
-                                        <div
-                                            onClick={() => toggleExpand(item.name)}
-                                            className={`w-full flex items-center justify-center p-3.5 rounded-xl transition-all duration-200 cursor-pointer
-                                                ${isActive ? 'bg-brand/10 text-brand' : 'text-text-secondary hover:bg-muted hover:text-foreground'}`}
-                                        >
-                                            <div className="text-current">
-                                                {item.icon}
-                                            </div>
-                                            {/* Tooltip */}
-                                            <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
-                                                {item.name}
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <Link
-                                            href={item.href}
-                                            onClick={() => onClose?.()}
-                                            className={`w-full flex items-center justify-center p-3.5 rounded-xl transition-all duration-200
-                                                ${isActive ? 'bg-brand/10 text-brand' : 'text-text-secondary hover:bg-muted hover:text-foreground'}`}
-                                        >
-                                            <div className="text-current">
-                                                {item.icon}
-                                            </div>
-                                            {/* Tooltip */}
-                                            <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
-                                                {item.name}
-                                            </div>
-                                        </Link>
-                                    )}
-                                </div>
-                            );
-                        }
-
-                        // Expanded state (normal view)
+                        // Unified rendering for smooth transition
                         const content = (
                             <div
-                                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group cursor-pointer ${isActive && !hasSubItems
-                                    ? 'bg-brand/10 text-brand shadow-sm border border-brand/20'
-                                    : 'text-text-secondary hover:bg-muted hover:text-foreground'
+                                className={`w-full flex items-center gap-4 py-3.5 rounded-xl transition-all duration-300 group relative ${isCollapsed ? 'px-0 justify-center' : 'px-4 cursor-pointer'
+                                    } ${isActive && !hasSubItems
+                                        ? 'bg-brand/10 text-brand shadow-sm border border-brand/20'
+                                        : 'text-text-secondary hover:bg-muted hover:text-foreground'
                                     } ${hasSubItems && isActive ? 'text-brand' : ''}`}
                             >
-                                <div className={`transition-colors duration-200 ${isActive ? 'text-brand' : 'text-text-muted group-hover:text-text-secondary'}`}>
+                                <div className={`shrink-0 transition-colors duration-200 flex items-center justify-center ${isActive ? 'text-brand' : 'text-text-muted group-hover:text-text-secondary'}`}>
                                     {item.icon}
                                 </div>
-                                <span className="text-base font-semibold tracking-wide">{item.name}</span>
-                                {isActive && !hasSubItems && (
-                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(230,192,79,0.5)]"></div>
+                                <span className={`text-base font-semibold tracking-wide whitespace-nowrap transition-all duration-300 overflow-hidden ${isCollapsed ? 'w-0 opacity-0' : 'flex-1 opacity-100'}`}>
+                                    {item.name}
+                                </span>
+                                {isActive && !hasSubItems && !isCollapsed && (
+                                    <div className={`ml-auto shrink-0 w-1.5 h-1.5 rounded-full bg-brand shadow-[0_0_8px_rgba(230,192,79,0.5)] transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 h-0 hidden' : 'opacity-100'}`}></div>
                                 )}
-                                {hasSubItems && (
-                                    <svg className={`ml-auto w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                                {hasSubItems && !isCollapsed && (
+                                    <svg className={`ml-auto shrink-0 w-4 h-4 transition-all duration-300 ${isExpanded ? 'rotate-180' : ''} ${isCollapsed ? 'opacity-0 w-0 hidden' : 'opacity-100'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                                 )}
+
+                                {/* Tooltip for collapsed state */}
+                                <div className={`absolute left-full ml-4 px-2 py-1 bg-popover text-popover-foreground text-xs rounded transition-all whitespace-nowrap z-50 shadow-md border border-border pointer-events-none ${isCollapsed ? 'opacity-0 invisible group-hover:opacity-100 group-hover:visible' : 'hidden'}`}>
+                                    {item.name}
+                                </div>
                             </div>
                         );
 
                         return (
-                            <div key={item.name} className="space-y-1">
-                                {hasSubItems ? (
+                            <div key={item.name} className={`space-y-1 relative group/container ${hasSubItems && !isCollapsed ? 'cursor-pointer' : ''}`}>
+                                {hasSubItems && !isCollapsed ? (
                                     <div onClick={() => toggleExpand(item.name)}>
+                                        {content}
+                                    </div>
+                                ) : hasSubItems && isCollapsed ? (
+                                    <div>
                                         {content}
                                     </div>
                                 ) : (
@@ -299,8 +271,8 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                                 )}
 
                                 {/* Render Sub Items if expanded */}
-                                {hasSubItems && isExpanded && (
-                                    <div className="ml-12 space-y-1 animate-in slide-in-from-top-2 duration-300">
+                                <div className={`transition-all duration-300 overflow-hidden ${hasSubItems && isExpanded && !isCollapsed ? 'max-h-[500px] opacity-100 mt-1' : 'max-h-0 opacity-0'}`}>
+                                    <div className="ml-12 space-y-1">
                                         {item.subItems?.map((sub) => {
                                             const isSubActive = pathname === sub.href;
                                             return (
@@ -308,36 +280,36 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                                                     key={sub.name}
                                                     href={sub.href}
                                                     onClick={() => onClose?.()}
-                                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all ${isSubActive
+                                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${isSubActive
                                                         ? 'text-brand bg-brand/5'
                                                         : 'text-text-muted hover:text-foreground hover:bg-muted'
                                                         }`}
                                                 >
-                                                    <div className={`w-1.5 h-1.5 rounded-full transition-colors ${isSubActive ? 'bg-brand' : 'bg-transparent'}`}></div>
+                                                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 transition-colors ${isSubActive ? 'bg-brand' : 'bg-transparent'}`}></div>
                                                     {sub.name}
                                                 </Link>
                                             );
                                         })}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         );
                     })}
                 </nav>
 
                 {/* User Profile Summary */}
-                <div className={`p-4 border-t border-border mt-auto space-y-2 ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
+                <div className={`p-4 border-t border-border mt-auto space-y-2 relative`}>
                     <button
                         onClick={() => router.push('/login')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-text-muted hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100 dark:hover:bg-red-950/20 ${isCollapsed ? 'justify-center' : ''}`}
+                        className={`w-full flex items-center gap-3 py-3 rounded-xl text-xs font-bold text-text-muted hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100 dark:hover:bg-red-950/20 group relative ${isCollapsed ? 'justify-center px-0' : 'px-4'}`}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
-                        {!isCollapsed && 'Sign Out'}
-                        {isCollapsed && (
-                            <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
-                                Sign Out
-                            </div>
-                        )}
+                        <div className="shrink-0 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
+                        </div>
+                        <span className={`whitespace-nowrap transition-all duration-300 overflow-hidden ${isCollapsed ? 'w-0 opacity-0' : 'flex-1 text-left opacity-100'}`}>Sign Out</span>
+                        <div className={`absolute left-full ml-4 px-2 py-1 bg-popover text-popover-foreground text-xs rounded transition-all whitespace-nowrap z-50 shadow-md border border-border pointer-events-none ${isCollapsed ? 'opacity-0 invisible group-hover:opacity-100 group-hover:visible' : 'hidden'}`}>
+                            Sign Out
+                        </div>
                     </button>
                 </div>
             </aside>

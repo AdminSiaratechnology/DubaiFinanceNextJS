@@ -1,42 +1,24 @@
-'use client'
+import { notFound } from 'next/navigation';
+import { getCommissionById } from '@/features/owner/commission/api/commission.api';
+import { CommissionForm } from '@/features/owner/commission/components/CommissionForm';
 
-import React from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import { mockCommissionRules } from '@/lib/mock/commissionRules'
-import { CommissionForm } from '@/features/owner/commission/components/CommissionForm'
-
-export default function EditCommissionPage() {
-    const router = useRouter()
-    const params = useParams()
-    const id = params.id as string
-
-    const commission = mockCommissionRules.find(c => c.id === id)
-    const handleSave = (data: any) => {
-        console.log('Commission Updated:', data)
-        // TODO: Add logic here to update in store/API
-        router.push('/owner/commission')
-    }
+export default async function EditCommissionPage({
+    params,
+}: {
+    params: { id: string };
+}) {
+    const { id } = await params;
+    const commission = await getCommissionById(Number(id));
 
     if (!commission) {
-        return (
-            <div className="flex flex-col items-center justify-center h-96 text-text-muted">
-                <p>Commission not found</p>
-                <button
-                    onClick={() => router.push('/owner/commission')}
-                    className="mt-4 text-brand font-bold hover:underline"
-                >
-                    Return to List
-                </button>
-            </div>
-        )
+        notFound();
     }
 
     return (
         <CommissionForm
-            commissionForm={commission}
+            commission={commission}
+            commissionId={Number(id)}
             title={`Edit Commission Rule`}
-            onSave={handleSave}
-            onCancel={() => router.push('/owner/commission')}
         />
-    )
+    );
 }
