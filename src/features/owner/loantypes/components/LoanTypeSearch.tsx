@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 interface LoanTypeSearchProps {
@@ -13,33 +13,40 @@ export function LoanTypeSearch({
     filterOptions = ['active', 'inactive'],
 }: LoanTypeSearchProps) {
     const searchParams = useSearchParams();
-    const router = useRouter();
-
-    const query = searchParams.get('query') || '';
-    const status = searchParams.get('status') || '';
-
-    const updateParams = (key: string, value: string) => {
-        const params = new URLSearchParams(searchParams.toString());
-
-        // Reset pagination when searching/filtering
-        params.set('page', '1');
-
-        if (value) {
-            params.set(key, value);
-        } else {
-            params.delete(key);
-        }
-
-        router.push(`?${params.toString()}`);
-    };
-
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        updateParams('query', e.target.value);
-    };
-
-    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        updateParams('status', e.target.value);
-    };
+        const router = useRouter();
+        const [searchValue, setSearchValue] = useState(searchParams.get('query') || '');
+        const status = searchParams.get('status') || '';
+    
+        const updateParams = (key: string, value: string) => {
+            const params = new URLSearchParams(searchParams.toString());
+    
+            params.set('page', '1');
+    
+            if (value) {
+                params.set(key, value);
+            } else {
+                params.delete(key);
+            }
+    
+            router.push(`?${params.toString()}`);
+        };
+    
+        // debounce search
+        useEffect(() => {
+            const timer = setTimeout(() => {
+                updateParams('query', searchValue);
+            }, 500);
+    
+            return () => clearTimeout(timer);
+        }, [searchValue]);
+    
+        const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+            setSearchValue(e.target.value);
+        };
+    
+        const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+            updateParams('status', e.target.value);
+        };
 
     return (
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -63,7 +70,7 @@ export function LoanTypeSearch({
 
                 <input
                     type="search"
-                    value={query}
+                    value={searchValue}
                     onChange={handleSearch}
                     placeholder="Search loan types..."
                     className="w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all placeholder:text-text-muted/50"

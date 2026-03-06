@@ -1,14 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
-import { BankProduct } from '@/lib/mock/bankProducts';
+import { BankProduct } from '../api/bankproducts.api';
 import { BankProductActions } from './BankProductActions';
 import { BankProductSearch } from './BankProductSearch';
-
+import { Pagination } from '@/components/ui/Pagination';
 interface BankProductTableProps {
     bankProducts: BankProduct[];
+    page: number;
+    total: number;
+    limit: number;
 }
 
-const segmentLabels = {
+const segmentLabels: Record<string, string> = {
+    Salaried: 'Salaried',
+    'Self-employed': 'Self-employed',
+    SME: 'SME',
     salaried: 'Salaried',
     'self-employed': 'Self-employed',
     sme: 'SME'
@@ -22,12 +28,12 @@ const formatCurrency = (amount: number) => {
     }).format(amount);
 };
 
-export function BankProductTable({ bankProducts }: BankProductTableProps) {
+export function BankProductTable({ bankProducts, page, total, limit }: BankProductTableProps) {
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
                 <div className="w-full sm:w-auto">
-                    <BankProductSearch />
+                    <BankProductSearch showFilter={true} />
                 </div>
                 <Link
                     href="/owner/bankproducts/new"
@@ -43,6 +49,7 @@ export function BankProductTable({ bankProducts }: BankProductTableProps) {
                     <table className="w-full text-left border-collapse min-w-[1100px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Product Details</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Bank</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Segment</th>
@@ -57,49 +64,52 @@ export function BankProductTable({ bankProducts }: BankProductTableProps) {
                                 bankProducts.map((product) => (
                                     <tr key={product.id} className="hover:bg-muted/30 transition-colors group">
                                         <td className="p-3 sm:p-4">
+                                            <p className="text-xs font-bold text-foreground">{product.id}</p>
+                                        </td>
+                                        <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-2 sm:gap-3">
                                                 <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-teal-soft text-teal flex items-center justify-center font-bold text-xs border border-teal/20">
-                                                    {product.loanTypeName.substring(0, 2).toUpperCase()}
+                                                    {product.loan_type?.name?.substring(0, 2).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <p className="text-xs sm:text-sm font-bold text-foreground leading-tight">{product.productName}</p>
-                                                    <p className="text-[9px] sm:text-[10px] text-text-muted mt-0.5">{product.loanTypeName}</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-foreground leading-tight">{product.product_name}</p>
+                                                    <p className="text-[9px] sm:text-[10px] text-text-muted mt-0.5">{product.loan_type?.name}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4">
-                                            <p className="text-xs font-bold text-foreground">{product.bankName}</p>
+                                            <p className="text-xs font-bold text-foreground">{product.bank?.name}</p>
                                         </td>
                                         <td className="p-3 sm:p-4">
-                                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${product.customerSegment === 'salaried'
-                                                    ? 'bg-blue-soft text-blue border-blue/10'
-                                                    : product.customerSegment === 'self-employed'
-                                                        ? 'bg-purple-soft text-purple border-purple/10'
-                                                        : 'bg-orange-soft text-orange border-orange/10'
+                                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${product.customer_segment?.toLowerCase() === 'salaried'
+                                                ? 'bg-blue-soft text-blue border-blue/10'
+                                                : product.customer_segment?.toLowerCase() === 'self-employed'
+                                                    ? 'bg-purple-soft text-purple border-purple/10'
+                                                    : 'bg-orange-soft text-orange border-orange/10'
                                                 }`}>
-                                                {segmentLabels[product.customerSegment]}
+                                                {segmentLabels[product.customer_segment] || product.customer_segment}
                                             </span>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="space-y-0.5">
                                                 <p className="text-[10px] font-bold text-foreground">
-                                                    {formatCurrency(product.minLoanAmount)} - {formatCurrency(product.maxLoanAmount)}
+                                                    {formatCurrency(product.min_loan_amount)} - {formatCurrency(product.max_loan_amount)}
                                                 </p>
                                                 <p className="text-[9px] text-text-muted">
-                                                    {product.minTenure}-{product.maxTenure} months
+                                                    {product.min_tenure}-{product.max_tenure} months
                                                 </p>
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4 text-center">
                                             <div className="flex flex-col items-center gap-1">
-                                                <span className="text-sm font-bold text-foreground">{product.priorityScore}</span>
+                                                <span className="text-sm font-bold text-foreground">{product.priority_score}</span>
                                                 <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                                                     <div
-                                                        className={`h-full ${product.priorityScore >= 90 ? 'bg-green' :
-                                                                product.priorityScore >= 75 ? 'bg-teal' :
-                                                                    product.priorityScore >= 50 ? 'bg-orange' : 'bg-red'
+                                                        className={`h-full ${product.priority_score >= 90 ? 'bg-green' :
+                                                            product.priority_score >= 75 ? 'bg-teal' :
+                                                                product.priority_score >= 50 ? 'bg-orange' : 'bg-red'
                                                             }`}
-                                                        style={{ width: `${product.priorityScore}%` }}
+                                                        style={{ width: `${product.priority_score}%` }}
                                                     />
                                                 </div>
                                             </div>
@@ -113,7 +123,7 @@ export function BankProductTable({ bankProducts }: BankProductTableProps) {
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4 text-right">
-                                            <BankProductActions id={product.id} />
+                                            <BankProductActions id={Number(product.id)} />
                                         </td>
                                     </tr>
                                 ))
@@ -128,6 +138,7 @@ export function BankProductTable({ bankProducts }: BankProductTableProps) {
                     </table>
                 </div>
             </div>
+            <Pagination page={page} total={total} limit={limit} />
         </div>
     );
 }

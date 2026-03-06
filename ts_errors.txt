@@ -1,0 +1,2 @@
+src/components/ui/Skeleton.tsx(33,59): error TS2322: Type '{ key: number; className: string; style: { width: number; }; }' is not assignable to type 'IntrinsicAttributes & { className?: string | undefined; }'.
+  Property 'style' does not exist on type 'IntrinsicAttributes & { className?: string | undefined; }'.

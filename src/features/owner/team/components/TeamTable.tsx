@@ -1,15 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
-import { TeamMember } from '@/lib/mock/team';
+import { Coordinator } from '../api/analyst.api';
 import { TeamActions } from './TeamActions';
 import { TeamSearch } from './TeamSearch';
+import { Pagination } from '@/components/ui/Pagination';
 
 interface TeamTableProps {
-    members: TeamMember[];
+    members: Coordinator[];
     role: 'analyst' | 'telecaller';
+    page: number;
+    total: number;
+    limit: number;
 }
 
-export function TeamTable({ members, role }: TeamTableProps) {
+export function TeamTable({ members, role, page, total, limit }: TeamTableProps) {
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
@@ -30,6 +34,7 @@ export function TeamTable({ members, role }: TeamTableProps) {
                     <table className="w-full text-left border-collapse min-w-[800px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Full Name</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Contact</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">Experience</th>
@@ -43,44 +48,47 @@ export function TeamTable({ members, role }: TeamTableProps) {
                                 members.map((member) => (
                                     <tr key={member.id} className="hover:bg-muted/30 transition-colors group">
                                         <td className="p-3 sm:p-4">
+                                            <p className="text-xs font-bold text-foreground">{member.id}</p>
+                                        </td>
+                                        <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-2 sm:gap-3">
                                                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold text-[10px] sm:text-xs">
-                                                    {member.fullName.split(' ').map(n => n[0]).join('')}
+                                                    {member.name.split(' ').map(n => n[0]).join('')}
                                                 </div>
                                                 <div>
-                                                    <p className="text-xs sm:text-sm font-bold text-foreground leading-tight">{member.fullName}</p>
-                                                    <p className="text-[9px] sm:text-[10px] text-text-muted mt-0.5">Joined: {member.joinedDate}</p>
+                                                    <p className="text-xs sm:text-sm font-bold text-foreground leading-tight">{member.name}</p>
+                                                    <p className="text-[9px] sm:text-[10px] text-text-muted mt-0.5">Joined: {member.created_at ? new Date(member.created_at).toLocaleDateString() : '-'}</p>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="space-y-0.5">
                                                 <p className="text-[11px] sm:text-xs font-medium text-foreground">{member.email}</p>
-                                                <p className="text-[9px] sm:text-[10px] text-text-muted">{member.mobile}</p>
+                                                <p className="text-[9px] sm:text-[10px] text-text-muted">{member.phone}</p>
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4 text-center">
                                             <span className="px-2 py-0.5 sm:py-1 bg-blue-soft text-blue rounded-md text-[9px] sm:text-[10px] font-bold border border-blue/10">
-                                                {member.experience}
+                                                {member.experience} Years
                                             </span>
                                         </td>
                                         <td className="p-3 sm:p-4">
-                                            <p className="text-[11px] sm:text-xs font-medium text-text-secondary font-mono">{member.emiratesId}</p>
+                                            <p className="text-[11px] sm:text-xs font-medium text-text-secondary font-mono">{member.emirates_id}</p>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="space-y-0.5">
-                                                <p className="text-[9px] sm:text-[10px] font-bold text-foreground leading-tight">{member.bankName}</p>
-                                                <p className="text-[8px] sm:text-[9px] text-text-muted font-mono">{member.iban}</p>
+                                                <p className="text-[9px] sm:text-[10px] font-bold text-foreground leading-tight">{member.bank_name || '-'}</p>
+                                                <p className="text-[8px] sm:text-[9px] text-text-muted font-mono">{member.iban || '-'}</p>
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4 text-right">
-                                            <TeamActions id={member.id} role={role} />
+                                            <TeamActions id={String(member.id)} role={role} />
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={6} className="p-12 text-center text-text-muted italic">
+                                    <td colSpan={7} className="p-12 text-center text-text-muted italic">
                                         No {role}s found matching your search.
                                     </td>
                                 </tr>
@@ -89,6 +97,7 @@ export function TeamTable({ members, role }: TeamTableProps) {
                     </table>
                 </div>
             </div>
+            <Pagination page={page} total={total} limit={limit} />
         </div>
     );
 }

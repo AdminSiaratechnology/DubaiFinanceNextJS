@@ -11,7 +11,9 @@ async function handler(
     const { path } = await context.params;
     const { searchParams } = new URL(req.url);
 
-    const url = `${BACKEND_URL}/${path.join("/")}${searchParams.toString() ? `?${searchParams.toString()}` : ""
+    const pathString = path.join("/").replace(/\/$/, "");
+
+    const url = `${BACKEND_URL}/${pathString}/${searchParams.toString() ? `?${searchParams.toString()}` : ""
         }`;
 
     // 1) Safely read the exact raw binary of the request (works perfectly for multipart/form-data)

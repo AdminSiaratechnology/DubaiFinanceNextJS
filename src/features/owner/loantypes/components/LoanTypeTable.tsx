@@ -22,7 +22,7 @@ export function LoanTypeTable({
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
         <div className="w-full sm:w-auto">
-          <LoanTypeSearch showFilter/>
+          <LoanTypeSearch showFilter />
         </div>
         <Link
           href="/owner/loanTypes/new"
@@ -41,6 +41,7 @@ export function LoanTypeTable({
           <table className="w-full text-left border-collapse min-w-[700px] lg:min-w-0">
             <thead>
               <tr className="bg-muted/50 border-b border-border">
+                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">
                   Loan Type Name
                 </th>
@@ -60,6 +61,9 @@ export function LoanTypeTable({
               {loanTypes.length > 0 ? (
                 loanTypes.map((loanType) => (
                   <tr key={loanType.id} className="hover:bg-muted/30 transition-colors group">
+                    <td className="p-3 sm:p-4">
+                      <p className="text-xs font-bold text-foreground">{loanType.id}</p>
+                    </td>
                     <td className="p-3 sm:p-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-lg bg-purple-soft text-purple flex items-center justify-center font-bold text-xs border border-purple/20">
@@ -82,16 +86,14 @@ export function LoanTypeTable({
                     <td className="p-3 sm:p-4">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`w-2 h-2 rounded-full ${
-                            loanType.status === 'active' ? 'bg-green' : 'bg-red'
-                          }`}
+                          className={`w-2 h-2 rounded-full ${loanType.status === 'active' ? 'bg-green' : 'bg-red'
+                            }`}
                         />
                         <span
-                          className={`text-xs font-bold ${
-                            loanType.status === 'active'
+                          className={`text-xs font-bold ${loanType.status === 'active'
                               ? 'text-green'
                               : 'text-red'
-                          }`}
+                            }`}
                         >
                           {loanType.status === 'active' ? 'Active' : 'Inactive'}
                         </span>

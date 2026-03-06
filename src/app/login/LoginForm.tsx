@@ -28,7 +28,11 @@ export function LoginForm() {
             setUser(me.data);
             if (role === 'admin') {
                 router.push('/owner/dashboard');
-            } else {
+            }
+            else if (role === 'coordinator') {
+                router.push('/dashboard/analyst/main');
+            }
+            else {
                 router.push('/user');
             }
         } catch (err: any) {

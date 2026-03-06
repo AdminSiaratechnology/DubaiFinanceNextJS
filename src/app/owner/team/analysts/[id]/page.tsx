@@ -1,32 +1,27 @@
-'use client';
-
 import React from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { mockAnalysts } from '@/lib/mock/team';
+import { notFound } from 'next/navigation';
+import { getCoordinatorById } from '@/features/owner/team/api/analyst.api';
 import { MemberForm } from '@/features/owner/team/components/MemberForm';
+import Link from 'next/link';
 
-export default function EditAnalystPage() {
-    const router = useRouter();
-    const params = useParams();
-    const id = params.id as string;
-
-    const member = mockAnalysts.find(m => m.id === id);
-
-    const handleSave = (data: any) => {
-        console.log('Analyst Updated:', data);
-        // Add logic here to update in store/API
-    };
+export default async function EditAnalystPage({
+    params
+}: {
+    params: { id: string }
+}) {
+    const { id } = await params;
+    const member = await getCoordinatorById(Number(id));
 
     if (!member) {
         return (
             <div className="flex flex-col items-center justify-center h-96 text-text-muted">
                 <p>Analyst not found</p>
-                <button
-                    onClick={() => router.push('/owner/team/analysts')}
-                    className="mt-4 text-brand font-bold hover:underline"
+                <Link
+                    href="/owner/team/analysts"
+                    className="mt-4 text-brand font-bold hover:underline underline-offset-4"
                 >
                     Return to List
-                </button>
+                </Link>
             </div>
         );
     }
@@ -34,10 +29,9 @@ export default function EditAnalystPage() {
     return (
         <MemberForm
             member={member}
-            title={`Edit Analyst: ${member.fullName}`}
+            memberId={Number(id)}
+            title={`Edit Analyst: ${member.name}`}
             role="analyst"
-            onSave={handleSave}
-            onCancel={() => router.push('/owner/team/analysts')}
         />
     );
 }

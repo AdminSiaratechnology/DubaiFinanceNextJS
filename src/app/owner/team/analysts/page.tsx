@@ -1,21 +1,24 @@
 import React from 'react';
-import { mockAnalysts } from '@/lib/mock/team';
 import { PageHeader } from '@/components/PageHeader';
 import { TeamTable } from '@/features/owner/team/components/TeamTable';
+import { getCoordinators } from '@/features/owner/team/api/analyst.api';
 
 export default async function AnalystsPage({
     searchParams
 }: {
-    searchParams: Promise<{ query?: string }>
+    searchParams: Promise<{ query?: string; page?: string; status?: string }>
 }) {
     const params = await searchParams;
-    const query = params.query?.toLowerCase() || '';
+    const query = params.query || '';
+    const page = Number(params.page) || 1;
+    const status = params.status || '';
 
-    const filteredMembers = mockAnalysts.filter(m =>
-        m.fullName.toLowerCase().includes(query) ||
-        m.email.toLowerCase().includes(query) ||
-        m.emiratesId.toLowerCase().includes(query)
-    );
+    const response = await getCoordinators({
+        search: query,
+        page,
+        limit: 10,
+        status
+    });
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
@@ -24,7 +27,13 @@ export default async function AnalystsPage({
                 description="Review and manage your credit analysts and case handlers."
             />
 
-            <TeamTable members={filteredMembers} role="analyst" />
+            <TeamTable
+                members={response.items}
+                role="analyst"
+                page={response.page}
+                total={response.total}
+                limit={response.limit}
+            />
         </div>
     );
 }

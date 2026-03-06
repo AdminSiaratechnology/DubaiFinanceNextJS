@@ -18,7 +18,6 @@ export default async function BanksPage({
         search: query,
         status,
     });
-    console.log(data)
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
             <PageHeader

@@ -26,8 +26,7 @@ export function OwnerLayoutClient({
                 onHoverChange={setIsSidebarHovered}
             />
             <div className="flex-1 flex flex-col min-w-0 relative">
-                <div className="fixed top-0 right-0 z-40 transition-all duration-300 pointer-events-none p-4 sm:p-6 sm:pt-4"
-                    style={{ left: typeof window !== 'undefined' && window.innerWidth < 1024 ? '0' : (isSidebarCollapsed ? '80px' : '288px') }}>
+                <div className={`fixed top-0 right-0 left-0 z-40 transition-all duration-300 pointer-events-none p-4 sm:p-6 sm:pt-4 ${isSidebarCollapsed ? 'lg:left-[80px]' : 'lg:left-[288px]'}`}>
                     <div className="pointer-events-auto">
                         <DashboardHeader onMenuClick={() => setIsSidebarOpen(true)} />
                     </div>

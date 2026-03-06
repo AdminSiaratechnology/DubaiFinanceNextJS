@@ -41,7 +41,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
     return (
         <header className="rounded-xl executive-header p-4 sm:p-6 flex items-center justify-between gap-4 shadow-lg text-white overflow-hidden relative group w-full">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
                 {/* Mobile Trigger */}
                 <button
                     onClick={onMenuClick}
@@ -55,14 +55,14 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                         <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
                     </svg>
                 </div>
-                <div className="text-left">
-                    <h1 className="text-lg sm:text-2xl font-light tracking-wide leading-tight">Executive Command Center</h1>
-                    <p className="text-white/80 text-[10px] sm:text-xs font-medium tracking-wider uppercase mt-0.5">Business Intelligence & Control</p>
+                <div className="text-left min-w-0 flex-1">
+                    <h1 className="text-lg sm:text-2xl font-light tracking-wide leading-tight truncate">Executive Command Center</h1>
+                    <p className="text-white/80 text-[10px] sm:text-xs font-medium tracking-wider uppercase mt-0.5 truncate">Business Intelligence & Control</p>
                 </div>
             </div>
 
             {/* Right Side Icons (Optional for desktop) */}
-            <div className="hidden sm:flex items-center gap-3 cursor-pointer" onClick={handleViewProfile}>
+            <div className="hidden sm:flex items-center gap-3 cursor-pointer shrink-0" onClick={handleViewProfile}>
                 <div className="flex flex-col items-end">
                     <p className="text-xl font-medium">{getDisplayName()}</p>
                     <p className="text-[12px] text-white/80">{getRoleTitle()}</p>

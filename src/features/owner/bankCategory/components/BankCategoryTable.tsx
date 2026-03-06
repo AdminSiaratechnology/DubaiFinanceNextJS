@@ -41,6 +41,7 @@ export function BankCategoryTable({
                     <table className="w-full text-left border-collapse min-w-[700px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">
                                     Bank Category Name
                                 </th>
@@ -60,6 +61,9 @@ export function BankCategoryTable({
                             {bankCategories.length > 0 ? (
                                 bankCategories.map((bankCategory) => (
                                     <tr key={bankCategory.id} className="hover:bg-muted/30 transition-colors group">
+                                        <td className="p-3 sm:p-4">
+                                            <p className="text-xs font-bold text-foreground">{bankCategory.id}</p>
+                                        </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-lg bg-purple-soft text-purple flex items-center justify-center font-bold text-xs border border-purple/20">
