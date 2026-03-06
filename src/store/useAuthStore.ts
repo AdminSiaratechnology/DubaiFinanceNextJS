@@ -1,9 +1,18 @@
 import { create } from 'zustand';
 
-type Role = 'admin' | 'agent' | 'analyst';
+type Role = 'admin' | 'agent' | 'analyst' | 'telecaller' | 'coordinator';
 
 interface User {
+    id: number;
+    email: string;
     role: Role;
+    name?: string;
+    telecaller_profile?: {
+        name: string;
+    };
+    coordinator_profile?: {
+        name: string;
+    };
 }
 
 interface AuthState {

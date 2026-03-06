@@ -38,18 +38,38 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
             setFormData(initialData);
         }
     }, [initialData]);
-
     const isAdmin = formData?.role === 'admin';
+    const isTelecaller = formData?.role === 'telecaller';
+    const isCoordinator = formData?.role === 'coordinator' || formData?.role === 'analyst';
+
+    const profileKey = isAdmin
+        ? 'admin_profile'
+        : isTelecaller
+            ? 'telecaller_profile'
+            : (isCoordinator)
+                ? 'coordinator_profile'
+                : null;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        // Handle nested admin_profile updates
-        if (isAdmin && (name === 'name' || name === 'phone' || name === 'address')) {
+        if (profileKey && (
+            name === 'name' ||
+            name === 'phone' ||
+            name === 'address' ||
+            name === 'emirates_id' ||
+            name === 'nationality' ||
+            name === 'experience' ||
+            name === 'bank_name' ||
+            name === 'iban' ||
+            name === 'account_number' ||
+            name === 'account_holder_name'
+        )) {
             setFormData((prev: any) => ({
                 ...prev,
-                admin_profile: {
-                    ...prev.admin_profile,
-                    [name]: value
+                [profileKey]: {
+                    ...prev[profileKey],
+                    [name]: name === 'experience' ? Number(value) : value
                 }
             }));
             return;
@@ -91,7 +111,7 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
                     </button>
 
                     <div className="hidden sm:flex text-xs font-semibold text-text-muted bg-card/30 px-4 py-2 rounded-xl border border-border uppercase tracking-widest">
-                        Last updated: {isAdmin ? new Date(formData.updated_at).toLocaleDateString() : 'Today at 2:30 PM'}
+                        Last updated: {formData?.updated_at ? new Date(formData.updated_at).toLocaleDateString() : 'N/A'}
                     </div>
                 </div>
 
@@ -167,8 +187,8 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
                                     <>
                                         <Field label="Full Name">
                                             <Input
-                                                name="fullName"
-                                                value={formData.fullName || ''}
+                                                name="name"
+                                                value={formData[profileKey || '']?.name || ''}
                                                 onChange={handleChange}
                                                 placeholder="Enter your full name"
                                                 required
@@ -188,8 +208,8 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
 
                                         <Field label="Mobile Number">
                                             <Input
-                                                name="mobile"
-                                                value={formData.mobile || ''}
+                                                name="phone"
+                                                value={formData[profileKey || '']?.phone || ''}
                                                 onChange={handleChange}
                                                 placeholder="+971 XX XXX XXXX"
                                                 className="h-12 text-base bg-muted/20 border-border"
@@ -198,47 +218,45 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
 
                                         <Field label="Emirates ID">
                                             <Input
-                                                name="emiratesId"
-                                                value={formData.emiratesId || ''}
+                                                name="emirates_id"
+                                                value={formData[profileKey || '']?.emirates_id || ''}
                                                 onChange={handleChange}
                                                 placeholder="784-XXXX-XXXXXXX-X"
                                                 className="h-12 text-base bg-muted/20 border-border"
                                             />
                                         </Field>
 
-                                        <Field label="Nationality">
-                                            <CountrySearchableSelect
-                                                label="Nationality"
-                                                value={formData.nationality || null}
-                                                onChange={(value) => setFormData((prev: any) => ({ ...prev, nationality: value }))}
-                                                placeholder="Select your nationality"
-                                                className="w-full"
-                                            />
-                                        </Field>
+                                        <CountrySearchableSelect
+                                            label="Nationality"
+                                            value={formData[profileKey || '']?.nationality || null}
+                                            onChange={(value) => setFormData((prev: any) => ({
+                                                ...prev,
+                                                [profileKey || '']: { ...prev[profileKey || ''], nationality: value }
+                                            }))}
+                                            placeholder="Select your nationality"
+                                            className="w-full"
+                                        />
 
-                                        <Field label="Experience">
+                                        <Field label="Experience (Years)">
                                             <Input
                                                 name="experience"
-                                                value={formData.experience || ''}
+                                                type="number"
+                                                value={formData[profileKey || '']?.experience || ''}
                                                 onChange={handleChange}
-                                                placeholder="5 Years"
-                                                className="h-12 text-base bg-muted/20 border-border"
-                                            />
-                                        </Field>
-
-                                        <Field label="Company">
-                                            <Input
-                                                name="companyName"
-                                                value={formData.companyName || ''}
-                                                onChange={handleChange}
-                                                placeholder="Company Name"
+                                                placeholder="e.g. 5"
                                                 className="h-12 text-base bg-muted/20 border-border"
                                             />
                                         </Field>
 
                                         <Field label="Role">
                                             <div className="h-12 flex items-center px-4 rounded-xl border border-border bg-muted/40 text-text-secondary text-base font-semibold">
-                                                {formData.role || 'N/A'}
+                                                {formData.role?.charAt(0).toUpperCase() + formData.role?.slice(1) || 'N/A'}
+                                            </div>
+                                        </Field>
+
+                                        <Field label="Member Since">
+                                            <div className="h-12 flex items-center px-4 rounded-xl border border-border bg-muted/40 text-text-muted text-sm font-medium">
+                                                {formData.created_at ? new Date(formData.created_at).toLocaleDateString() : 'N/A'}
                                             </div>
                                         </Field>
                                     </>
@@ -272,8 +290,8 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     <Field label="Account Holder Name">
                                         <Input
-                                            name="accountHolder"
-                                            value={formData.accountHolder || ''}
+                                            name="account_holder_name"
+                                            value={formData[profileKey || '']?.account_holder_name || ''}
                                             onChange={handleChange}
                                             placeholder="Full name as per bank records"
                                             className="h-12 text-base bg-muted/20 border-border"
@@ -282,8 +300,8 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
 
                                     <Field label="Bank Name">
                                         <Input
-                                            name="bankName"
-                                            value={formData.bankName || ''}
+                                            name="bank_name"
+                                            value={formData[profileKey || '']?.bank_name || ''}
                                             onChange={handleChange}
                                             placeholder="e.g., Emirates NBD"
                                             className="h-12 text-base bg-muted/20 border-border"
@@ -292,8 +310,8 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
 
                                     <Field label="Account Number">
                                         <Input
-                                            name="accountNumber"
-                                            value={formData.accountNumber || ''}
+                                            name="account_number"
+                                            value={formData[profileKey || '']?.account_number || ''}
                                             onChange={handleChange}
                                             placeholder="Bank account number"
                                             className="h-12 text-base bg-muted/20 border-border"
@@ -303,7 +321,7 @@ export function ProfileForm({ initialData, onSave }: ProfileFormProps) {
                                     <Field label="IBAN">
                                         <Input
                                             name="iban"
-                                            value={formData.iban || ''}
+                                            value={formData[profileKey || '']?.iban || ''}
                                             onChange={handleChange}
                                             placeholder="AEXX XXXX XXXX XXXX XXX"
                                             className="h-12 text-base bg-muted/20 border-border"

@@ -68,7 +68,7 @@ export const getCommissions = async ({
         if (search) params.append('search', search);
         if (status) params.append('status', status);
 
-        const res = await apiClient.get(`/commission/?${params.toString()}`);
+        const res = await apiClient.get(`/commission?${params.toString()}`);
         return res.data;
     } catch (error: any) {
         console.error('Error in getCommissions:', {
