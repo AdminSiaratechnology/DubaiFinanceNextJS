@@ -18,4 +18,8 @@ export const forgotPassword = (data: { email: string }) => {
 
 export const resetPassword = (data: { token: string; new_password: string }) => {
   return apiClient.post("/account/verify-password-reset-token", data);
-}; 
+};
+
+export const updateAdminProfile = (data: { name: string; phone: string; address: string }) => {
+  return apiClient.put("/account/profile", data);
+};

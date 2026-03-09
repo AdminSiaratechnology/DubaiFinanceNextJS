@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
@@ -214,7 +214,7 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Phone Number</Label>
-                                    <Input name="phone" value={formData.phone} onChange={handleChange} placeholder="6394497861" required />
+                                    <Input name="phone" value={formData.phone} onChange={handleChange} placeholder="Enter Phone Number" required />
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Emirates ID</Label>

@@ -6,12 +6,9 @@ import { Label, Input, Select } from '@/components/ui/Form';
 
 import { FileUploader } from '@/shared/FileUploader';
 
-const productOptions = [
-    { value: 'personal-loan', label: 'Personal Loan' },
-    { value: 'business-loan', label: 'Business Loan' },
-    { value: 'auto-loan', label: 'Auto Loan' },
-    { value: 'credit-card', label: 'Credit Card' },
-];
+import { getBanks } from '@/features/owner/bank/api/bank.api';
+import { getBankProductByBankId } from '@/features/owner/bankproducts/api/bankproducts.api';
+import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
 
 const requiredDocs = [
     { id: 'eid-front', label: 'Emirates ID (Front) *' },
@@ -52,7 +49,10 @@ export function SubmitCase() {
         emiratesId: '',
         employerName: '',
         monthlySalary: '',
-        productType: 'personal-loan',
+        bank_id: '' as string | number,
+        bankName: '',
+        product_id: '' as string | number,
+        productName: '',
         amount: '',
     });
 
@@ -62,6 +62,11 @@ export function SubmitCase() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const fetchProducts = async (params: any) => {
+        if (!formData.bank_id) return { items: [], total: 0, page: 1, limit: 10 };
+        return getBankProductByBankId(Number(formData.bank_id));
     };
 
     const handleFileChange = (id: string, file: File | null) => {
@@ -91,7 +96,10 @@ export function SubmitCase() {
                 emiratesId: '',
                 employerName: '',
                 monthlySalary: '',
-                productType: 'personal-loan',
+                bank_id: '',
+                bankName: '',
+                product_id: '',
+                productName: '',
                 amount: '',
             });
             setFiles({});
@@ -155,8 +163,28 @@ export function SubmitCase() {
                             </div>
 
                             <div className="space-y-1">
-                                <Label>Product Type *</Label>
-                                <Select name="productType" required value={formData.productType} onChange={handleChange} options={productOptions} />
+                                <Label>Select Bank *</Label>
+                                <ApiSearchableSelect
+                                    fetchFn={getBanks as any}
+                                    value={formData.bank_id}
+                                    onChange={(val) => setFormData(prev => ({ ...prev, bank_id: val as number, product_id: '' }))}
+                                    placeholder="Search bank..."
+                                    initialOptions={formData.bank_id && formData.bankName ? [{ id: Number(formData.bank_id), name: formData.bankName }] : []}
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Select Product *</Label>
+                                <ApiSearchableSelect
+                                    fetchFn={fetchProducts}
+                                    labelKey="product_name"
+                                    value={formData.product_id}
+                                    onChange={(val) => setFormData(prev => ({ ...prev, product_id: val as number | '' }))}
+                                    placeholder="Search product..."
+                                    disabled={!formData.bank_id}
+                                    extraParams={{ bank_id: formData.bank_id }}
+                                    initialOptions={formData.product_id && formData.productName ? [{ id: Number(formData.product_id), product_name: formData.productName }] : []}
+                                />
                             </div>
 
                             <div className="space-y-1">

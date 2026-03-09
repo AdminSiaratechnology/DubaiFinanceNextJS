@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { updateAgent } from '@/features/owner/team/api/agent.api';
 import { updateCoordinator } from '@/features/owner/team/api/analyst.api';
 import { updateTelecaller } from '@/features/owner/team/api/telecaller.api';
+import { updateAdminProfile } from '@/features/owner/api/auth.api';
 interface ProfileFormProps {
     initialData?: TeamMember;
 }
@@ -78,7 +79,6 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
 
         setFormData((prev: any) => ({ ...prev, [name]: value }));
     };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
@@ -89,7 +89,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
             };
 
             if (isAdmin) {
-                // await updateAdmin(formData.admin_profile);
+                await updateAdminProfile(formData.admin_profile);
             } else if (isTelecaller) {
                 const payload = { ...formData.telecaller_profile, ...commonData };
                 await updateTelecaller(formData.telecaller_profile.user_id, payload);
@@ -97,7 +97,6 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                 const payload = { ...formData.coordinator_profile, ...commonData };
                 await updateCoordinator(formData.coordinator_profile.user_id, payload);
             } else {
-                console.log(formData.agent_profile)
                 await updateAgent(formData.agent_profile.id, formData.agent_profile);
             }
             toast.success('Profile updated successfully');
