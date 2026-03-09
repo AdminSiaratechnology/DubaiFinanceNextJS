@@ -6,13 +6,15 @@ import { useRouter } from 'next/navigation';
 import { useConfirmAction } from '@/hooks/use-confirm-action';
 import { deleteCoordinator } from '../api/analyst.api';
 import { deleteTelecaller } from '../api/telecaller.api';
+import { deleteAgent } from '../api/agent.api';
 
 interface TeamActionsProps {
     id: string;
-    role: 'analyst' | 'telecaller';
+    role: 'analyst' | 'telecaller' | 'agent';
+    userId?: number;
 }
 
-export function TeamActions({ id, role }: TeamActionsProps) {
+export function TeamActions({ id, role, userId }: TeamActionsProps) {
     const router = useRouter();
     const { confirmAction } = useConfirmAction();
 
@@ -29,7 +31,7 @@ export function TeamActions({ id, role }: TeamActionsProps) {
                     router.refresh();
                 },
             });
-        } else {
+        } else if (role === 'telecaller') {
             await confirmAction({
                 title: 'Delete Team Member',
                 description: 'Are you sure you want to delete this telecaller? This action cannot be undone.',
@@ -37,6 +39,18 @@ export function TeamActions({ id, role }: TeamActionsProps) {
                 action: () => deleteTelecaller(Number(id)),
                 successMessage: 'Telecaller deleted successfully.',
                 errorMessage: 'Failed to delete telecaller.',
+                onSuccess: () => {
+                    router.refresh();
+                },
+            });
+        } else {
+            await confirmAction({
+                title: 'Delete Team Member',
+                description: 'Are you sure you want to delete this agent? This action cannot be undone.',
+                confirmText: 'Delete',
+                action: () => deleteAgent(Number(userId)),
+                successMessage: 'Agent deleted successfully.',
+                errorMessage: 'Failed to delete agent.',
                 onSuccess: () => {
                     router.refresh();
                 },

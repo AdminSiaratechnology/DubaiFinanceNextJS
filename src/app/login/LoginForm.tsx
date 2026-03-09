@@ -29,11 +29,14 @@ export function LoginForm() {
             if (role === 'admin') {
                 router.push('/owner/dashboard');
             }
-            else if (role === 'coordinator') {
+            else if (role === 'coordinator' || role === 'analyst') {
                 router.push('/dashboard/analyst/main');
             }
             else if (role === 'telecaller') {
                 router.push('/dashboard/telecaller/main');
+            }
+            else if (role === 'agent') {
+                router.push('/dashboard/agent/main');
             }
             else {
                 router.push('/user');

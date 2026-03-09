@@ -1,4 +1,3 @@
-import React from 'react';
 import { agentStats, agentCases } from '@/lib/mock/agent';
 import { StatCard } from '@/features/dashboard/components/StatCard';
 import { TabSwitcher } from '@/features/dashboard/components/TabSwitcher';

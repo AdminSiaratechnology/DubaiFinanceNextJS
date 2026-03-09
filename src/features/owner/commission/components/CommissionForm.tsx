@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
 import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
 import { getBanks } from '@/features/owner/bank/api/bank.api';
-import { getBankProducts } from '@/features/owner/bankproducts/api/bankproducts.api';
+import { getBankProductByBankId } from '@/features/owner/bankproducts/api/bankproducts.api';
 import {
     Commission,
     CommissionCreatePayload,
@@ -122,7 +122,7 @@ export function CommissionForm({ commission, commissionId, title }: CommissionFo
     // Fetch products filtered by selected bank
     const fetchProducts = async (params: any) => {
         if (!formData.bank_id) return { items: [], total: 0, page: 1, limit: 10 };
-        return getBankProducts({ ...params, bank_id: formData.bank_id });
+        return getBankProductByBankId(formData.bank_id);
     };
 
     return (

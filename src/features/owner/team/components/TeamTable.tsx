@@ -2,20 +2,20 @@ import React from 'react';
 import Link from 'next/link';
 import { Coordinator } from '../api/analyst.api';
 import { Telecaller } from '../api/telecaller.api';
+import { Agent } from '../api/agent.api';
 import { TeamActions } from './TeamActions';
 import { TeamSearch } from './TeamSearch';
 import { Pagination } from '@/components/ui/Pagination';
 
 interface TeamTableProps {
-    members: (Coordinator | Telecaller)[];
-    role: 'analyst' | 'telecaller';
+    members: (Coordinator | Telecaller | Agent)[];
+    role: 'analyst' | 'telecaller' | 'agent';
     page: number;
     total: number;
     limit: number;
 }
 
 export function TeamTable({ members, role, page, total, limit }: TeamTableProps) {
-    console.log(members)
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
@@ -84,7 +84,7 @@ export function TeamTable({ members, role, page, total, limit }: TeamTableProps)
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4 text-right">
-                                            <TeamActions id={String(member.id)} role={role} />
+                                            <TeamActions id={String(member.id)} userId={member.user_id} role={role} />
                                         </td>
                                     </tr>
                                 ))

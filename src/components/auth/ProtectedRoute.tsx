@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 
-type Role = 'admin' | 'agent' | 'analyst';
+type Role = 'admin' | 'agent' | 'analyst' | 'telecaller' | 'coordinator';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

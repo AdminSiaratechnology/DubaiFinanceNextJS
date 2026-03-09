@@ -1,6 +1,4 @@
-import React from 'react';
 import { analystStats, analystCases } from '@/lib/mock/analyst';
-import { StatCard } from '@/features/dashboard/components/StatCard';
 import { StatTabs } from '@/features/dashboard/components/StatTabs';
 import { AnalystMainGrid } from '@/features/dashboard/components/AnalystMainGrid';
 

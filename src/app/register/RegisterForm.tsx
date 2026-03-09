@@ -2,50 +2,44 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
+import { getBanks } from '@/features/owner/bank/api/bank.api';
+import { getBankProductByBankId } from '@/features/owner/bankproducts/api/bankproducts.api';
+import { getCommissionByBankAndProduct, Commission } from '@/features/owner/commission/api/commission.api';
+import { createAgent, AgentCreatePayload } from '@/features/owner/team/api/agent.api';
+import { toast } from 'sonner';
+import { Label, Input } from '@/components/ui/Form';
+import { Card } from '@/components/ui/Card';
+import CountrySearchableSelect from '@/shared/CountrySearchableSelect';
 
 interface SectionCardProps {
     number: string;
     title: string;
+    icon?: React.ReactNode;
     children: React.ReactNode;
 }
 
-function SectionCard({ number, title, children }: SectionCardProps) {
+function SectionCard({ number, title, icon, children }: SectionCardProps) {
     return (
-        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm transition-all hover:shadow-md">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500/10 to-violet-500/10 text-indigo-600 dark:text-indigo-400 text-sm font-bold border border-indigo-200/60 dark:border-indigo-800/60">
-                    {number}
+        <div className="bg-card border border-border rounded-xl p-6 sm:p-8 shadow-sm overflow-visible">
+            <div className="flex items-center gap-3 border-b border-border pb-3 mb-6">
+                <div className="flex items-center justify-center p-2 rounded-lg bg-blue-soft text-blue">
+                    {icon || (
+                        <span className="text-[10px] font-black tracking-tighter font-mono">
+                            {number}
+                        </span>
+                    )}
                 </div>
-                <div>
-                    <h3 className="text-base font-semibold text-slate-900 dark:text-white">
-                        {title}
-                    </h3>
-                    <div className="h-0.5 w-10 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full mt-1" />
-                </div>
+                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">{title}</h4>
             </div>
-            {children}
+
+            <div className="space-y-6">
+                {children}
+            </div>
         </div>
     );
 }
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string;
-    required?: boolean;
-}
-
-function Input({ label, required, ...props }: InputProps) {
-    return (
-        <div className="space-y-1.5">
-            <label className="text-xs font-semibold tracking-wide text-slate-500 dark:text-slate-400 uppercase">
-                {label} {required && <span className="text-rose-500">*</span>}
-            </label>
-            <input
-                {...props}
-                className="w-full px-4 py-3 bg-slate-50/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-md text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
-            />
-        </div>
-    );
-}
 
 interface FormData {
     fullName: string;
@@ -58,6 +52,7 @@ interface FormData {
     accountHolder: string;
     bankName: string;
     iban: string;
+    password: string;
     agreedKYC: boolean;
     agreedTerms: boolean;
 }
@@ -65,6 +60,11 @@ interface FormData {
 export function RegisterForm() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+
+    const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
+    const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+    const [assignedCommissions, setAssignedCommissions] = useState<Commission[]>([]);
+
     const [formData, setFormData] = useState<FormData>({
         fullName: '',
         email: '',
@@ -76,18 +76,79 @@ export function RegisterForm() {
         accountHolder: '',
         bankName: '',
         iban: '',
+        password: '',
         agreedKYC: false,
         agreedTerms: false,
     });
 
+    const handleAddCommission = async () => {
+        if (!selectedBankId || !selectedProductId) {
+            toast.error('Please select both bank and product');
+            return;
+        }
+
+        try {
+            const commission = await getCommissionByBankAndProduct(selectedBankId, selectedProductId);
+            if (!commission) {
+                toast.error('No commission configuration found');
+                return;
+            }
+
+            if (assignedCommissions.some(c => c.id === commission.id)) {
+                toast.error('This commission is already assigned');
+                return;
+            }
+
+            setAssignedCommissions(prev => [...prev, commission]);
+            setSelectedProductId(null);
+            toast.success('Commission added');
+        } catch (error) {
+            toast.error('Failed to fetch commission');
+        }
+    };
+
+    const removeCommission = (id: number) => {
+        setAssignedCommissions(prev => prev.filter(c => c.id !== id));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!formData.agreedTerms || !formData.agreedKYC) {
+            toast.error('Please agree to all terms and conditions');
+            return;
+        }
+
+        if (!formData.fullName || !formData.email || !formData.mobile || !formData.password) {
+            toast.error('Please fill in all required fields');
+            return;
+        }
+
         setIsLoading(true);
         try {
-            await new Promise((res) => setTimeout(res, 2000));
+            const agentPayload: AgentCreatePayload = {
+                name: formData.fullName,
+                email: formData.email,
+                phone: formData.mobile,
+                emirates_id: formData.emiratesId,
+                nationality: formData.nationality,
+                business_name: formData.companyName,
+                year_of_experience: Number(formData.experience) || 0,
+                account_holder_name: formData.accountHolder,
+                bank_name: formData.bankName,
+                account_number: '', // Optional/Legacy if handled by IBAN
+                iban: formData.iban,
+                status: 'active',
+                password: formData.password,
+                commission_ids: assignedCommissions.map(c => c.id)
+            };
+
+            await createAgent(agentPayload);
+            toast.success('Registration successful! Please login.');
             router.push('/login');
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
+            toast.error(err?.response?.data?.detail?.[0]?.msg || err?.response?.data?.detail || 'Registration failed');
         } finally {
             setIsLoading(false);
         }
@@ -96,204 +157,312 @@ export function RegisterForm() {
     const update = <K extends keyof FormData>(key: K, value: FormData[K]) =>
         setFormData((prev) => ({ ...prev, [key]: value }));
 
+    const fetchProducts = async (params: any) => {
+        if (!selectedBankId) return { items: [], total: 0, page: 1, limit: 10 };
+        return getBankProductByBankId(selectedBankId);
+    };
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="relative bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl overflow-hidden"
-        >
-            <div className="px-7 py-7 border-b border-slate-200/70 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                            Agent Registration
-                        </h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                            Complete your profile to unlock commissions & payouts
-                        </p>
+        <Card noPadding className="relative bg-background border border-border rounded-xl shadow-card overflow-visible">
+            <form onSubmit={handleSubmit}>
+                <div className="px-7 py-7 border-b border-border bg-card/60 backdrop-blur-xl">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <h2 className="text-2xl font-bold bg-linear-to-r from-blue to-purple bg-clip-text text-transparent">
+                                Agent Registration
+                            </h2>
+                            <p className="text-sm text-text-secondary mt-1">
+                                Complete your profile to unlock commissions & payouts
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="p-4 md:p-6 space-y-4">
-                <SectionCard number="01" title="Personal Information">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="md:col-span-2">
-                            <Input
-                                label="Full Name (as per Emirates ID)"
-                                required
-                                placeholder="Enter your legal name"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('fullName', e.target.value)}
-                            />
-                        </div>
-
-                        <Input
-                            label="Email Address"
-                            type="email"
-                            required
-                            placeholder="you@example.com"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('email', e.target.value)}
-                        />
-
-                        <Input
-                            label="Mobile Number"
-                            type="tel"
-                            required
-                            placeholder="+971 XX XXX XXXX"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('mobile', e.target.value)}
-                        />
-
-                        <Input
-                            label="Emirates ID"
-                            required
-                            placeholder="784-XXXX-XXXXXXX-X"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('emiratesId', e.target.value)}
-                        />
-
-                        <Input
-                            label="Nationality"
-                            required
-                            placeholder="Country of citizenship"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('nationality', e.target.value)}
-                        />
-                    </div>
-                </SectionCard>
-
-                {/* Professional */}
-                <SectionCard number="02" title="Professional Background">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <Input
-                            label="Company / Business Name"
-                            placeholder="Optional"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('companyName', e.target.value)}
-                        />
-
-                        <Input
-                            label="Years of Experience"
-                            placeholder="e.g. 5 years"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('experience', e.target.value)}
-                        />
-                    </div>
-                </SectionCard>
-
-                {/* Banking */}
-                <SectionCard number="03" title="Banking Information">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="md:col-span-2">
-                            <Input
-                                label="Account Holder Name"
-                                required
-                                placeholder="As per bank records"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('accountHolder', e.target.value)}
-                            />
-                        </div>
-
-                        <Input
-                            label="Bank Name"
-                            required
-                            placeholder="e.g. Emirates NBD"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('bankName', e.target.value)}
-                        />
-
-                        <Input
-                            label="IBAN"
-                            required
-                            placeholder="AE00 XXXX XXXX XXXX XXX"
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('iban', e.target.value)}
-                        />
-                    </div>
-                </SectionCard>
-
-                {/* Commission Card (Premium look) */}
-                <div className="relative overflow-hidden rounded-2xl border border-indigo-200/60 dark:border-indigo-900/40 bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/20 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-sm font-semibold text-slate-900 dark:text-white">
-                            Commission Structure
-                        </h4>
-                        <button
-                            type="button"
-                            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
-                        >
-                            View payout terms →
-                        </button>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-4 text-sm">
-                        {[
-                            ['Credit Card (Lead)', 'AED 200'],
-                            ['Credit Card (Complete)', 'AED 500'],
-                            ['Personal Loan', 'AED 750'],
-                            ['Personal Finance', '1.5% (Max 2k)'],
-                        ].map(([label, value]) => (
-                            <div
-                                key={label}
-                                className="flex items-center justify-between p-3 rounded-md bg-white/70 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800"
-                            >
-                                <span className="text-slate-600 dark:text-slate-400">
-                                    {label}
-                                </span>
-                                <span className="font-semibold text-slate-900 dark:text-white">
-                                    {value}
-                                </span>
+                <div className="p-4 md:p-8 space-y-8">
+                    <SectionCard
+                        number="01"
+                        title="Personal Information"
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>}
+                    >
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="md:col-span-2 space-y-2">
+                                <Label required>Full Name (as per Emirates ID)</Label>
+                                <Input
+                                    required
+                                    placeholder="Enter your legal name"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('fullName', e.target.value)}
+                                />
                             </div>
+
+                            <div className="space-y-2">
+                                <Label required>Email Address</Label>
+                                <Input
+                                    type="email"
+                                    required
+                                    placeholder="you@example.com"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('email', e.target.value)}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label required>Mobile Number</Label>
+                                <Input
+                                    type="tel"
+                                    required
+                                    placeholder="+971 XX XXX XXXX"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('mobile', e.target.value)}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label required>Emirates ID</Label>
+                                <Input
+                                    required
+                                    placeholder="784-XXXX-XXXXXXX-X"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('emiratesId', e.target.value)}
+                                />
+                            </div>
+
+                            <CountrySearchableSelect
+                                label='Nationality'
+                                value={formData.nationality}
+                                required
+                                placeholder="Country of citizenship"
+                                onChange={(val) => update('nationality', val)}
+                            />
+
+                            <div className="space-y-2">
+                                <Label required>Password</Label>
+                                <Input
+                                    type="password"
+                                    required
+                                    placeholder="Create a secure password"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('password', e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </SectionCard>
+
+                    <SectionCard
+                        number="02"
+                        title="Professional Background"
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>}
+                    >
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-2">
+                                <Label>Company / Business Name</Label>
+                                <Input
+                                    placeholder="Optional"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('companyName', e.target.value)}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Years of Experience</Label>
+                                <Input
+                                    type="number"
+                                    placeholder="e.g. 5"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('experience', e.target.value)}
+                                    min={0}
+                                />
+                            </div>
+                        </div>
+                    </SectionCard>
+
+                    <SectionCard
+                        number="03"
+                        title="Banking Information"
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg>}
+                    >
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="md:col-span-2 space-y-2">
+                                <Label required>Account Holder Name</Label>
+                                <Input
+                                    required
+                                    placeholder="As per bank records"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('accountHolder', e.target.value)}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label required>Bank Name</Label>
+                                <Input
+                                    required
+                                    placeholder="e.g. Emirates NBD"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('bankName', e.target.value)}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label required>IBAN</Label>
+                                <Input
+                                    required
+                                    placeholder="AE00 XXXX XXXX XXXX XXX"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => update('iban', e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </SectionCard>
+
+                    <div className="relative overflow-visible rounded-2xl border border-blue/10 bg-linear-to-br from-blue-soft to-purple-soft p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h4 className="text-sm font-semibold text-text-primary">
+                                Commission Structure
+                            </h4>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-6">
+                            <div className="space-y-2">
+                                <Label>Pick Bank</Label>
+                                <ApiSearchableSelect
+                                    fetchFn={getBanks as any}
+                                    value={selectedBankId || ''}
+                                    onChange={(val) => {
+                                        setSelectedBankId(Number(val));
+                                        setSelectedProductId(null);
+                                    }}
+                                    placeholder="Search bank..."
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Pick Product</Label>
+                                <ApiSearchableSelect
+                                    fetchFn={fetchProducts}
+                                    labelKey="product_name"
+                                    value={selectedProductId || ''}
+                                    onChange={(val) => setSelectedProductId(Number(val))}
+                                    placeholder="Search product..."
+                                    disabled={!selectedBankId}
+                                    extraParams={{ bank_id: selectedBankId }}
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleAddCommission}
+                                disabled={!selectedProductId}
+                                className="md:col-span-2 w-full py-2.5 bg-blue text-white rounded-lg text-xs font-bold hover:bg-blue/90 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+                                Add to My Portfolio
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {assignedCommissions.map(comm => (
+                                <div
+                                    key={comm.id}
+                                    className="flex items-center justify-between p-3 rounded-xl bg-card/70 border border-border relative group"
+                                >
+                                    <div className="flex flex-col">
+                                        <span className="text-[11px] font-bold text-text-primary">
+                                            {comm.bank.name}
+                                        </span>
+                                        <span className="text-[10px] text-text-muted">
+                                            {comm.product.product_name}
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-3">
+                                        <div className="flex flex-wrap gap-1.5 justify-end">
+                                            <div className="flex flex-col items-center bg-blue/5 border border-blue/10 px-2.5 py-1 rounded-lg">
+                                                <span className="text-[8px] font-black uppercase tracking-tighter text-text-muted">Agent</span>
+                                                <span className="text-[11px] font-bold text-blue leading-none mt-0.5">{comm.agent_share}%</span>
+                                            </div>
+                                            <div className="flex flex-col items-center bg-green-soft dark:bg-green/5 border border-green/10 px-2.5 py-1 rounded-lg">
+                                                <span className="text-[8px] font-black uppercase tracking-tighter text-text-muted">Caller</span>
+                                                <span className="text-[11px] font-bold text-green leading-none mt-0.5">{comm.telecaller_share}%</span>
+                                            </div>
+                                            <div className="flex flex-col items-center bg-purple-soft dark:bg-purple/5 border border-purple/10 px-2.5 py-1 rounded-lg">
+                                                <span className="text-[8px] font-black uppercase tracking-tighter text-text-muted">Analyst</span>
+                                                <span className="text-[11px] font-bold text-purple leading-none mt-0.5">{comm.coordinator_share}%</span>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => removeCommission(comm.id)}
+                                            className="p-1.5 text-text-muted hover:text-red hover:bg-red/5 rounded-full transition-all group-hover:opacity-100"
+                                            title="Remove from portfolio"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                            {assignedCommissions.length === 0 && (
+                                <div className="md:col-span-2 text-center py-4 border border-dashed border-border rounded-xl text-text-muted text-xs italic">
+                                    Search and add products to see your commission rates
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        {([
+                            {
+                                key: 'agreedKYC',
+                                text: 'I confirm that I will complete KYC verification and provide required documentation',
+                            },
+                            {
+                                key: 'agreedTerms',
+                                text: 'I accept the Agent Agreement and Code of Conduct',
+                            },
+                        ] as { key: keyof FormData; text: string }[]).map((item) => (
+                            <label
+                                key={item.key}
+                                className={`flex items-start gap-4 p-5 rounded-2xl border transition-all cursor-pointer group ${formData[item.key] ? 'bg-blue-soft/30 border-blue/20' : 'bg-card/50 border-border hover:border-blue/20'}`}
+                            >
+                                <div className="relative flex items-center mt-1">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData[item.key] as boolean}
+                                        className="peer h-5 w-5 cursor-pointer appearance-none rounded-lg border border-border bg-background transition-all checked:bg-blue checked:border-blue focus:outline-none focus:ring-2 focus:ring-blue/20"
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => update(item.key as keyof FormData, e.target.checked)}
+                                    />
+                                    <svg
+                                        className="pointer-events-none absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                </div>
+                                <span className={`text-sm leading-relaxed transition-colors ${formData[item.key] ? 'text-text-primary font-medium' : 'text-text-secondary'}`}>
+                                    {item.text}
+                                </span>
+                            </label>
                         ))}
                     </div>
                 </div>
 
-                {/* Agreements */}
-                <div className="space-y-3">
-                    {([
-                        {
-                            key: 'agreedKYC',
-                            text: 'I confirm that I will complete KYC verification and provide required documentation',
-                        },
-                        {
-                            key: 'agreedTerms',
-                            text: 'I accept the Agent Agreement and Code of Conduct',
-                        },
-                    ] as { key: keyof FormData; text: string }[]).map((item) => (
-                        <label
-                            key={item.key}
-                            className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 hover:border-indigo-300 dark:hover:border-indigo-700 transition cursor-pointer"
-                        >
-                            <input
-                                type="checkbox"
-                                required
-                                className="mt-1 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => update(item.key as keyof FormData, e.target.checked)}
-                            />
-                            <span className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                                {item.text}
-                            </span>
-                        </label>
-                    ))}
+                <div className="sticky bottom-0 px-6 md:px-8 py-5 bg-card/80 backdrop-blur-xl border-t border-border flex items-center justify-between z-10">
+                    <button
+                        type="button"
+                        onClick={() => router.push('/login')}
+                        className="text-sm font-medium text-text-secondary hover:text-text-primary transition"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="px-8 py-3 rounded-xl bg-linear-to-r from-blue to-purple hover:opacity-90 text-white text-sm font-semibold shadow-soft disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                    >
+                        {isLoading ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                Processing...
+                            </>
+                        ) : (
+                            'Complete Registration'
+                        )}
+                    </button>
                 </div>
-            </div>
-
-            {/* Sticky Footer CTA */}
-            <div className="sticky bottom-0 px-6 md:px-8 py-5 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                <button
-                    type="button"
-                    onClick={() => router.push('/login')}
-                    className="text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-sm font-semibold shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
-                >
-                    {isLoading ? (
-                        <>
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Processing...
-                        </>
-                    ) : (
-                        'Complete Registration'
-                    )}
-                </button>
-            </div>
-        </form>
+            </form>
+        </Card>
     );
 }
