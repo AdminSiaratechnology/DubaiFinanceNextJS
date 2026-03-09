@@ -4,45 +4,81 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
 
-const productOptions = [
-    { value: 'personal-loan', label: 'Personal Loan' },
-    { value: 'credit-card', label: 'Credit Card' },
-    { value: 'auto-loan', label: 'Auto Loan' },
-    { value: 'business-loan', label: 'Business Loan' },
-];
+import { getBanks } from '@/features/owner/bank/api/bank.api';
+import { getBankProductByBankId } from '@/features/owner/bankproducts/api/bankproducts.api';
+import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
+import { submitLead, sendLeadOtp } from './api/agent.api'
+import { toast } from 'sonner';
 
 export function SubmitLead() {
     const [formData, setFormData] = useState({
-        customerName: '',
-        mobileNumber: '',
+        customer_name: '',
+        mobile_number: '',
         email: '',
-        productType: 'personal-loan',
-        amount: '',
+        bank_id: '' as string | number,
+        product_id: '' as string | number,
+        requested_amount: 0,
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isOtpSent, setIsOtpSent] = useState(false);
+    const [otp, setOtp] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => ({
+            ...prev,
+            [name]: name === 'requested_amount' ? Number(value) : value
+        }));
+    };
+
+    const fetchProducts = async (params: any) => {
+        if (!formData.bank_id) return { items: [], total: 0, page: 1, limit: 10 };
+        return getBankProductByBankId(Number(formData.bank_id));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        console.log('Lead Submission Data:', formData);
-
-        setTimeout(() => {
-            alert('Lead submitted successfully! Verification OTP sent.');
+        try {
+            await sendLeadOtp(formData.email);
+            setIsOtpSent(true);
+            toast.success('Verification OTP sent to your email.');
+        } catch (error) {
+            toast.error('Failed to send OTP. Please try again.');
+            console.error(error);
+        } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!otp || otp.length < 4) {
+            toast.error('Please enter a valid OTP');
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await submitLead(formData, otp);
+            toast.success('Lead verified and submitted successfully!');
+            setIsOtpSent(false);
             setFormData({
-                customerName: '',
-                mobileNumber: '',
+                customer_name: '',
+                mobile_number: '',
                 email: '',
-                productType: 'personal-loan',
-                amount: '',
+                bank_id: '',
+                product_id: '',
+                requested_amount: 0,
             });
-        }, 1500);
+            setOtp('');
+        } catch (error) {
+            toast.error('Invalid OTP or submission failed. Please try again.');
+            console.error(error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -54,92 +90,153 @@ export function SubmitLead() {
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
                         </div>
                         <div className="space-y-1">
-                            <h3 className="text-base sm:text-lg font-bold text-foreground leading-tight">Submit Lead (Basic Info)</h3>
+                            <h3 className="text-base sm:text-lg font-bold text-foreground leading-tight">
+                                {isOtpSent ? 'Verify Lead OTP' : 'Submit Lead (Basic Info)'}
+                            </h3>
                             <p className="text-[10px] sm:text-xs font-semibold text-text-muted opacity-80 leading-relaxed">
-                                Submit basic customer details. Telecaller will collect documents later.
+                                {isOtpSent
+                                    ? `Enter the OTP sent to customer: ${formData.mobile_number}`
+                                    : 'Submit basic customer details. Telecaller will collect documents later.'}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-8 space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
-                        <div className="space-y-1">
-                            <Label>Customer Name *</Label>
-                            <Input
-                                type="text"
-                                name="customerName"
-                                required
-                                value={formData.customerName}
-                                onChange={handleChange}
-                                placeholder="Full name"
-                            />
+                {!isOtpSent ? (
+                    <form onSubmit={handleSubmit} className="p-8 space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+                            <div className="space-y-1">
+                                <Label>Customer Name *</Label>
+                                <Input
+                                    type="text"
+                                    name="customer_name"
+                                    required
+                                    value={formData.customer_name}
+                                    onChange={handleChange}
+                                    placeholder="Full name"
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Mobile Number *</Label>
+                                <Input
+                                    type="tel"
+                                    name="mobile_number"
+                                    required
+                                    value={formData.mobile_number}
+                                    onChange={handleChange}
+                                    placeholder="+971 50 123 4567"
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Email Address *</Label>
+                                <Input
+                                    type="email"
+                                    name="email"
+                                    required
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="customer@email.com"
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Select Bank *</Label>
+                                <ApiSearchableSelect
+                                    fetchFn={getBanks as any}
+                                    value={formData.bank_id}
+                                    onChange={(val) => setFormData(prev => ({ ...prev, bank_id: val as number, product_id: '' }))}
+                                    placeholder="Search bank..."
+                                />
+                            </div>
+
+                            <div className="space-y-1">
+                                <Label>Select Product *</Label>
+                                <ApiSearchableSelect
+                                    fetchFn={fetchProducts}
+                                    labelKey="product_name"
+                                    value={formData.product_id}
+                                    onChange={(val) => setFormData(prev => ({ ...prev, product_id: val as number | '' }))}
+                                    placeholder="Search product..."
+                                    disabled={!formData.bank_id}
+                                    extraParams={{ bank_id: formData.bank_id }}
+                                />
+                            </div>
+
+                            <div className="space-y-1 md:col-span-2">
+                                <Label>Requested Amount (AED) *</Label>
+                                <Input
+                                    type="number"
+                                    name="requested_amount"
+                                    required
+                                    value={formData.requested_amount || ''}
+                                    onChange={handleChange}
+                                    placeholder="Enter amount"
+                                    className="text-lg font-bold text-green"
+                                />
+                            </div>
                         </div>
 
-                        <div className="space-y-1">
-                            <Label>Mobile Number *</Label>
-                            <Input
-                                type="tel"
-                                name="mobileNumber"
-                                required
-                                value={formData.mobileNumber}
-                                onChange={handleChange}
-                                placeholder="+971 50 123 4567"
-                            />
-                        </div>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className={`w-full py-3 bg-green text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all hover:shadow-lg active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green/90 shadow-md shadow-green/20'}`}
+                        >
+                            {isSubmitting ? (
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            ) : (
+                                <>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
+                                    Send OTP for Verification
+                                </>
+                            )}
+                        </button>
+                    </form>
+                ) : (
+                    <form onSubmit={handleVerifyOtp} className="p-8 space-y-8 animate-in slide-in-from-right-4 duration-300">
+                        <div className="max-w-sm mx-auto space-y-6">
+                            <div className="space-y-2 text-center mb-8">
+                                <Label className="text-sm">Verification Code</Label>
+                                <Input
+                                    type="text"
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value)}
+                                    placeholder="Enter 4-6 digit OTP"
+                                    className="text-center text-2xl font-black tracking-[0.5em] h-16 border-2 focus:border-green"
+                                    maxLength={6}
+                                    autoFocus
+                                />
+                                <p className="text-[10px] text-text-muted mt-2 italic">A code was sent to help us verify this lead submission.</p>
+                            </div>
 
-                        <div className="space-y-1">
-                            <Label>Email Address *</Label>
-                            <Input
-                                type="email"
-                                name="email"
-                                required
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="customer@email.com"
-                            />
-                        </div>
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting || !otp}
+                                    className={`w-full py-4 bg-green text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all hover:shadow-lg active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green/90 shadow-md'}`}
+                                >
+                                    {isSubmitting ? (
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    ) : (
+                                        <>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                                            Verify & Submit Lead
+                                        </>
+                                    )}
+                                </button>
 
-                        <div className="space-y-1">
-                            <Label>Product Type *</Label>
-                            <Select
-                                name="productType"
-                                required
-                                value={formData.productType}
-                                onChange={handleChange}
-                                options={productOptions}
-                            />
+                                <button
+                                    type="button"
+                                    onClick={() => setIsOtpSent(false)}
+                                    className="text-xs font-bold text-text-muted hover:text-foreground transition-colors py-2"
+                                >
+                                    Edit Contact Details
+                                </button>
+                            </div>
                         </div>
-
-                        <div className="space-y-1 md:col-span-2">
-                            <Label>Requested Amount (AED) *</Label>
-                            <Input
-                                type="number"
-                                name="amount"
-                                required
-                                value={formData.amount}
-                                onChange={handleChange}
-                                placeholder="Enter amount"
-                                className="text-lg font-bold text-green"
-                            />
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className={`w-full py-3 bg-green text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all hover:shadow-lg active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green/90 shadow-md shadow-green/20'}`}
-                    >
-                        {isSubmitting ? (
-                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        ) : (
-                            <>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
-                                Send OTP for Verification
-                            </>
-                        )}
-                    </button>
-                </form>
+                    </form>
+                )}
             </Card>
         </div>
     );
