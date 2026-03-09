@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getMe } from '@/features/owner/api/auth.api';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-export default function AuthInitializer({
+function AuthInitializerContent({
     children,
 }: {
     children: React.ReactNode;
@@ -17,7 +17,6 @@ export default function AuthInitializer({
 
     const token = searchParams.get('token');
 
-    // 🔥 Bypass auth for password reset flow
     const isAuthBypassRoute =
         pathname === '/forgot-password' ||
         (pathname === '/reset-password' && token);
@@ -28,7 +27,6 @@ export default function AuthInitializer({
     const hasFetched = useRef(false);
 
     useEffect(() => {
-        // 🚨 IMPORTANT: Skip auth check for reset password page
         if (isAuthBypassRoute) {
             setIsInitializing(false);
             return;
@@ -44,15 +42,16 @@ export default function AuthInitializer({
                 if (userData) {
                     setUser(userData);
 
-                    // Redirect logged-in users away from auth pages
                     if (isPublicRoute && !['/forgot-password', '/reset-password'].includes(pathname)) {
                         const role = userData.role;
                         if (role === 'admin') {
                             router.push('/owner/dashboard');
-                        } else if (role === 'coordinator') {
+                        } else if (role === 'coordinator' || role === 'analyst') {
                             router.push('/dashboard/analyst/main');
                         } else if (role === 'telecaller') {
                             router.push('/dashboard/telecaller/main');
+                        } else if (role === 'agent') {
+                            router.push('/dashboard/agent/main');
                         } else {
                             router.push('/user');
                         }
@@ -68,7 +67,6 @@ export default function AuthInitializer({
         initAuth();
     }, [pathname, token, isAuthBypassRoute, isPublicRoute, router, setUser, setIsInitializing]);
 
-    // Also prevent loader from blocking reset page
     if (isAuthBypassRoute) {
         return <>{children}</>;
     }
@@ -91,5 +89,17 @@ export default function AuthInitializer({
             )}
             {children}
         </>
+    );
+}
+
+export default function AuthInitializer({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    return (
+        <Suspense fallback={null}>
+            <AuthInitializerContent>{children}</AuthInitializerContent>
+        </Suspense>
     );
 }

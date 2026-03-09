@@ -42,7 +42,9 @@ export default function HomePage() {
     } else if (role === 'telecaller') {
       router.replace('/dashboard/telecaller/main');
     } else if (role === 'coordinator') {
-      router.replace('/dashboard/coordinator/main');
+      router.replace('/dashboard/analyst/main');
+    } else if (role === 'agent') {
+      router.replace('/dashboard/agent/main');
     } else {
       router.replace('/login');
     }

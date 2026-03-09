@@ -2,6 +2,7 @@ import { apiClient } from "@/lib/api/client";
 
 export interface Coordinator {
     id: number;
+    user_id?: number;
     name: string;
     email: string;
     phone: string;
@@ -15,6 +16,7 @@ export interface Coordinator {
     status: 'active' | 'inactive';
     created_at: string;
     updated_at: string;
+    business_name?: string;
 }
 
 export interface CoordinatorCreate {
@@ -30,6 +32,7 @@ export interface CoordinatorCreate {
     iban: string;
     status: 'active' | 'inactive';
     password?: string;
+    business_name?: string;
 }
 
 export interface CoordinatorResponse {

@@ -109,3 +109,13 @@ export const getBankProductById = async (id: number) => {
         return null;
     }
 };
+
+export const getBankProductByBankId = async (bankId: number) => {
+    try {
+        const response = await apiClient.get(`/banks/${bankId}/products`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching bank product:', error);
+        return null;
+    }
+};

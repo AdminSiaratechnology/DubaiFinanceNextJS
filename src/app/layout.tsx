@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 // import AuthInitializer from "@/components/auth/AuthInitializer";
 import { ConfirmProvider } from '@/components/providers/confirm-provider';
-import { Toaster } from "sonner"; 
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -53,19 +53,19 @@ export default function RootLayout({
       </head>
       <body className={`${roboto.variable} antialiased`}>
         {/* <AuthInitializer> */}
-          <ThemeProvider>
-            <ConfirmProvider>
-                {children}
-                  <Toaster
-                position="top-right"
-                richColors
-                closeButton
-                toastOptions={{
-                  duration: 3000,
-                }}
-              />
-            </ConfirmProvider>
-          </ThemeProvider>
+        <ThemeProvider>
+          <ConfirmProvider>
+            {children}
+            <Toaster
+              position="top-right"
+              richColors
+              closeButton
+              toastOptions={{
+                duration: 3000,
+              }}
+            />
+          </ConfirmProvider>
+        </ThemeProvider>
         {/* </AuthInitializer> */}
       </body>
     </html>

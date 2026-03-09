@@ -2,6 +2,7 @@ import { apiClient } from "@/lib/api/client";
 
 export interface Telecaller {
     id: number;
+    user_id?: number;
     name: string;
     email: string;
     phone: string;
@@ -15,6 +16,7 @@ export interface Telecaller {
     status: 'active' | 'inactive';
     created_at: string;
     updated_at: string;
+    business_name?: string;
 }
 
 export interface TelecallerCreate {
@@ -30,6 +32,7 @@ export interface TelecallerCreate {
     iban: string;
     status: 'active' | 'inactive';
     password?: string;
+    business_name?: string;
 }
 
 export interface TelecallerResponse {
@@ -39,7 +42,7 @@ export interface TelecallerResponse {
     limit: number;
 }
 
-export const getTelecallers= async ({
+export const getTelecallers = async ({
     page = 1,
     limit = 10,
     search = '',

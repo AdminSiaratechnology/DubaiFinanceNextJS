@@ -173,7 +173,7 @@ export function ApiSearchableSelect<T extends ApiSelectItem = ApiSelectItem>({
                 ...extraParamsRef.current,
             });
             if (!ctrl.signal.aborted) {
-                setItems(data.items ?? []);
+                setItems(data.items ?? data ?? []);
             }
         } catch (err: unknown) {
             if (!ctrl.signal.aborted) {

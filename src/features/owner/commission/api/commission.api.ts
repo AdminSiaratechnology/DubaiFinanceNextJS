@@ -125,3 +125,13 @@ export const deleteCommission = async (id: number): Promise<void> => {
         throw error;
     }
 };
+
+export const getCommissionByBankAndProduct = async (bankId: number, productId: number): Promise<Commission | null> => {
+    try {
+        const res = await apiClient.get(`/commission/bank/${bankId}/product/${productId}`);
+        return res.data;
+    } catch (error) {
+        console.error(`Error in getCommissionByBankAndProduct for Bank ${bankId} and Product ${productId}:`, error);
+        return null;
+    }
+};
