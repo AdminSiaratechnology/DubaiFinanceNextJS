@@ -18,4 +18,4 @@ export const forgotPassword = (data: { email: string }) => {
 
 export const resetPassword = (data: { token: string; new_password: string }) => {
   return apiClient.post("/account/verify-password-reset-token", data);
-};
+}; 

@@ -39,7 +39,7 @@ export function CommissionTable({ rules, page, total, limit }: CommissionTablePr
                     <table className="w-full text-left border-collapse min-w-[1100px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">S.No</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Bank</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Product</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Commission</th>
@@ -52,11 +52,13 @@ export function CommissionTable({ rules, page, total, limit }: CommissionTablePr
 
                         <tbody className="divide-y divide-border">
                             {rules.length > 0 ? (
-                                rules.map((rule) => (
+                                rules.map((rule,index) => (
                                     <tr key={rule.id} className="hover:bg-muted/30 transition-colors group">
                                         {/* ID */}
                                         <td className="p-3 sm:p-4">
-                                            <p className="text-xs font-bold text-foreground">{rule.id}</p>
+                                            <p className="text-xs font-bold text-foreground">
+                                                {((page || 1) - 1) * (limit || 10) + index + 1}
+                                            </p>
                                         </td>
 
                                         {/* Bank */}

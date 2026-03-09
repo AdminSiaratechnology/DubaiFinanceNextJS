@@ -49,7 +49,7 @@ export function BankProductTable({ bankProducts, page, total, limit }: BankProdu
                     <table className="w-full text-left border-collapse min-w-[1100px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">S.No</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Product Details</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Bank</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Segment</th>
@@ -61,10 +61,12 @@ export function BankProductTable({ bankProducts, page, total, limit }: BankProdu
                         </thead>
                         <tbody className="divide-y divide-border">
                             {bankProducts.length > 0 ? (
-                                bankProducts.map((product) => (
+                                bankProducts.map((product, index) => (
                                     <tr key={product.id} className="hover:bg-muted/30 transition-colors group">
                                         <td className="p-3 sm:p-4">
-                                            <p className="text-xs font-bold text-foreground">{product.id}</p>
+                                            <p className="text-xs font-bold text-foreground">
+                                                {((page || 1) - 1) * (limit || 10) + index + 1}
+                                            </p>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-2 sm:gap-3">

@@ -30,7 +30,7 @@ export function SLATemplateTable({ templates, page, total, limit }: Props) {
           <table className="w-full text-left min-w-[900px]">
             <thead className="bg-muted/50 border-b border-border">
               <tr>
-                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
+                <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">S.No</th>
                 <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Template</th>
                 <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Telecaller (hrs)</th>
                 <th className="p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Coordinator (hrs)</th>
@@ -44,9 +44,11 @@ export function SLATemplateTable({ templates, page, total, limit }: Props) {
 
             <tbody className="divide-y divide-border">
               {templates.length > 0 ? (
-                templates.map((t) => (
+                templates.map((t,index) => (
                   <tr key={t.id} className="hover:bg-muted/30 transition">
-                    <td className="p-4 text-sm">{t.id}</td>
+                    <td className="p-4 text-sm">
+                      {((page || 1) - 1) * (limit || 10) + index + 1}
+                    </td>
                     <td className="p-4 text-sm font-bold">{t.template_name}</td>
                     <td className="p-4 text-sm">{t.telecaller_action_time}h</td>
                     <td className="p-4 text-sm">{t.coordinator_verification_time}h</td>
