@@ -41,7 +41,7 @@ export function BankCategoryTable({
                     <table className="w-full text-left border-collapse min-w-[700px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">S.No</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">
                                     Bank Category Name
                                 </th>
@@ -59,10 +59,12 @@ export function BankCategoryTable({
 
                         <tbody className="divide-y divide-border">
                             {bankCategories.length > 0 ? (
-                                bankCategories.map((bankCategory) => (
+                                bankCategories.map((bankCategory, index) => (
                                     <tr key={bankCategory.id} className="hover:bg-muted/30 transition-colors group">
                                         <td className="p-3 sm:p-4">
-                                            <p className="text-xs font-bold text-foreground">{bankCategory.id}</p>
+                                            <p className="text-xs font-bold text-foreground">
+                                                {((page || 1) - 1) * (limit || 10) + index + 1}
+                                            </p>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-3">

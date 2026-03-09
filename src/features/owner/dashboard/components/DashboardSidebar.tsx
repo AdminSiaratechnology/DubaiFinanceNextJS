@@ -130,6 +130,7 @@ const navItems = [
 ];
 
 import { useRouter } from 'next/navigation';
+import { adminLogout } from '../../api/auth.api';
 
 interface DashboardSidebarProps {
     isOpen?: boolean;
@@ -166,6 +167,14 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
     // Determine if sidebar should be collapsed (desktop only, when not hovered)
     const isCollapsed = !isOpen && !isHovered;
 
+    const handleLogout = async () => {
+        try {
+            await adminLogout();
+            router.push('/login');
+        } catch (error) {
+            console.error('Failed to logout:', error);
+        }
+    };
     return (
         <>
             {/* Mobile Overlay */}
@@ -301,7 +310,7 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                 {/* User Profile Summary */}
                 <div className={`p-4 border-t border-border mt-auto space-y-2 relative`}>
                     <button
-                        onClick={() => router.push('/login')}
+                        onClick={handleLogout}
                         className={`w-full flex items-center gap-3 py-3 rounded-xl text-xs font-bold text-text-muted hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100 dark:hover:bg-red-950/20 group relative ${isCollapsed ? 'justify-center px-0' : 'px-4'}`}
                     >
                         <div className="shrink-0 flex items-center justify-center">

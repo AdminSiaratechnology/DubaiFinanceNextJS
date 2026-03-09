@@ -32,7 +32,7 @@ export function BankTable({ banks, page, total, limit }: BankTableProps) {
                     <table className="w-full text-left border-collapse min-w-[900px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">S.No</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Bank Name</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Category</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Loan Types</th>
@@ -43,10 +43,12 @@ export function BankTable({ banks, page, total, limit }: BankTableProps) {
                         </thead>
                         <tbody className="divide-y divide-border">
                             {banks.length > 0 ? (
-                                banks.map((bank) => (
+                                banks.map((bank, index) => (
                                     <tr key={bank.id} className="hover:bg-muted/30 transition-colors group">
                                         <td className="p-3 sm:p-4">
-                                            <p>{bank.id}</p>
+                                            <p className="text-xs font-bold text-foreground">
+                                                {((page || 1) - 1) * (limit || 10) + index + 1}
+                                            </p>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-2 sm:gap-3">

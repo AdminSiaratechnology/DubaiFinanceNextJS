@@ -36,7 +36,7 @@ export function TeamTable({ members, role, page, total, limit }: TeamTableProps)
                     <table className="w-full text-left border-collapse min-w-[800px] lg:min-w-0">
                         <thead>
                             <tr className="bg-muted/50 border-b border-border">
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">ID</th>
+                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">S.No</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Full Name</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Contact</th>
                                 <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">Experience</th>
@@ -47,10 +47,11 @@ export function TeamTable({ members, role, page, total, limit }: TeamTableProps)
                         </thead>
                         <tbody className="divide-y divide-border">
                             {members.length > 0 ? (
-                                members.map((member) => (
+                                members.map((member, index) => (
                                     <tr key={member.id} className="hover:bg-muted/30 transition-colors group">
                                         <td className="p-3 sm:p-4">
-                                            <p className="text-xs font-bold text-foreground">{member.id}</p>
+                                            <p className="text-xs font-bold text-foreground">                                                {((page || 1) - 1) * (limit || 10) + index + 1}
+                                            </p>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="flex items-center gap-2 sm:gap-3">
