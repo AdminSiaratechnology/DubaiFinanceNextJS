@@ -17,3 +17,19 @@ export const submitLead = async (payload: SubmitLeadPayload, otp: string) => {
     const response = await apiClient.post(`/leads?otp=${otp}`, payload);
     return response.data;
 }
+
+export const sendCaseOtp = async (email: string) => {
+    const formData = new FormData();
+    formData.append("email", email);
+
+    return apiClient.post("/cases/case-otp", formData);
+};
+
+export const submitCompleteCase = async (formData: FormData) => {
+    const response = await apiClient.post('/cases/submit-complete', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return response.data;
+}
