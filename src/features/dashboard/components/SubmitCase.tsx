@@ -56,6 +56,7 @@ export function SubmitCase() {
         product_id: '' as string | number,
         productName: '',
         amount: '',
+        status: 'submitted_to_coordinator'
     });
 
     const [files, setFiles] = useState<{ [key: string]: File | null }>({});
@@ -120,7 +121,7 @@ export function SubmitCase() {
             multipart.append('requested_amount', String(formData.amount));
             multipart.append('emirates_id', formData.emiratesId);
             multipart.append('otp', otp);
-
+            multipart.append('status', formData.status)
             // Append all files
             Object.entries(files).forEach(([id, file]) => {
                 if (file) {
@@ -143,6 +144,7 @@ export function SubmitCase() {
                 product_id: '',
                 productName: '',
                 amount: '',
+                status: 'submitted_to_coordinator'
             });
             setFiles({});
             setOtp('');

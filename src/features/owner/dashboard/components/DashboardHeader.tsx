@@ -40,7 +40,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     };
 
     return (
-        <header className="rounded-xl executive-header p-4 sm:p-6 flex items-center justify-between gap-4 shadow-lg text-white overflow-hidden relative group w-full">
+        <header className="rounded-xl executive-header p-2 sm:p-4 flex items-center justify-between gap-4 shadow-lg text-white overflow-hidden relative group w-full">
             <div className="flex items-center gap-4 flex-1 min-w-0">
                 {/* Mobile Trigger */}
                 <button

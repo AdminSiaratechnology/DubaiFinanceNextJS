@@ -255,8 +255,8 @@ export function ApiSearchableSelect<T extends ApiSelectItem = ApiSelectItem>({
     // For multi we show chips; for single we show one label
     const singleLabel: string | null = (() => {
         if (multiple || selectedIds.length === 0) return null;
-        const found = allKnownItems.find((i) => getId(i) === selectedIds[0]);
-        return found ? getLabel(found) : `ID: ${selectedIds[0]}`;
+        const found = allKnownItems.find((i) => getId(i) == selectedIds[0]);
+        return found ? getLabel(found) : `${selectedIds[0]}`;
     })();
 
     const triggerIsEmpty = selectedIds.length === 0;
@@ -292,8 +292,8 @@ export function ApiSearchableSelect<T extends ApiSelectItem = ApiSelectItem>({
                         // Multi chips — we only show them once items are loaded;
                         // fall back to showing ids while items haven't loaded yet.
                         selectedIds.map((id) => {
-                            const found = allKnownItems.find((i) => getId(i) === id);
-                            const chipLabel = found ? getLabel(found) : `#${id}`;
+                            const found = allKnownItems.find((i) => getId(i) == id);
+                            const chipLabel = found ? getLabel(found) : `${id}`;
                             return (
                                 <span
                                     key={id}

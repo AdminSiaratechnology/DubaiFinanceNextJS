@@ -1,280 +1,368 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card } from '@/components/ui/Card';
-import { Label, Input, Select } from '@/components/ui/Form';
-import { FileUploader } from '@/shared/FileUploader';
+import React, { useState, useEffect } from "react";
+import { Card } from "@/components/ui/Card";
+import { Label, Input, Select } from "@/components/ui/Form";
+import { FileUploader } from "@/shared/FileUploader";
+import { ApiSearchableSelect } from "@/shared/ApiSearchableSelect";
+
+import { getBanks } from "@/features/owner/bank/api/bank.api";
+import { getBankProductByBankId } from "@/features/owner/bankproducts/api/bankproducts.api";
+import { Case, submitCompleteCase, updateCase } from "./api/agent.api";
 
 interface LeadDetailsProps {
-    lead: {
-        id: string;
-        name: string;
-        mobile: string;
-        email?: string;
-        status: string;
-        employer?: string;
-        salary?: number | string;
-        amount?: number | string;
-        product?: string;
-        emiratesId?: string;
+  lead: {
+    id: number;
+    customer_name: string;
+    mobile_number: string;
+    email?: string;
+    requested_amount?: number;
+    product?: {
+      id: number;
+      product_name: string;
     };
-    onClose: () => void;
+    bank?: {
+      id: number;
+      name: string;
+    };
+  };
+  caseData?: Case | null;
+  onClose: () => void;
 }
 
 const requiredDocs = [
-    { id: 'eid-front', label: 'Emirates ID (Front) *' },
-    { id: 'eid-back', label: 'Emirates ID (Back) *' },
-    { id: 'passport', label: 'Passport Copy *' },
-    { id: 'visa', label: 'Residence Visa *' },
-    { id: 'salary-cert', label: 'Salary Certificate *' },
-    { id: 'bank-statement-3', label: 'Bank Statements (Last 3 Months) *' },
-    { id: 'bank-statement-6', label: 'Bank Statements (Last 6 Months) *' },
-    { id: 'trade-license', label: 'Trade License *' },
-    { id: 'liability-letter', label: 'Liability Letter' },
-    { id: 'noc', label: 'NOC From Employer' },
-    { id: 'security-cheque', label: 'Security Cheque' },
-    { id: 'utility-bill', label: 'Utility Bill' },
-    { id: 'tenancy-contract', label: 'Tenancy Contract' },
-    { id: 'proof-of-address', label: 'Proof of Address' },
-    { id: 'last-3-months-payslip', label: 'Last 3 Months Payslip' },
-    { id: 'last-6-months-payslip', label: 'Last 6 Months Payslip' },
-    { id: 'company-id', label: 'Company ID Card' },
-    { id: 'labor-contract', label: 'Labor Contract' },
-    { id: 'employment-letter', label: "Employment Letter" },
-    { id: 'bank-account-statement', label: 'Bank Account Statement (Personal)' },
-    { id: 'credit-report', label: 'Credit Report' },
-    { id: 'existing-loan-statements', label: 'Existing Loan Statements' },
-    { id: 'property-documents', label: 'Property Documents (if applicable)' },
-    { id: 'vehicle-registration', label: 'Vehicle Registration (for Auto Loan)' },
-    { id: 'business-plan', label: 'Business Plan (for Business Loan)' },
-    { id: 'financial-statements', label: 'Financial Statements (Last 2 Years)' },
-    { id: 'tax-returns', label: 'Tax Returns' },
-    { id: 'moa', label: '(MOA) Memorandum of Association' },
+  { id: "emirates_id_front", label: "Emirates ID (Front) *" },
+  { id: "emirates_id_back", label: "Emirates ID (Back) *" },
+  { id: "passport_copy", label: "Passport Copy *" },
+  { id: "residence_visa", label: "Residence Visa *" },
+  { id: "salary_certificate", label: "Salary Certificate *" },
+  { id: "bank_statement_last_3_months", label: "Bank Statements (Last 3 Months) *" },
+  { id: "bank_statement_last_6_months", label: "Bank Statements (Last 6 Months) *" },
+  { id: "trade_license", label: "Trade License *" },
+  { id: "liability_letter", label: "Liability Letter" },
+  { id: "noc_from_employer", label: "NOC From Employer" },
+  { id: "security_cheque", label: "Security Cheque" },
+  { id: "utility_bill", label: "Utility Bill" },
+  { id: "tenancy_contract", label: "Tenancy Contract" },
+  { id: "proof_of_address", label: "Proof of Address" },
+  { id: "last_3_month_payslips", label: "Last 3 Months Payslip" },
+  { id: "last_6_month_payslips", label: "Last 6 Months Payslip" },
+  { id: "company_id_card", label: "Company ID Card" },
+  { id: "labor_contract", label: "Labor Contract" },
+  { id: "employment_letter", label: "Employment Letter" },
+  { id: "bank_account_statement", label: "Bank Account Statement (Personal)" },
+  { id: "credit_report", label: "Credit Report" },
+  { id: "existing_loan_statement", label: "Existing Loan Statements" },
+  { id: "property_document", label: "Property Documents (if applicable)" },
+  { id: "vehicle_registration", label: "Vehicle Registration (for Auto Loan)" },
+  { id: "business_plan", label: "Business Plan (for Business Loan)" },
+  { id: "financial_statement", label: "Financial Statements (Last 2 Years)" },
+  { id: "tax_return", label: "Tax Returns" },
+  { id: "memorandum_of_association", label: "(MOA) Memorandum of Association" },
 ];
 
-export function LeadDetails({ lead, onClose }: LeadDetailsProps) {
-    const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({ ...lead });
-    const [files, setFiles] = useState<{ [key: string]: File | null }>({});
+export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: lead.customer_name || "",
+    mobile: lead.mobile_number || "",
+    email: lead.email || "",
+    amount: lead.requested_amount?.toString() || "",
+
+    employer_name: "",
+    salary: "",
+    emirates_id: "",
+
+    bank_id: lead.bank?.id?.toString() || "",
+    product_id: lead.product?.id?.toString() || "",
+  });
+
+  const [files, setFiles] = useState<{ [key: string]: File | null }>({});
+  const [status, setStatus] = useState("documents_pending");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ✅ Sync form when case loads
+  useEffect(() => {
+    if (!caseData) return;
+
+    setFormData({
+      name: caseData.customer_name || lead.customer_name || "",
+      mobile: caseData.mobile_number || lead.mobile_number || "",
+      email: caseData.email || lead.email || "",
+      amount: (caseData.requested_amount || lead.requested_amount || "").toString(),
+
+      employer_name: caseData.company_name || "",
+      salary: (caseData.salary || "").toString(),
+      emirates_id: caseData.emirates_id || "",
+
+      bank_id: (caseData.bank?.id || lead.bank?.id || "").toString(),
+      product_id: (caseData.product?.id || lead.product?.id || "").toString(),
+    });
+
+    setStatus(caseData.status || "documents_pending");
+
+  }, [caseData, lead]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (id: string, file: File | null) => {
+    setFiles(prev => {
+      if (file) return { ...prev, [id]: file };
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  };
+
+  const fetchProducts = async () => {
+    if (!formData.bank_id) {
+      return { items: [], total: 0, page: 1, limit: 10 };
+    }
+
+    const data = await getBankProductByBankId(Number(formData.bank_id));
+
+    return {
+      items: data,
+      total: data.length,
+      page: 1,
+      limit: data.length,
     };
+  };
 
-    const handleFileChange = (id: string, file: File | null) => {
-        setFiles(prev => {
-            if (file) {
-                return { ...prev, [id]: file };
-            } else {
-                const next = { ...prev };
-                delete next[id];
-                return next;
+  const handleSubmitCase = async (statusToSend: string) => {
+    try {
+      setIsSubmitting(true);
+
+      const multipart = new FormData();
+
+      multipart.append("customer_name", formData.name);
+      multipart.append("mobile_number", formData.mobile);
+      multipart.append("email", formData.email);
+      multipart.append("employer_name", formData.employer_name);
+      multipart.append("monthly_salary", String(formData.salary));
+      multipart.append("bank_id", String(formData.bank_id));
+      multipart.append("product_id", String(formData.product_id));
+      multipart.append("requested_amount", String(formData.amount));
+      multipart.append("emirates_id", formData.emirates_id);
+      multipart.append("status", statusToSend);
+
+      Object.entries(files).forEach(([id, file]) => {
+        if (file) multipart.append(id, file);
+      });
+
+      if (caseData) {
+        await updateCase(caseData.id, multipart);
+      } else {
+        multipart.append("lead_id", String(lead.id));
+        await submitCompleteCase(multipart);
+      }
+
+      alert(caseData ? "Case updated successfully" : "Case created successfully");
+
+    } catch (err) {
+      console.error(err);
+      alert("Submission failed");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Card noPadding className="h-full flex flex-col">
+      <div className="bg-green-soft/30 p-4 border-b border-border flex justify-between items-center">
+        <div>
+          <h3 className="font-bold text-lg">Lead Details</h3>
+
+          <span className="text-xs text-text-muted">
+            {lead.product?.product_name} • {lead.bank?.name}
+          </span>
+
+          {/* {caseData && (
+            <div className="mt-1">
+              <span className="text-[10px] px-2 py-1 rounded bg-green-100 text-green-700 font-semibold">
+                Case Created • {caseData.status}
+              </span>
+            </div>
+          )} */}
+        </div>
+
+        <button onClick={onClose} className="p-2 hover:bg-red-soft rounded-2xl">
+          ✕
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-6 space-y-10">
+        <section className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h4 className="font-bold">Customer Information</h4>
+
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="px-1 py-0.5 border rounded text-xs"
+            >
+              {isEditing ? "Cancel" : "Edit"}
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+
+            <div>
+              <Label>Full Name</Label>
+              <Input name="name" value={formData.name} onChange={handleInputChange} disabled={!isEditing}/>
+            </div>
+
+            <div>
+              <Label>Mobile</Label>
+              <Input name="mobile" value={formData.mobile} onChange={handleInputChange} disabled={!isEditing}/>
+            </div>
+
+            <div>
+              <Label>Email</Label>
+              <Input name="email" value={formData.email} onChange={handleInputChange} disabled={!isEditing}/>
+            </div>
+
+            <div>
+              <Label>Emirates ID</Label>
+              <Input name="emirates_id" value={formData.emirates_id} onChange={handleInputChange} disabled={!isEditing}/>
+            </div>
+
+            <div>
+              <Label>Employer</Label>
+              <Input name="employer_name" value={formData.employer_name} onChange={handleInputChange} disabled={!isEditing}/>
+            </div>
+
+            <div>
+              <Label>Salary</Label>
+              <Input name="salary" type="number" value={formData.salary} onChange={handleInputChange} disabled={!isEditing}/>
+            </div>
+
+            <div>
+              <Label>Requested Amount</Label>
+              <Input name="amount" value={formData.amount} onChange={handleInputChange} disabled={!isEditing}/>
+            </div>
+
+            <div>
+              <Label>Select Bank *</Label>
+              <ApiSearchableSelect
+                fetchFn={getBanks as any}
+                value={formData.bank_id}
+                initialOptions={(() => {
+                  const options = [];
+                  if (lead.bank?.id) options.push({ id: lead.bank.id, name: lead.bank.name });
+                  if (caseData?.bank?.id) options.push({ id: caseData.bank.id, name: caseData.bank.name });
+                  return options;
+                })()}
+                onChange={(val) =>
+                  setFormData(prev => ({ ...prev, bank_id: String(val), product_id: "" }))
+                }
+                placeholder="Search bank..."
+                disabled={!isEditing}
+              />
+            </div>
+
+            <div>
+              <Label>Select Product *</Label>
+              <ApiSearchableSelect
+                fetchFn={fetchProducts}
+                labelKey="product_name"
+                value={formData.product_id}
+                initialOptions={(() => {
+                  const options = [];
+                  if (lead.product?.id) options.push({ id: lead.product.id, product_name: lead.product.product_name });
+                  if (caseData?.product?.id) options.push({ id: caseData.product.id, product_name: caseData.product.product_name });
+                  return options;
+                })()}
+                onChange={(val) =>
+                  setFormData(prev => ({ ...prev, product_id: String(val) }))
+                }
+                placeholder="Search product..."
+                disabled={!isEditing || !formData.bank_id}
+              />
+            </div>
+
+          </div>
+
+        </section>
+
+        <section className="space-y-6">
+          <h4 className="font-bold">Upload Documents</h4>
+
+          {requiredDocs.map(doc => {
+            let docUrl = null;
+            if (caseData?.documents && caseData.documents.length > 0) {
+              const docData = caseData.documents[0];
+              const expectedKey = `${doc.id}_url`;
+              const alternateKey = doc.id === "residence_visa" ? "residencevisa_url" : expectedKey;
+              docUrl = docData[alternateKey] || null;
             }
-        });
-    };
 
-    const handleSave = () => {
-        console.log('Saving lead data:', formData);
-        setIsEditing(false);
-        // In a real app, you'd call an API here
-    };
+            return (
+              <FileUploader
+                key={doc.id}
+                id={doc.id}
+                label={doc.label}
+                file={files[doc.id] || null}
+                previewUrl={docUrl}
+                onChange={handleFileChange}
+                color="blue"
+              />
+            );
+          })}
+        </section>
 
-    return (
-        <Card noPadding className="h-full flex flex-col animate-in slide-in-from-right duration-300">
-            {/* ... header remains same ... */}
-            <div className="bg-green-soft/30 dark:bg-green/10 p-4 border-b border-border flex justify-between items-center sticky top-0 z-10 backdrop-blur-sm">
-                <div className="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-green"><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M15 18a3 3 0 1 0-6 0" /><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z" /></svg>
-                    <h3 className="font-bold text-lg text-foreground">Case Details</h3>
-                </div>
-                <button
-                    onClick={onClose}
-                    className="p-2 hover:bg-red-soft hover:text-red-500 rounded-lg transition-colors text-text-muted"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                </button>
-            </div>
+        <section className="space-y-6">
+          <h4 className="font-bold">Update Status</h4>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-10 custom-scrollbar">
-                {/* Customer Information Section */}
-                <section className="space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h4 className="text-base font-bold text-foreground">Customer Information</h4>
-                        <div className="flex gap-2">
-                            {isEditing ? (
-                                <>
-                                    <button
-                                        onClick={() => setIsEditing(false)}
-                                        className="px-3 py-1.5 rounded-lg border border-border text-xs font-bold hover:bg-muted transition-colors flex items-center gap-1"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleSave}
-                                        className="px-3 py-1.5 rounded-lg bg-brand text-white text-xs font-bold hover:bg-brand/90 transition-colors flex items-center gap-1"
-                                    >
-                                        Save Changes
-                                    </button>
-                                </>
-                            ) : (
-                                <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-bold hover:bg-muted transition-colors"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>
-                                    Edit
-                                </button>
-                            )}
-                        </div>
-                    </div>
+          <Select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            options={[
+              { value: "documents_pending", label: "Documents Pending" },
+              { value: "documents_collected", label: "Documents Collected" },
+              { value: "follow_up", label: "Follow Up Required" },
+              { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
+              { value: "documents_required", label: "Documents Required" }
+            ]}
+          />
+        </section>
 
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-                        <div className="space-y-1">
-                            <Label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Full Name</Label>
-                            {isEditing ? (
-                                <Input name="name" value={formData.name} onChange={handleInputChange} />
-                            ) : (
-                                <p className="text-sm font-bold text-foreground h-10 flex items-center">{formData.name}</p>
-                            )}
-                        </div>
-                        <div className="space-y-1">
-                            <Label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Mobile Number</Label>
-                            {isEditing ? (
-                                <Input name="mobile" value={formData.mobile} onChange={handleInputChange} />
-                            ) : (
-                                <p className="text-sm font-bold text-foreground h-10 flex items-center">{formData.mobile}</p>
-                            )}
-                        </div>
-                        <div className="space-y-1">
-                            <Label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Email Address</Label>
-                            {isEditing ? (
-                                <Input name="email" value={formData.email || ''} onChange={handleInputChange} />
-                            ) : (
-                                <p className="text-sm font-bold text-foreground h-10 flex items-center">{formData.email || 'N/A'}</p>
-                            )}
-                        </div>
-                        <div className="space-y-1">
-                            <Label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Emirates ID</Label>
-                            {isEditing ? (
-                                <Input name="emiratesId" value={formData.emiratesId || ''} onChange={handleInputChange} />
-                            ) : (
-                                <p className="text-sm font-bold text-foreground h-10 flex items-center">{formData.emiratesId || '784-1XXX-XXXX-X'}</p>
-                            )}
-                        </div>
-                        <div className="space-y-1">
-                            <Label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Employer</Label>
-                            {isEditing ? (
-                                <Input name="employer" value={formData.employer || ''} onChange={handleInputChange} />
-                            ) : (
-                                <p className="text-sm font-bold text-foreground h-10 flex items-center">{formData.employer || 'Dubai Health Authority'}</p>
-                            )}
-                        </div>
-                        <div className="space-y-1">
-                            <Label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Monthly Salary (AED)</Label>
-                            {isEditing ? (
-                                <Input name="salary" type="number" value={formData.salary || ''} onChange={handleInputChange} />
-                            ) : (
-                                <p className="text-sm font-bold text-foreground h-10 flex items-center">{formData.salary || '17,000'}</p>
-                            )}
-                        </div>
-                        <div className="space-y-1">
-                            <Label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Requested Amount (AED)</Label>
-                            {isEditing ? (
-                                <Input name="amount" type="number" value={formData.amount || ''} onChange={handleInputChange} />
-                            ) : (
-                                <p className="text-sm font-bold text-foreground h-10 flex items-center">{formData.amount || '80,000'}</p>
-                            )}
-                        </div>
-                        <div className="space-y-1">
-                            <Label className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Product Type</Label>
-                            {isEditing ? (
-                                <Select
-                                    name="product"
-                                    value={formData.product || ''}
-                                    onChange={handleInputChange}
-                                    options={[
-                                        { value: 'Personal Loan', label: 'Personal Loan' },
-                                        { value: 'Business Loan', label: 'Business Loan' },
-                                        { value: 'Credit Card', label: 'Credit Card' },
-                                        { value: 'Auto Loan', label: 'Auto Loan' },
-                                    ]}
-                                />
-                            ) : (
-                                <p className="text-sm font-bold text-foreground h-10 flex items-center">{formData.product || 'Personal Loan'}</p>
-                            )}
-                        </div>
-                    </div>
-                </section>
+      </div>
 
-                {/* Upload Documents Section */}
-                <section className="space-y-6">
-                    <h4 className="text-base font-bold text-foreground">Upload Documents</h4>
-                    <div className="grid grid-cols-1 gap-4">
-                        {requiredDocs.map((doc) => (
-                            <FileUploader
-                                key={doc.id}
-                                id={doc.id}
-                                label={doc.label}
-                                file={files[doc.id] || null}
-                                onChange={handleFileChange}
-                                color="blue"
-                            />
-                        ))}
-                    </div>
-                </section>
+      <div className="p-6 border-t border-border grid grid-cols-2 gap-4">
 
-                {/* Update Status */}
-                <section className="space-y-6">
-                    <h4 className="text-base font-bold text-foreground">Update Status</h4>
-                    <div className="space-y-4">
-                        <div className="space-y-1.5">
-                            <Label>Select New Status</Label>
-                            <Select
-                                value="pending"
-                                onChange={() => { }}
-                                options={[
-                                    { value: 'pending', label: 'Documents Pending' },
-                                    { value: 'collected', label: 'Documents Collected' },
-                                    { value: 'follow-up', label: 'Follow Up Required' },
-                                    { value: 'submitted', label: 'Submitted to Coordinator' }
-                                ]}
-                            />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label>Notes (Optional)</Label>
-                            <textarea
-                                className="w-full h-24 p-4 bg-muted border border-border rounded-xl text-sm focus:ring-2 focus:ring-brand outline-none transition-all custom-scrollbar placeholder:text-text-muted/50"
-                                placeholder="Add any notes or comments..."
-                            />
-                        </div>
-                    </div>
-                </section>
-            </div>
+        <button
+          onClick={() => handleSubmitCase(status)}
+          disabled={isSubmitting}
+          className="py-3 px-4 bg-brand text-white rounded-xl text-xs font-bold"
+        >
+          {isSubmitting ? "Submitting..." : "Update Status"}
+        </button>
 
-            {/* Footer Actions */}
-            <div className="p-6 border-t border-border bg-card space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                    <button className="flex items-center justify-center gap-2 py-3 px-4 bg-brand text-white rounded-xl font-bold text-xs hover:bg-brand/90 transition-all shadow-md active:scale-[0.98]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m20 6-9 11-5-5" /><circle cx="12" cy="12" r="10" opacity="0" /></svg>
-                        Update Status
-                    </button>
-                    <button className="flex items-center justify-center gap-2 py-3 px-4 bg-green text-white rounded-xl font-bold text-xs hover:bg-green/90 transition-all shadow-md active:scale-[0.98]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
-                        Submit to Coordinator
-                    </button>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <button className="flex items-center justify-center gap-2 py-3 px-4 border border-border text-foreground rounded-xl font-bold text-xs hover:bg-muted transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-                        Call
-                    </button>
-                    <button className="flex items-center justify-center gap-2 py-3 px-4 border border-border text-foreground rounded-xl font-bold text-xs hover:bg-muted transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
-                        Email
-                    </button>
-                </div>
-            </div>
-        </Card>
-    );
+        <button
+          onClick={() => handleSubmitCase("submitted_to_coordinator")}
+          disabled={isSubmitting || status !== "submitted_to_coordinator"}
+          className="py-3 px-4 bg-green text-white rounded-xl text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Submit to Coordinator
+        </button>
+
+        <button className="py-3 px-4 border border-border rounded-xl text-xs font-bold">
+          Call
+        </button>
+
+        <button className="py-3 px-4 border border-border rounded-xl text-xs font-bold">
+          Email
+        </button>
+
+      </div>
+
+    </Card>
+  );
 }

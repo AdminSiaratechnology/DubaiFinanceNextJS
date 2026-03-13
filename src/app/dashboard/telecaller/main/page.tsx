@@ -2,7 +2,7 @@ import React from 'react';
 import { telecallerStats, telecallerLeads } from '@/lib/mock/telecaller';
 import { StatTabs } from '@/features/dashboard/components/StatTabs';
 import { TelecallerMainGrid } from '@/features/dashboard/components/TelecallerMainGrid';
-
+import { getLeads } from '@/features/dashboard/components/api/agent.api';
 const telecallerStatsTabs = [
     {
         id: 'new-leads',
@@ -37,11 +37,18 @@ const telecallerStatsTabs = [
 export default async function TelecallerDashboardPage({
     searchParams
 }: {
-    searchParams: Promise<{ tab?: string; leadId?: string }>
+    searchParams: Promise<{ tab?: string; leadId?: string; q?: string }>
 }) {
     const params = await searchParams;
     const activeTab = params.tab || 'new-leads';
-
+    let lead_type = "";
+    if (params.tab === "new-leads") lead_type = "new";
+    if (params.tab === "working") lead_type = "working";
+    if (params.tab === "submitted") lead_type = "submitted";
+    if (params.tab === "docs-required") lead_type = "docs_required";
+    
+    const searchQuery = params.q || "";
+    const leads = await getLeads(0, 10, searchQuery, lead_type);
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
             {/* Cards as Tabs */}
@@ -52,7 +59,7 @@ export default async function TelecallerDashboardPage({
             />
 
             {/* Main Content Area: Leads List & Detail View */}
-            <TelecallerMainGrid leads={telecallerLeads} />
+            <TelecallerMainGrid leads={leads} />
         </div>
     );
 }
