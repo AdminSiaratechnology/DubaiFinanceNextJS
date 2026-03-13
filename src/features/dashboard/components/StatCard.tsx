@@ -2,58 +2,30 @@
 
 import React from 'react';
 
+type Color = 'blue' | 'green' | 'purple' | 'teal' | 'orange' | 'red' | 'dark';
+
 interface StatCardProps {
     title: string;
     value: string | number;
     icon?: React.ReactNode;
-    color: 'blue' | 'green' | 'purple' | 'teal' | 'orange' | 'red' | 'dark';
+    color: Color;
     isActive?: boolean;
     onClick?: () => void;
 }
 
-const variants = {
-    blue: {
-        wrapper: 'from-blue-50/50 to-white border-blue-100 hover:border-blue-200 hover:shadow-blue-100/50 dark:from-blue-950/20 dark:to-transparent dark:border-blue-900/30 dark:hover:border-blue-800',
-        icon: 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30',
-        text: 'text-blue-950 dark:text-blue-100',
-        label: 'text-blue-600/80 dark:text-blue-400/80'
-    },
-    green: {
-        wrapper: 'from-green-50/50 to-white border-green-100 hover:border-green-200 hover:shadow-green-100/50 dark:from-green-950/20 dark:to-transparent dark:border-green-900/30 dark:hover:border-green-800',
-        icon: 'bg-green-50 text-green-600 border-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30',
-        text: 'text-green-950 dark:text-green-100',
-        label: 'text-green-600/80 dark:text-green-400/80'
-    },
-    purple: {
-        wrapper: 'from-purple-50/50 to-white border-purple-100 hover:border-purple-200 hover:shadow-purple-100/50 dark:from-purple-950/20 dark:to-transparent dark:border-purple-900/30 dark:hover:border-purple-800',
-        icon: 'bg-purple-50 text-purple-600 border-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800/30',
-        text: 'text-purple-950 dark:text-purple-100',
-        label: 'text-purple-600/80 dark:text-purple-400/80'
-    },
-    teal: {
-        wrapper: 'from-teal-50/50 to-white border-teal-100 hover:border-teal-200 hover:shadow-teal-100/50 dark:from-teal-950/20 dark:to-transparent dark:border-teal-900/30 dark:hover:border-teal-800',
-        icon: 'bg-teal-50 text-teal-600 border-teal-100 dark:bg-teal-900/20 dark:text-teal-400 dark:border-teal-800/30',
-        text: 'text-teal-950 dark:text-teal-100',
-        label: 'text-teal-600/80 dark:text-teal-400/80'
-    },
-    orange: {
-        wrapper: 'from-orange-50/50 to-white border-orange-100 hover:border-orange-200 hover:shadow-orange-100/50 dark:from-orange-950/20 dark:to-transparent dark:border-orange-900/30 dark:hover:border-orange-800',
-        icon: 'bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800/30',
-        text: 'text-orange-950 dark:text-orange-100',
-        label: 'text-orange-600/80 dark:text-orange-400/80'
-    },
-    red: {
-        wrapper: 'from-red-50/50 to-white border-red-100 hover:border-red-200 hover:shadow-red-100/50 dark:from-red-950/20 dark:to-transparent dark:border-red-900/30 dark:hover:border-red-800',
-        icon: 'bg-red-50 text-red-600 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30',
-        text: 'text-red-950 dark:text-red-100',
-        label: 'text-red-600/80 dark:text-red-400/80'
-    },
-    dark: {
-        wrapper: 'from-slate-50 to-white border-slate-200 hover:border-slate-300 hover:shadow-slate-100/50 dark:from-slate-800 dark:to-slate-900/50 dark:border-slate-700 dark:hover:border-slate-600',
-        icon: 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
-        text: 'text-slate-900 dark:text-white',
-        label: 'text-slate-500 dark:text-slate-400'
-    }
+const variants: Record<Color, {
+    solid: string;
+    soft: string;
+    border: string;
+    glow: string;
+}> = {
+    blue:   { solid: 'var(--blue)',   soft: 'var(--blue-soft)',   border: 'rgba(59,130,246,0.25)',  glow: '0 8px 32px rgba(59,130,246,0.18)' },
+    green:  { solid: 'var(--green)',  soft: 'var(--green-soft)',  border: 'rgba(34,197,94,0.25)',   glow: '0 8px 32px rgba(34,197,94,0.18)' },
+    purple: { solid: 'var(--purple)', soft: 'var(--purple-soft)', border: 'rgba(139,92,246,0.25)',  glow: '0 8px 32px rgba(139,92,246,0.18)' },
+    teal:   { solid: 'var(--teal)',   soft: 'var(--teal-soft)',   border: 'rgba(13,148,136,0.25)',  glow: '0 8px 32px rgba(13,148,136,0.18)' },
+    orange: { solid: 'var(--orange)', soft: 'var(--orange-soft)', border: 'rgba(245,158,11,0.25)',  glow: '0 8px 32px rgba(245,158,11,0.18)' },
+    red:    { solid: 'var(--red)',    soft: 'var(--red-soft)',    border: 'rgba(239,68,68,0.25)',   glow: '0 8px 32px rgba(239,68,68,0.18)' },
+    dark:   { solid: 'var(--text-secondary)', soft: 'var(--muted)', border: 'var(--border)', glow: 'var(--shadow-soft)' },
 };
 
 export function StatCard({
@@ -64,46 +36,99 @@ export function StatCard({
     isActive = false,
     onClick,
 }: StatCardProps) {
-    const variant = variants[color];
-    const Wrapper = onClick ? 'button' : 'div';
+    const v = variants[color];
+    const Tag = onClick ? 'button' : 'div';
 
     return (
-        <Wrapper
+        <Tag
             onClick={onClick}
-            className={`
-                group relative w-full text-left shadow-sm
-                bg-linear-to-br ${variant.wrapper}
-                border rounded-2xl p-5
-                transition-all duration-300 ease-out
-                ${onClick ? 'cursor-pointer hover:-translate-y-1 hover:shadow-lg' : ''}
-                ${isActive ? 'ring-2 ring-brand/80 ring-offset-2 ring-offset-background scale-[1.02] shadow-xl z-20' : ''}
-            `}
+            style={{
+                '--c-solid': v.solid,
+                '--c-soft': v.soft,
+                '--c-border': v.border,
+                '--c-glow': v.glow,
+            } as React.CSSProperties}
+            className={[
+                'group relative w-full text-left overflow-hidden',
+                'rounded-2xl p-5',
+                'transition-all duration-300 ease-out',
+                onClick ? 'cursor-pointer' : '',
+            ].join(' ')}
         >
-            <div className="flex items-center gap-4 relative z-10">          
+            <div
+                className="absolute inset-0 rounded-[inherit]"
+                style={{
+                    background: 'var(--card)',
+                    border: `1px solid var(--c-border, var(--border))`,
+                    boxShadow: isActive
+                        ? `var(--c-glow), 0 0 0 2px var(--c-solid)`
+                        : `var(--shadow-card)`,
+                    transform: isActive ? 'translateY(-2px)' : undefined,
+                    transition: 'box-shadow 0.3s ease, transform 0.2s ease, border-color 0.2s ease',
+                }}
+            />
+
+            <style>{`
+                .stat-card-hover:hover > .stat-surface {
+                    box-shadow: var(--c-glow) !important;
+                    transform: translateY(-3px) !important;
+                    border-color: var(--c-solid) !important;
+                }
+            `}</style>
+
+            <div
+                className="absolute -top-6 -right-6 w-28 h-28 rounded-full blur-2xl opacity-60 pointer-events-none transition-opacity duration-500 group-hover:opacity-100"
+                style={{ background: 'var(--c-soft)' }}
+            />
+            <div
+                className="absolute left-0 top-4 bottom-4 w-[3px] rounded-r-full opacity-70 transition-all duration-300 group-hover:opacity-100 group-hover:top-2 group-hover:bottom-2"
+                style={{ background: 'var(--c-solid)' }}
+            />
+
+            <div className="relative z-10 flex items-center gap-4 pl-2">
+
                 {icon && (
-                    <div className={`
-                        p-3.5 rounded-xl border
-                        flex items-center justify-center shrink-0
-                        transition-all duration-300
-                        group-hover:scale-110 group-hover:rotate-3
-                        ${variant.icon}
-                    `}>
+                    <div
+                        className="shrink-0 flex items-center justify-center w-12 h-12 rounded-2xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
+                        style={{
+                            background: 'var(--c-soft)',
+                            color: 'var(--c-solid)',
+                            boxShadow: `0 2px 8px color-mix(in srgb, var(--c-solid) 20%, transparent)`,
+                        }}
+                    >
                         {icon}
                     </div>
                 )}
 
-                <div className="flex flex-col">
-                    <span className={`text-2xl font-black tracking-tight leading-none mb-1.5 ${variant.text}`}>
-                        {value}
-                    </span>
-                    <span className={`text-[10px] font-bold uppercase tracking-wider ${variant.label}`}>
+                <div className="flex flex-col gap-0.5 min-w-0">
+                    <span
+                        className="text-[11px] font-semibold uppercase tracking-[0.12em] truncate"
+                        style={{ color: 'var(--text-muted)' }}
+                    >
                         {title}
                     </span>
+                    <span
+                        className="text-[1.65rem] font-black tracking-tight leading-none tabular-nums"
+                        style={{ color: 'var(--text-primary)' }}
+                    >
+                        {value}
+                    </span>
                 </div>
+
+                {isActive && (
+                    <div
+                        className="ml-auto shrink-0 w-6 h-6 rounded-full flex items-center justify-center"
+                        style={{ background: 'var(--c-solid)' }}
+                    >
+                        <svg viewBox="0 0 10 10" fill="white" className="w-3 h-3">
+                            <path d="M2 5.5 L4.2 7.5 L8 3" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                        </svg>
+                    </div>
+                )}
             </div>
 
-            {/* Decorative Shine Effect */}
-            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/40 dark:bg-white/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-        </Wrapper>
+        </Tag>
     );
 }
+
+

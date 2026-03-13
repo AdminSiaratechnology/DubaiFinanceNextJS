@@ -9,6 +9,7 @@ interface CaseCardProps {
     employer: string;
     salary: string;
     product: string;
+    bank?: string;
     amount: string;
     date: string;
     commission: string;
@@ -17,9 +18,20 @@ interface CaseCardProps {
 }
 
 export function CaseCard({
-    id, name, mobile, email, emiratesId, employer, salary, product, amount, date, commission, status, step
+    id, name, mobile, email, emiratesId, employer, salary, product, bank, amount, date, commission, status, step
 }: CaseCardProps) {
     const steps = ['Lead', 'Documents', 'Review', 'Bank', 'Approved'];
+
+    let currentStep = step || 1;
+    const normalizedStatus = status?.toLowerCase() || '';
+
+    if (['documents_pending', 'documents_required', 'documents_collected', 'follow_up'].includes(normalizedStatus)) {
+        currentStep = 2;
+    } else if (normalizedStatus === 'submitted_to_coordinator') {
+        currentStep = 3;
+    }
+
+    const formattedStatus = status ? status.replaceAll("_", " ") : "Unknown";
 
     return (
         <div className="section-card overflow-hidden bg-card border-border border shadow-sm hover:shadow-md transition-shadow">
@@ -30,8 +42,8 @@ export function CaseCard({
                     <div className="absolute top-4 left-10 right-10 h-0.5 bg-border z-0" />
 
                     {steps.map((s, i) => {
-                        const isCompleted = i + 1 < step;
-                        const isActive = i + 1 === step;
+                        const isCompleted = i + 1 < currentStep;
+                        const isActive = i + 1 === currentStep;
                         return (
                             <div key={s} className="flex flex-col items-center gap-2 relative z-10">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${isCompleted ? 'bg-blue border-blue text-white shadow-sm' :
@@ -51,10 +63,10 @@ export function CaseCard({
                 <div className="flex justify-between items-start mb-4">
                     <div>
                         <h4 className="text-lg font-bold text-foreground leading-none">{name}</h4>
-                        <p className="text-xs text-text-secondary mt-1 tracking-wide uppercase font-medium">Case ID: {id}</p>
+                        {/* <p className="text-xs text-text-secondary mt-1 tracking-wide uppercase font-medium">Case ID: {id}</p> */}
                     </div>
-                    <span className="px-3 py-1 rounded-lg bg-muted text-[10px] font-bold text-text-secondary uppercase tracking-widest border border-border">
-                        {status}
+                    <span className="px-3 py-1 rounded-lg bg-blue/10 text-[10px] font-bold text-blue uppercase tracking-widest border border-blue/20">
+                        {formattedStatus}
                     </span>
                 </div>
             </div>
@@ -85,6 +97,12 @@ export function CaseCard({
                     <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Product Type</label>
                     <p className="text-sm font-semibold text-foreground">{product}</p>
                 </div>
+                {bank && (
+                    <div>
+                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Bank</label>
+                        <p className="text-sm font-semibold text-foreground">{bank}</p>
+                    </div>
+                )}
                 <div>
                     <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Requested Amount</label>
                     <p className="text-sm font-semibold text-blue">{amount}</p>
