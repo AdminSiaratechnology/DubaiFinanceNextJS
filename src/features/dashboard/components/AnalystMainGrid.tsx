@@ -7,9 +7,10 @@ import { CaseDetailsAnalyst } from './CaseDetailsAnalyst';
 
 interface AnalystMainGridProps {
     cases: any[];
+    onStatusUpdate?: () => void;
 }
 
-export function AnalystMainGrid({ cases }: AnalystMainGridProps) {
+export function AnalystMainGrid({ cases, onStatusUpdate }: AnalystMainGridProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const selectedId = searchParams.get('caseId');
@@ -50,6 +51,8 @@ export function AnalystMainGrid({ cases }: AnalystMainGridProps) {
                             <CaseCard
                                 {...c}
                                 isActive={selectedId === c.id}
+                                isAnyCaseSelected={!!selectedId}
+                                showCommission={false}
                             />
                         </div>
                     ))}
@@ -72,6 +75,7 @@ export function AnalystMainGrid({ cases }: AnalystMainGridProps) {
                     <CaseDetailsAnalyst
                         caseData={selectedCase}
                         onClose={handleClose}
+                        onStatusUpdate={onStatusUpdate}
                     />
                 </div>
             ) : (

@@ -49,7 +49,11 @@ export function AgentCasesGrid({ cases }: AgentCasesGridProps) {
                             onClick={() => handleCaseSelect(c.id)}
                             className={`cursor-pointer transition-all ${selectedId === c.id ? 'ring-2 ring-blue ring-offset-4 rounded-2xl' : ''}`}
                         >
-                            <CaseCard {...c} />
+                            <CaseCard
+                                {...c}
+                                isActive={selectedId === c.id}
+                                isAnyCaseSelected={!!selectedId}
+                            />
                         </div>
                     ))}
                 </div>

@@ -77,11 +77,17 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
 
     bank_id: lead.bank?.id?.toString() || "",
     product_id: lead.product?.id?.toString() || "",
+    notes: caseData?.notes || "",
   });
 
   const [files, setFiles] = useState<{ [key: string]: File | null }>({});
   const [status, setStatus] = useState("documents_pending");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ✅ Optimized update function
+  const updateField = (name: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   // ✅ Sync form when case loads
   useEffect(() => {
@@ -94,11 +100,12 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
       amount: (caseData.requested_amount || lead.requested_amount || "").toString(),
 
       employer_name: caseData.company_name || "",
-      salary: (caseData.salary || "").toString(),
+      salary: caseData.salary != null ? String(caseData.salary) : "",
       emirates_id: caseData.emirates_id || "",
 
       bank_id: (caseData.bank?.id || lead.bank?.id || "").toString(),
       product_id: (caseData.product?.id || lead.product?.id || "").toString(),
+      notes: caseData.notes || "",
     });
 
     setStatus(caseData.status || "documents_pending");
@@ -108,8 +115,7 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    updateField(e.target.name as any, e.target.value);
   };
 
   const handleFileChange = (id: string, file: File | null) => {
@@ -152,6 +158,7 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
       multipart.append("requested_amount", String(formData.amount));
       multipart.append("emirates_id", formData.emirates_id);
       multipart.append("status", statusToSend);
+      multipart.append("notes", formData.notes);
 
       Object.entries(files).forEach(([id, file]) => {
         if (file) multipart.append(id, file);
@@ -248,44 +255,41 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
               <Input name="amount" value={formData.amount} onChange={handleInputChange} disabled={!isEditing}/>
             </div>
 
-            <div>
-              <Label>Select Bank *</Label>
-              <ApiSearchableSelect
-                fetchFn={getBanks as any}
-                value={formData.bank_id}
-                initialOptions={(() => {
-                  const options = [];
-                  if (lead.bank?.id) options.push({ id: lead.bank.id, name: lead.bank.name });
-                  if (caseData?.bank?.id) options.push({ id: caseData.bank.id, name: caseData.bank.name });
-                  return options;
-                })()}
-                onChange={(val) =>
-                  setFormData(prev => ({ ...prev, bank_id: String(val), product_id: "" }))
-                }
-                placeholder="Search bank..."
-                disabled={!isEditing}
-              />
-            </div>
+            <ApiSearchableSelect
+              label="Select Bank"
+              required
+              fetchFn={getBanks as any}
+              value={formData.bank_id}
+              initialOptions={(() => {
+                const options = [];
+                if (lead.bank?.id) options.push({ id: lead.bank.id, name: lead.bank.name });
+                if (caseData?.bank?.id) options.push({ id: caseData.bank.id, name: caseData.bank.name });
+                return options;
+              })()}
+              onChange={(val) => {
+                updateField("bank_id", String(val));
+                updateField("product_id", "");
+              }}
+              placeholder="Search bank..."
+              disabled={!isEditing}
+            />
 
-            <div>
-              <Label>Select Product *</Label>
-              <ApiSearchableSelect
-                fetchFn={fetchProducts}
-                labelKey="product_name"
-                value={formData.product_id}
-                initialOptions={(() => {
-                  const options = [];
-                  if (lead.product?.id) options.push({ id: lead.product.id, product_name: lead.product.product_name });
-                  if (caseData?.product?.id) options.push({ id: caseData.product.id, product_name: caseData.product.product_name });
-                  return options;
-                })()}
-                onChange={(val) =>
-                  setFormData(prev => ({ ...prev, product_id: String(val) }))
-                }
-                placeholder="Search product..."
-                disabled={!isEditing || !formData.bank_id}
-              />
-            </div>
+            <ApiSearchableSelect
+              label="Select Product"
+              required
+              fetchFn={fetchProducts}
+              labelKey="product_name"
+              value={formData.product_id}
+              initialOptions={(() => {
+                const options = [];
+                if (lead.product?.id) options.push({ id: lead.product.id, product_name: lead.product.product_name });
+                if (caseData?.product?.id) options.push({ id: caseData.product.id, product_name: caseData.product.product_name });
+                return options;
+              })()}
+              onChange={(val) => updateField("product_id", String(val))}
+              placeholder="Search product..."
+              disabled={!isEditing || !formData.bank_id}
+            />
 
           </div>
 
@@ -331,6 +335,8 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
               { value: "documents_required", label: "Documents Required" }
             ]}
           />
+          <Label>Notes</Label>
+          <Input name="notes" value={formData.notes} onChange={handleInputChange} placeholder="Notes" />
         </section>
 
       </div>
