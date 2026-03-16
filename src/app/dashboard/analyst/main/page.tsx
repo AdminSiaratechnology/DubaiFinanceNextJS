@@ -1,33 +1,128 @@
-import { analystStats, analystCases } from '@/lib/mock/analyst';
+'use client';
+
+import { Suspense, useEffect, useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { StatTabs } from '@/features/dashboard/components/StatTabs';
 import { AnalystMainGrid } from '@/features/dashboard/components/AnalystMainGrid';
+import { getCoordinatorCases, CoordinatorCase } from '@/features/dashboard/components/api/agent.api';
 
-const analystTabs = [
-    { id: 'new', title: `New Cases`, value: analystStats.newCases, color: 'blue' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg> },
-    { id: 'pending', title: `Pending Acceptance`, value: analystStats.pending, color: 'orange' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> },
-    { id: 'accepted', title: `Accepted & Under Review`, value: analystStats.accepted, color: 'purple' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><circle cx="10" cy="14" r="2" /><path d="m14 18-2.5-2.5" /></svg> },
-    { id: 'bank', title: `Submitted to Bank`, value: analystStats.atBank, color: 'teal' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> },
-    { id: 'approved', title: `Approved`, value: analystStats.approved, color: 'green' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="10" /></svg> },
-    { id: 'rejected', title: `Rejected`, value: analystStats.rejected, color: 'red' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg> },
-];
+const statusMap: Record<string, string> = {
+    new: 'submitted_to_coordinator',
+    pending: 'pending_acceptance',
+    accepted: 'under_review',
+    bank: 'submitted_to_bank',
+    approved: 'approved',
+    rejected: 'rejected',
+};
 
-export default async function AnalystDashboardPage({
-    searchParams
-}: {
-    searchParams: Promise<{ tab?: string; caseId?: string }>
-}) {
-    const params = await searchParams;
-    const activeTab = params.tab || 'new';
+function AnalystDashboardContent() {
+    const searchParams = useSearchParams();
+    const activeTab = searchParams.get('tab') || 'new';
 
-    const filteredCases = analystCases.filter(c => {
-        if (activeTab === 'new') return c.status === 'New';
-        if (activeTab === 'pending') return c.status === 'Pending Acceptance';
-        if (activeTab === 'accepted') return c.status === 'Under Review';
-        if (activeTab === 'bank') return c.status === 'Submitted to Bank';
-        if (activeTab === 'approved') return c.status === 'Approved';
-        if (activeTab === 'rejected') return c.status === 'Rejected';
-        return true;
+    const [cases, setCases] = useState<CoordinatorCase[]>([]);
+    const [totalCases, setTotalCases] = useState(0);
+    const [loading, setLoading] = useState(true);
+
+    // Stats counters per tab
+    const [stats, setStats] = useState({
+        newCases: 0,
+        pending: 0,
+        accepted: 0,
+        atBank: 0,
+        approved: 0,
+        rejected: 0,
     });
+
+    // Fetch stats for all tabs on mount
+    const fetchStats = useCallback(async () => {
+        try {
+            const [newRes, pendingRes, acceptedRes, bankRes, approvedRes, rejectedRes] = await Promise.all([
+                getCoordinatorCases(1, 1, undefined, statusMap.new),
+                getCoordinatorCases(1, 1, undefined, statusMap.pending),
+                getCoordinatorCases(1, 1, undefined, statusMap.accepted),
+                getCoordinatorCases(1, 1, undefined, statusMap.bank),
+                getCoordinatorCases(1, 1, undefined, statusMap.approved),
+                getCoordinatorCases(1, 1, undefined, statusMap.rejected),
+            ]);
+            setStats({
+                newCases: newRes.total,
+                pending: pendingRes.total,
+                accepted: acceptedRes.total,
+                atBank: bankRes.total,
+                approved: approvedRes.total,
+                rejected: rejectedRes.total,
+            });
+        } catch (err) {
+            console.error('Failed to fetch stats:', err);
+        }
+    }, []);
+
+    // Fetch cases for the active tab
+    const fetchCases = useCallback(async () => {
+        setLoading(true);
+        try {
+            const status = statusMap[activeTab];
+            const res = await getCoordinatorCases(1, 50, undefined, status);
+            setCases(res.items);
+            setTotalCases(res.total);
+        } catch (err) {
+            console.error('Failed to fetch cases:', err);
+            setCases([]);
+            setTotalCases(0);
+        } finally {
+            setLoading(false);
+        }
+    }, [activeTab]);
+
+    useEffect(() => {
+        fetchStats();
+    }, [fetchStats]);
+
+    useEffect(() => {
+        fetchCases();
+    }, [fetchCases]);
+
+    // Map API cases to the shape CaseCard / AnalystMainGrid expects
+    const mappedCases = cases.map((c) => {
+        const formattedStatus = c.status.replaceAll('_', ' ');
+        let step = 1;
+        const s = c.status.toLowerCase();
+        if (s === 'submitted_to_coordinator' || s === 'ready_for_coordinator' || s === 'physical_docs_received') step = 2;
+        else if (s === 'under_review') step = 3;
+        else if (s === 'submitted_to_bank') step = 4;
+        else if (s === 'approved') step = 5;
+        else if (s === 'rejected') step = 6;
+
+        return {
+            id: String(c.id),
+            name: c.customer_name,
+            mobile: c.mobile_number,
+            email: c.email,
+            emiratesId: c.emirates_id || '-',
+            employer: c.company_name || '-',
+            salary: `${c.salary?.toLocaleString() || 0} AED`,
+            product: c.product?.product_name || '-',
+            bank: c.bank?.name || undefined,
+            amount: `${c.requested_amount?.toLocaleString() || 0} AED`,
+            date: c.created_at ? new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '-',
+            status: formattedStatus,
+            step,
+            // pass original data for detail view
+            documents: c.documents,
+            notes: c.notes,
+            passport_no: c.passport_no,
+            telecaller_id: c.telecaller_id,
+        };
+    });
+
+    const analystTabs = [
+        { id: 'new', title: `New Cases`, value: stats.newCases, color: 'blue' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg> },
+        { id: 'pending', title: `Pending Acceptance`, value: stats.pending, color: 'orange' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> },
+        { id: 'accepted', title: `Accepted & Under Review`, value: stats.accepted, color: 'purple' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><circle cx="10" cy="14" r="2" /><path d="m14 18-2.5-2.5" /></svg> },
+        { id: 'bank', title: `Submitted to Bank`, value: stats.atBank, color: 'teal' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> },
+        { id: 'approved', title: `Approved`, value: stats.approved, color: 'green' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="10" /></svg> },
+        { id: 'rejected', title: `Rejected`, value: stats.rejected, color: 'red' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg> },
+    ];
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
@@ -38,7 +133,16 @@ export default async function AnalystDashboardPage({
                 gridCols="grid-cols-1 sm:grid-cols-3 xl:grid-cols-6"
             />
 
-            <AnalystMainGrid cases={filteredCases} />
+            {loading ? (
+                <div className="flex items-center justify-center py-32">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-10 h-10 border-4 border-brand/30 border-t-brand rounded-full animate-spin" />
+                        <p className="text-sm font-bold text-text-muted uppercase tracking-widest">Loading cases...</p>
+                    </div>
+                </div>
+            ) : (
+                <AnalystMainGrid cases={mappedCases} onStatusUpdate={() => { fetchCases(); fetchStats(); }} />
+            )}
 
             {/* How It Works Section */}
             <section className="section-card bg-card border-border border shadow-sm rounded-2xl p-8">
@@ -67,5 +171,20 @@ export default async function AnalystDashboardPage({
                 </div>
             </section>
         </div>
+    );
+}
+
+export default function AnalystDashboardPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center py-32">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-10 h-10 border-4 border-brand/30 border-t-brand rounded-full animate-spin" />
+                    <p className="text-sm font-bold text-text-muted uppercase tracking-widest">Loading...</p>
+                </div>
+            </div>
+        }>
+            <AnalystDashboardContent />
+        </Suspense>
     );
 }

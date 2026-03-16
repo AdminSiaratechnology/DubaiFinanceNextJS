@@ -56,7 +56,8 @@ export function SubmitCase() {
         product_id: '' as string | number,
         productName: '',
         amount: '',
-        status: 'submitted_to_coordinator'
+        status: 'submitted_to_coordinator',
+        notes: '',
     });
 
     const [files, setFiles] = useState<{ [key: string]: File | null }>({});
@@ -122,6 +123,7 @@ export function SubmitCase() {
             multipart.append('emirates_id', formData.emiratesId);
             multipart.append('otp', otp);
             multipart.append('status', formData.status)
+            multipart.append('notes', formData.notes)
             // Append all files
             Object.entries(files).forEach(([id, file]) => {
                 if (file) {
@@ -144,7 +146,8 @@ export function SubmitCase() {
                 product_id: '',
                 productName: '',
                 amount: '',
-                status: 'submitted_to_coordinator'
+                status: 'submitted_to_coordinator',
+                notes: ''
             });
             setFiles({});
             setOtp('');
@@ -245,6 +248,10 @@ export function SubmitCase() {
                                 <div className="space-y-1">
                                     <Label>Requested Amount (AED) *</Label>
                                     <Input type="number" name="amount" required value={formData.amount} onChange={handleChange} placeholder="Loan amount" />
+                                </div>
+                                <div className='space-y-1'>
+                                    <Label>Notes</Label>
+                                    <Input name="notes" value={formData.notes} onChange={handleChange} placeholder="Notes" />
                                 </div>
                             </div>
                         </div>

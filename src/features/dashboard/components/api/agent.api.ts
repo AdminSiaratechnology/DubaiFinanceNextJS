@@ -58,6 +58,7 @@ export interface Case {
   product_type?: string;
   requested_amount?: number;
   created_at?: string;
+  notes?: string;
 }
 
 export const sendLeadOtp = async (email: string) => {
@@ -162,4 +163,77 @@ export const getCaseByLeadId = async (leadId: number): Promise<Case | null> => {
     console.error(`Error fetching case for lead ${leadId}:`, error);
     return null;
   }
+};
+
+export interface CoordinatorCase {
+  id: number;
+  agent_id: number;
+  customer_name: string;
+  mobile_number: string;
+  email: string;
+  product: {
+    id: number;
+    product_name: string;
+  };
+  bank: {
+    id: number;
+    name: string;
+  };
+  requested_amount: number;
+  salary: number;
+  company_name: string;
+  emirates_id: string;
+  passport_no: string | null;
+  status: string;
+  created_at: string;
+  notes: string | null;
+  documents: any[];
+  telecaller_id: number | null;
+}
+
+export interface CoordinatorCasesResponse {
+  total: number;
+  page: number;
+  limit: number;
+  items: CoordinatorCase[];
+}
+
+export const getCoordinatorCases = async (
+  page: number = 1,
+  limit: number = 10,
+  search?: string,
+  status?: string
+): Promise<any> => {
+  const response = await apiClient.get("/cases/coordinator-cases", {
+    params: {
+      page,
+      limit,
+      search: search || undefined,
+      status: status || undefined,
+    },
+  });
+  console.log(response.data)
+  return response.data;
+};
+
+export const updateCaseStatus = async (
+  caseId: number,
+  status: string,
+  analysisNotes?: string
+): Promise<{ message: string; case_id: number }> => {
+  const params = new URLSearchParams();
+  params.append("status", status);
+  if (analysisNotes) {
+    params.append("analysis_notes", analysisNotes);
+  }
+  const response = await apiClient.put(
+    `/cases/update-case-status/${caseId}`,
+    params.toString(),
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    }
+  );
+  return response.data;
 };
