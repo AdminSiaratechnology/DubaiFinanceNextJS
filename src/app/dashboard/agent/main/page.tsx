@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { agentStats, agentCases } from '@/lib/mock/agent';
 import { StatCard } from '@/features/dashboard/components/StatCard';
 import { TabSwitcher } from '@/features/dashboard/components/TabSwitcher';
 import { CaseCard } from '@/features/dashboard/components/CaseCard';
@@ -8,7 +7,7 @@ import { SubmitLead } from '@/features/dashboard/components/SubmitLead';
 import { SubmitCase } from '@/features/dashboard/components/SubmitCase';
 import { SearchBar } from '@/shared/SearchBar';
 import { AgentLeadsCard } from '@/features/dashboard/components/AgentLeadsCard';
-import { getLeads, getMyCases } from '@/features/dashboard/components/api/agent.api';
+import { getLeads, getMyCases, agentStats } from '@/features/dashboard/components/api/agent.api';
 import { Pagination } from '@/components/ui/Pagination';
 const agentTabs = [
     { id: 'dashboard', label: 'Dashboard', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg> },
@@ -34,6 +33,7 @@ export default async function AgentDashboardPage({
     const skip = (page - 1) * limit;
     const leads = await getLeads(skip, limit, searchQuery);
 
+    const stats = await agentStats();
     // fetch cases
     const casesData = await getMyCases(page, limit, searchQuery);
     const cases = casesData?.items || [];
@@ -52,25 +52,25 @@ export default async function AgentDashboardPage({
                     <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         <StatCard
                             title="Total Cases"
-                            value={agentStats.totalCases}
+                            value={stats.total}
                             color="blue"
                             icon={<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>}
                         />
                         <StatCard
                             title="Approved"
-                            value={agentStats.approved}
+                            value={stats.approved}
                             color="green"
                             icon={<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="m9 12 2 2 4-4" /></svg>}
                         />
                         <StatCard
                             title="Expected (AED)"
-                            value={agentStats.expectedAED}
+                            value={stats.expected_commission}
                             color="purple"
                             icon={<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg>}
                         />
                         <StatCard
                             title="Earned (AED)"
-                            value={agentStats.earnedAED}
+                            value={stats.total_commission}
                             color="teal"
                             icon={<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg>}
                         />

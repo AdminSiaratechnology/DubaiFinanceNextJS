@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { StatTabs } from '@/features/dashboard/components/StatTabs';
 import { AnalystMainGrid } from '@/features/dashboard/components/AnalystMainGrid';
-import { getCoordinatorCases, CoordinatorCase } from '@/features/dashboard/components/api/agent.api';
+import { getCoordinatorCases, CoordinatorCase, coordinatorStats } from '@/features/dashboard/components/api/agent.api';
 
 const statusMap: Record<string, string> = {
     new: 'submitted_to_coordinator',
@@ -24,41 +24,17 @@ function AnalystDashboardContent() {
     const [cases, setCases] = useState<CoordinatorCase[]>([]);
     const [totalCases, setTotalCases] = useState(0);
     const [loading, setLoading] = useState(true);
-
-    // Stats counters per tab
-    const [stats, setStats] = useState({
-        newCases: 0,
-        pending: 0,
-        accepted: 0,
-        atBank: 0,
-        approved: 0,
-        rejected: 0,
-    });
-
-    // Fetch stats for all tabs on mount
+    const [stats, setStats] = useState<any>(null);
+    
     const fetchStats = useCallback(async () => {
-        try {
-            const [newRes, pendingRes, acceptedRes, bankRes, approvedRes, rejectedRes] = await Promise.all([
-                getCoordinatorCases(1, 1, undefined, statusMap.new),
-                getCoordinatorCases(1, 1, undefined, statusMap.pending),
-                getCoordinatorCases(1, 1, undefined, statusMap.accepted),
-                getCoordinatorCases(1, 1, undefined, statusMap.bank),
-                getCoordinatorCases(1, 1, undefined, statusMap.approved),
-                getCoordinatorCases(1, 1, undefined, statusMap.rejected),
-            ]);
-            setStats({
-                newCases: newRes.total,
-                pending: pendingRes.total,
-                accepted: acceptedRes.total,
-                atBank: bankRes.total,
-                approved: approvedRes.total,
-                rejected: rejectedRes.total,
-            });
-        } catch (err) {
-            console.error('Failed to fetch stats:', err);
-        }
+        const stats = await coordinatorStats();
+        setStats(stats);
     }, []);
 
+    useEffect(() => {
+        fetchStats();
+    }, []);
+    
     // Fetch cases for the active tab
     const fetchCases = useCallback(async () => {
         setLoading(true);
@@ -75,10 +51,6 @@ function AnalystDashboardContent() {
             setLoading(false);
         }
     }, [activeTab, page, limit]);
-
-    useEffect(() => {
-        fetchStats();
-    }, [fetchStats]);
 
     useEffect(() => {
         fetchCases();
@@ -116,14 +88,13 @@ function AnalystDashboardContent() {
             telecaller_id: c.telecaller_id,
         };
     });
-
     const analystTabs = [
-        { id: 'new', title: `New Cases`, value: stats.newCases, color: 'blue' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg> },
-        { id: 'pending', title: `Pending Acceptance`, value: stats.pending, color: 'orange' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> },
-        { id: 'accepted', title: `Accepted & Under Review`, value: stats.accepted, color: 'purple' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><circle cx="10" cy="14" r="2" /><path d="m14 18-2.5-2.5" /></svg> },
-        { id: 'bank', title: `Submitted to Bank`, value: stats.atBank, color: 'teal' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> },
-        { id: 'approved', title: `Approved`, value: stats.approved, color: 'green' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="10" /></svg> },
-        { id: 'rejected', title: `Rejected`, value: stats.rejected, color: 'red' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg> },
+        { id: 'new', title: `New Cases`, value: stats?.newCases, color: 'blue' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg> },
+        { id: 'pending', title: `Pending Acceptance`, value: stats?.pending, color: 'orange' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> },
+        { id: 'accepted', title: `Accepted & Under Review`, value: stats?.accepted, color: 'purple' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><circle cx="10" cy="14" r="2" /><path d="m14 18-2.5-2.5" /></svg> },
+        { id: 'bank', title: `Submitted to Bank`, value: stats?.atBank, color: 'teal' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> },
+        { id: 'approved', title: `Approved`, value: stats?.approved, color: 'green' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 12 2 2 4-4" /><circle cx="12" cy="12" r="10" /></svg> },
+        { id: 'rejected', title: `Rejected`, value: stats?.rejected, color: 'red' as const, icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg> },
     ];
 
     return (
@@ -145,7 +116,7 @@ function AnalystDashboardContent() {
             ) : (
                 <AnalystMainGrid 
                     cases={mappedCases} 
-                    onStatusUpdate={() => { fetchCases(); fetchStats(); }} 
+                    onStatusUpdate={() => { fetchCases(); }} 
                     page={page}
                     totalCases={totalCases}
                     limit={limit}
