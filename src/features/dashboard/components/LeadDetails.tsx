@@ -9,6 +9,7 @@ import { ApiSearchableSelect } from "@/shared/ApiSearchableSelect";
 import { getBanks } from "@/features/owner/bank/api/bank.api";
 import { getBankProductByBankId } from "@/features/owner/bankproducts/api/bankproducts.api";
 import { Case, submitCompleteCase, updateCase } from "./api/agent.api";
+import { toast } from "sonner";
 
 interface LeadDetailsProps {
   lead: {
@@ -61,6 +62,31 @@ const requiredDocs = [
   { id: "memorandum_of_association", label: "(MOA) Memorandum of Association" },
 ];
 
+const getStatusOptions = (currentStatus?: string, hasCase?: boolean) => {
+  if (!hasCase) {
+    return [
+      { value: "sent_back_to_agent", label: "Sent Back to Agent" },
+      { value: "documents_collected", label: "Documents Collected" },
+      { value: "follow_up", label: "Follow Up Required" },
+      { value: "documents_required", label: "Documents Required" },
+      { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
+    ];
+  }
+
+  // 🚫 Already submitted → no change allowed
+  if (currentStatus === "submitted_to_coordinator") {
+    return [
+      { value: "submitted_to_coordinator", label: "Submitted to Coordinator" }
+    ];
+  }
+
+  return [
+    { value: "documents_collected", label: "Documents Collected" },
+    { value: "follow_up", label: "Follow Up Required" },
+    { value: "documents_required", label: "Documents Required" },
+    { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
+  ];
+};
 export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
 
   const [isEditing, setIsEditing] = useState(false);
@@ -81,7 +107,7 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
   });
 
   const [files, setFiles] = useState<{ [key: string]: File | null }>({});
-  const [status, setStatus] = useState("documents_pending");
+  const [status, setStatus] = useState("sent_back_to_agent");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ✅ Optimized update function
@@ -171,13 +197,19 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
         await submitCompleteCase(multipart);
       }
 
-      alert(caseData ? "Case updated successfully" : "Case created successfully");
+      const getSuccessMessage = (status: string, hasCase: boolean) => {
+        if (status === "sent_back_to_agent") return "Sent back to agent";
+        if (status === "submitted_to_coordinator") return "Submitted to coordinator";
+        return hasCase ? "Case updated successfully" : "Case created successfully";
+      };
 
+      toast.success(getSuccessMessage(statusToSend, !!caseData));
     } catch (err) {
       console.error(err);
-      alert("Submission failed");
+      toast.error("Submission failed");
     } finally {
       setIsSubmitting(false);
+      onClose();
     }
   };
 
@@ -222,37 +254,37 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
 
             <div>
               <Label>Full Name</Label>
-              <Input name="name" value={formData.name} onChange={handleInputChange} disabled={!isEditing}/>
+              <Input name="name" value={formData.name} onChange={handleInputChange} disabled={!isEditing} />
             </div>
 
             <div>
               <Label>Mobile</Label>
-              <Input name="mobile" value={formData.mobile} onChange={handleInputChange} disabled={!isEditing}/>
+              <Input name="mobile" value={formData.mobile} onChange={handleInputChange} disabled={!isEditing} />
             </div>
 
             <div>
               <Label>Email</Label>
-              <Input name="email" value={formData.email} onChange={handleInputChange} disabled={!isEditing}/>
+              <Input name="email" value={formData.email} onChange={handleInputChange} disabled={!isEditing} />
             </div>
 
             <div>
               <Label>Emirates ID</Label>
-              <Input name="emirates_id" value={formData.emirates_id} onChange={handleInputChange} disabled={!isEditing}/>
+              <Input name="emirates_id" value={formData.emirates_id} onChange={handleInputChange} disabled={!isEditing} />
             </div>
 
             <div>
               <Label>Employer</Label>
-              <Input name="employer_name" value={formData.employer_name} onChange={handleInputChange} disabled={!isEditing}/>
+              <Input name="employer_name" value={formData.employer_name} onChange={handleInputChange} disabled={!isEditing} />
             </div>
 
             <div>
               <Label>Salary</Label>
-              <Input name="salary" type="number" value={formData.salary} onChange={handleInputChange} disabled={!isEditing}/>
+              <Input name="salary" type="number" value={formData.salary} onChange={handleInputChange} disabled={!isEditing} />
             </div>
 
             <div>
               <Label>Requested Amount</Label>
-              <Input name="amount" value={formData.amount} onChange={handleInputChange} disabled={!isEditing}/>
+              <Input name="amount" value={formData.amount} onChange={handleInputChange} disabled={!isEditing} />
             </div>
 
             <ApiSearchableSelect
@@ -327,13 +359,8 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
           <Select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            options={[
-              { value: "documents_pending", label: "Documents Pending" },
-              { value: "documents_collected", label: "Documents Collected" },
-              { value: "follow_up", label: "Follow Up Required" },
-              { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
-              { value: "documents_required", label: "Documents Required" }
-            ]}
+            options={getStatusOptions(status, !!caseData)}
+            disabled={status === "submitted_to_coordinator"}
           />
           <Label>Notes</Label>
           <Input name="notes" value={formData.notes} onChange={handleInputChange} placeholder="Notes" />

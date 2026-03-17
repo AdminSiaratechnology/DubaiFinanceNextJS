@@ -27,7 +27,7 @@ export function StatTabs({
     tabs,
     activeTab,
     baseUrl,
-    gridCols = "grid-cols-1 md:grid-cols-2 xl:grid-cols-4"
+    gridCols = "grid-cols-1 md:grid-cols-2 xl:grid-cols-5"
 }: StatTabsProps) {
     const router = useRouter();
 

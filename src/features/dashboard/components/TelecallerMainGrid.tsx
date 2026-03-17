@@ -7,11 +7,14 @@ import { LeadDetails } from "./LeadDetails";
 import { SearchBar } from "@/shared/SearchBar";
 import { Lead } from "./api/agent.api";
 import { getLeadById, getCaseByLeadId } from "./api/agent.api";
+import { Pagination } from "@/components/ui/Pagination";
 interface TelecallerMainGridProps {
   leads: Lead[];
+  page: number;
+  limit: number;
 }
 
-export function TelecallerMainGrid({ leads }: TelecallerMainGridProps) {
+export function TelecallerMainGrid({ leads, page, limit }: TelecallerMainGridProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedId = searchParams.get("leadId");
@@ -78,7 +81,7 @@ export function TelecallerMainGrid({ leads }: TelecallerMainGridProps) {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 space-y-2 no-scrollbar">
           {leads.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-text-muted text-sm font-semibold">
               <svg
@@ -114,6 +117,17 @@ export function TelecallerMainGrid({ leads }: TelecallerMainGridProps) {
             ))
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {(leads.length === limit || page > 1) && (
+          <div className="p-4 border-t border-border bg-muted/30">
+            <Pagination 
+              page={page} 
+              total={leads.length >= limit ? (page * limit) + 1 : (page - 1) * limit + leads.length} 
+              limit={limit} 
+            />
+          </div>
+        )}
       </div>
 
       <div className="h-[700px]">

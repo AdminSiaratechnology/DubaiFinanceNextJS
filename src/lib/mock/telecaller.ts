@@ -3,6 +3,7 @@ export const telecallerStats = {
     workingOn: 2,
     submitted: 2,
     docsRequired: 2,
+    sentByAnalyst:2,
 };
 
 export const telecallerLeads = [

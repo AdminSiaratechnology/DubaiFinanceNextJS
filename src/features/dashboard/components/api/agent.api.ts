@@ -7,6 +7,7 @@ interface SubmitLeadPayload {
     bank_id: string | number;
     product_id: string | number;
     requested_amount: number;
+    status?: string;
 }
 
 export interface Lead {
@@ -31,6 +32,7 @@ export interface Lead {
     requested_amount: number;
   } | null;
   created_at: string;
+  is_returned: boolean;
 }
 
 export interface Case {
@@ -71,6 +73,11 @@ export const submitLead = async (payload: SubmitLeadPayload, otp: string) => {
     return response.data;
 }
 
+export const updateLead = async (leadId: number, payload: SubmitLeadPayload) => {
+    const response = await apiClient.put(`/leads/${leadId}`, payload);
+    return response.data;
+}
+
 export const sendCaseOtp = async (email: string) => {
     const formData = new FormData();
     formData.append("email", email);
@@ -105,7 +112,7 @@ GET /api/leads Get Leads Parameters Cancel Name Description skip integer (query)
 
 export const getLeads = async (
   skip: number = 0,
-  limit: number = 100,
+  limit: number = 10,
   search?: string,
   lead_type?: string
 ): Promise<Lead[]> => {
