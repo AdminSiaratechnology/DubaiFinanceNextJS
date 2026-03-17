@@ -115,9 +115,6 @@
 
   --shadow-soft: var(--shadow-soft);
   --shadow-card: var(--shadow-card);
-
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 /* =========================

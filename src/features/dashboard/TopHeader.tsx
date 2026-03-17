@@ -17,7 +17,7 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
     const { user, clearUser } = useAuthStore();
     const parts = pathname.split('/');
     const role = parts[1] === 'owner' ? 'owner' : parts[2];
-    console.log(user);
+    // console.log(user);
     const roleTitle: Record<string, string> = {
         agent: 'Agent Portal',
         telecaller: 'Telecaller Portal',

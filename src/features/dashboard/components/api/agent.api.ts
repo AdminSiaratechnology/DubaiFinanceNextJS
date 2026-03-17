@@ -244,3 +244,18 @@ export const updateCaseStatus = async (
   );
   return response.data;
 };
+
+export const agentStats = async () => {
+  const response = await apiClient.get("/cases/agent-stats");
+  return response.data;
+};
+
+export const telecallerStats = async () => {
+  const response = await apiClient.get("/cases/telecaller-stats");
+  return response.data;
+};
+
+export const coordinatorStats = async () => {
+  const response = await apiClient.get("/cases/coordinator-stats");
+  return response.data;
+};  

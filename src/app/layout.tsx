@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Roboto } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 // import AuthInitializer from "@/components/auth/AuthInitializer";
 import { ConfirmProvider } from '@/components/providers/confirm-provider';
 import { Toaster } from "sonner";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
 const roboto = Roboto({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "700", "900"],
   variable: "--font-sans",
   display: "swap",
 });
@@ -51,7 +46,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${roboto.variable} antialiased`}>
+      <body className={`${roboto.variable} font-sans antialiased`}>
         {/* <AuthInitializer> */}
         <ThemeProvider>
           <ConfirmProvider>
