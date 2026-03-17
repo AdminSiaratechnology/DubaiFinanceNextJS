@@ -85,7 +85,7 @@ export function StatCard({
                 style={{ background: 'var(--c-solid)' }}
             />
 
-            <div className="relative z-10 flex items-center gap-4 pl-2">
+            <div className="relative z-10 flex items-center gap-4 pl-1">
 
                 {icon && (
                     <div
@@ -102,7 +102,7 @@ export function StatCard({
 
                 <div className="flex flex-col gap-0.5 min-w-0">
                     <span
-                        className="text-[11px] font-semibold uppercase tracking-[0.12em] truncate"
+                        className="text-[11px] font-semibold uppercase tracking-[0.12em] whitespace-normal wrap-break-word"
                         style={{ color: 'var(--text-muted)' }}
                     >
                         {title}

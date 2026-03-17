@@ -32,12 +32,19 @@ const telecallerStatsTabs = [
         color: 'red' as const,
         icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
     },
+    {
+        id: 'sent_back_to_telecaller',
+        title: 'Sent back by Coordinator',
+        value: telecallerStats.sentByAnalyst,
+        color: 'red' as const,
+        icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
+    }
 ];
 
 export default async function TelecallerDashboardPage({
     searchParams
 }: {
-    searchParams: Promise<{ tab?: string; leadId?: string; q?: string }>
+    searchParams: Promise<{ tab?: string; leadId?: string; q?: string; page?: string }>
 }) {
     const params = await searchParams;
     const activeTab = params.tab || 'new-leads';
@@ -46,9 +53,14 @@ export default async function TelecallerDashboardPage({
     if (params.tab === "working") lead_type = "working";
     if (params.tab === "submitted") lead_type = "submitted";
     if (params.tab === "docs-required") lead_type = "docs_required";
-    
+    if (params.tab === "sent_back_to_telecaller") lead_type = "sent_back_to_telecaller";
+
+    const page = Number(params.page) || 1;
+    const limit = 5;
+
     const searchQuery = params.q || "";
-    const leads = await getLeads(0, 10, searchQuery, lead_type);
+    const skip = (page - 1) * limit;
+    const leads = await getLeads(skip, limit, searchQuery, lead_type);
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
             {/* Cards as Tabs */}
@@ -59,7 +71,7 @@ export default async function TelecallerDashboardPage({
             />
 
             {/* Main Content Area: Leads List & Detail View */}
-            <TelecallerMainGrid leads={leads} />
+            <TelecallerMainGrid leads={leads} page={page} limit={limit} />
         </div>
     );
 }

@@ -18,6 +18,8 @@ const statusMap: Record<string, string> = {
 function AnalystDashboardContent() {
     const searchParams = useSearchParams();
     const activeTab = searchParams.get('tab') || 'new';
+    const page = Number(searchParams.get('page')) || 1;
+    const limit = 5;
 
     const [cases, setCases] = useState<CoordinatorCase[]>([]);
     const [totalCases, setTotalCases] = useState(0);
@@ -62,7 +64,7 @@ function AnalystDashboardContent() {
         setLoading(true);
         try {
             const status = statusMap[activeTab];
-            const res = await getCoordinatorCases(1, 50, undefined, status);
+            const res = await getCoordinatorCases(page, limit, undefined, status);
             setCases(res.items);
             setTotalCases(res.total);
         } catch (err) {
@@ -72,7 +74,7 @@ function AnalystDashboardContent() {
         } finally {
             setLoading(false);
         }
-    }, [activeTab]);
+    }, [activeTab, page, limit]);
 
     useEffect(() => {
         fetchStats();
@@ -141,7 +143,13 @@ function AnalystDashboardContent() {
                     </div>
                 </div>
             ) : (
-                <AnalystMainGrid cases={mappedCases} onStatusUpdate={() => { fetchCases(); fetchStats(); }} />
+                <AnalystMainGrid 
+                    cases={mappedCases} 
+                    onStatusUpdate={() => { fetchCases(); fetchStats(); }} 
+                    page={page}
+                    totalCases={totalCases}
+                    limit={limit}
+                />
             )}
 
             {/* How It Works Section */}

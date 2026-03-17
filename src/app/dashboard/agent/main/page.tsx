@@ -9,6 +9,7 @@ import { SubmitCase } from '@/features/dashboard/components/SubmitCase';
 import { SearchBar } from '@/shared/SearchBar';
 import { AgentLeadsCard } from '@/features/dashboard/components/AgentLeadsCard';
 import { getLeads, getMyCases } from '@/features/dashboard/components/api/agent.api';
+import { Pagination } from '@/components/ui/Pagination';
 const agentTabs = [
     { id: 'dashboard', label: 'Dashboard', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg> },
     { id: 'calculator', label: 'Commission Calculator', icon: <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" /><line x1="8" x2="16" y1="6" y2="6" /><line x1="8" x2="16" y1="10" y2="10" /><line x1="10" x2="10" y1="14" y2="18" /><line x1="8" x2="12" y1="16" y2="16" /><line x1="14" x2="14" y1="14" y2="18" /><line x1="16" x2="16" y1="16" y2="16" /></svg> },
@@ -20,19 +21,24 @@ const agentTabs = [
 export default async function AgentDashboardPage({
     searchParams
 }: {
-    searchParams: Promise<{ tab?: string; caseId?: string; q?: string; view?: string }>
+    searchParams: Promise<{ tab?: string; caseId?: string; q?: string; view?: string; page?: string }>
 }) {
     const params = await searchParams;
     const activeTab = params.tab || 'dashboard';
     const viewType = params.view || 'cases'; // 'cases' or 'leads'
     const searchQuery = params.q || '';
+    const page = Number(params.page) || 1;
+    const limit = 5;
 
     // fetch leads
-    const leads = await getLeads(0, 50, searchQuery);
+    const skip = (page - 1) * limit;
+    const leads = await getLeads(skip, limit, searchQuery);
 
     // fetch cases
-    const casesData = await getMyCases(1, 50, searchQuery);
+    const casesData = await getMyCases(page, limit, searchQuery);
     const cases = casesData?.items || [];
+    const totalCases = casesData?.total || 0;
+    const totalLeads = leads.length >= limit ? (page * limit) + 1 : (page - 1) * limit + leads.length; // Approximate total if API doesn't provide it
     return (
         <main className="space-y-8 animate-in fade-in duration-500 pb-10">
             <TabSwitcher
@@ -100,52 +106,67 @@ export default async function AgentDashboardPage({
 
                         <div className="p-6 space-y-6 bg-card/50">
                             {viewType === 'cases' ? (
-                                cases.length > 0 ? (
-                                    cases.map((c) => (
-                                        <CaseCard
-                                            key={c.id}
-                                            id={String(c.id)}
-                                            name={c.customer_name || 'N/A'}
-                                            mobile={c.mobile_number || 'N/A'}
-                                            email={c.email || 'N/A'}
-                                            emiratesId={c.emirates_id || 'N/A'}
-                                            employer={c.employer || c.company_name || 'N/A'}
-                                            salary={c.salary ? String(c.salary) : '0'}
-                                            product={c.product?.product_name || c.product_type || 'N/A'}
-                                            bank={c.bank?.name || 'N/A'}
-                                            amount={String(c.requested_amount || c.amount || 0)}
-                                            date={new Date(c.created_at || c.date).toLocaleDateString()}
-                                            commission={"0 (Pending)"}
-                                            status={c.status}
-                                            step={3}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border rounded-2xl">
-                                        <span className="text-sm font-semibold text-text-muted opacity-80">No cases found</span>
-                                    </div>
-                                )
+                                <>
+                                    {cases.length > 0 ? (
+                                        cases.map((c) => (
+                                            <CaseCard
+                                                key={c.id}
+                                                id={String(c.id)}
+                                                name={c.customer_name || 'N/A'}
+                                                mobile={c.mobile_number || 'N/A'}
+                                                email={c.email || 'N/A'}
+                                                emiratesId={c.emirates_id || 'N/A'}
+                                                employer={c.employer || c.company_name || 'N/A'}
+                                                salary={c.salary ? String(c.salary) : '0'}
+                                                product={c.product?.product_name || c.product_type || 'N/A'}
+                                                bank={c.bank?.name || 'N/A'}
+                                                amount={String(c.requested_amount || c.amount || 0)}
+                                                date={new Date(c.created_at || c.date).toLocaleDateString()}
+                                                commission={"0 (Pending)"}
+                                                status={c.status}
+                                                step={3}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border rounded-2xl">
+                                            <span className="text-sm font-semibold text-text-muted opacity-80">No cases found</span>
+                                        </div>
+                                    )}
+                                    
+                                    {totalCases > limit && (
+                                        <Pagination page={page} total={totalCases} limit={limit} />
+                                    )}
+                                </>
                             ) : (
-                                leads.length > 0 ? (
-                                    leads.map((lead) => (
-                                        <AgentLeadsCard
-                                            key={lead.id}
-                                            id={lead.id}
-                                            customer_name={lead.customer_name}
-                                            mobile_number={lead.mobile_number}
-                                            email={lead.email}
-                                            requested_amount={lead.requested_amount}
-                                            product_name={lead.product?.product_name || 'N/A'}
-                                            bank_name={lead.bank?.name || 'N/A'}
-                                            created_at={lead.created_at}
-                                            status={lead.case?.status}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border rounded-2xl">
-                                        <span className="text-sm font-semibold text-text-muted opacity-80">No leads found</span>
-                                    </div>
-                                )
+                                <>
+                                    {leads.length > 0 ? (
+                                        leads.map((lead) => (
+                                            <AgentLeadsCard
+                                                key={lead.id}
+                                                id={lead.id}
+                                                customer_name={lead.customer_name}
+                                                mobile_number={lead.mobile_number}
+                                                email={lead.email}
+                                                requested_amount={lead.requested_amount}
+                                                product_name={lead.product?.product_name || 'N/A'}
+                                                product_id={lead.product?.id}
+                                                bank_name={lead.bank?.name || 'N/A'}
+                                                bank_id={lead.bank?.id}
+                                                created_at={lead.created_at}
+                                                status={lead.case?.status}
+                                                isReturned={lead.is_returned}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border rounded-2xl">
+                                            <span className="text-sm font-semibold text-text-muted opacity-80">No leads found</span>
+                                        </div>
+                                    )}
+
+                                    {(leads.length === limit || page > 1) && (
+                                        <Pagination page={page} total={totalLeads} limit={limit} />
+                                    )}
+                                </>
                             )}
                         </div>
                     </section>

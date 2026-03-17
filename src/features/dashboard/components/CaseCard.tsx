@@ -105,7 +105,7 @@ export function CaseCard({
                     </div>
                     <div>
                         <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Emirates ID</label>
-                        <p className={`text-xs font-semibold text-foreground`}>{emiratesId}</p>
+                        <p className={`text-xs font-semibold text-foreground truncate`}>{emiratesId}</p>
                     </div>
                     <div>
                         <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Employer</label>

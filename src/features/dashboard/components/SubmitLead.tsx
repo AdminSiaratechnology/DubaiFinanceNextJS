@@ -1,28 +1,80 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Label, Input, Select } from '@/components/ui/Form';
 
 import { getBanks } from '@/features/owner/bank/api/bank.api';
 import { getBankProductByBankId } from '@/features/owner/bankproducts/api/bankproducts.api';
 import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
-import { submitLead, sendLeadOtp } from './api/agent.api'
+import { submitLead, sendLeadOtp, updateLead } from './api/agent.api'
 import { toast } from 'sonner';
+import { useSearchParams } from 'next/navigation';
 
 export function SubmitLead() {
+    const searchParams = useSearchParams();
+    
+    // Check for prefilled data from 'Edit' navigation
+    const getInitialData = () => {
+        const editDataStr = searchParams.get('editData');
+        if (editDataStr) {
+            try {
+                const data = JSON.parse(decodeURIComponent(editDataStr));
+                return {
+                    id: data.id || null,
+                    customer_name: data.customer_name || '',
+                    mobile_number: data.mobile_number || '',
+                    email: data.email || '',
+                    bank_id: data.bank?.id || '',
+                    bank_name: data.bank?.name || '',
+                    product_id: data.product?.id || '',
+                    product_name: data.product?.product_name || '',
+                    requested_amount: data.requested_amount || 0,
+                };
+            } catch (e) {
+                console.error("Failed to parse editData", e);
+            }
+        }
+        return {
+            id: null,
+            customer_name: '',
+            mobile_number: '',
+            email: '',
+            bank_id: '',
+            bank_name: '',
+            product_id: '',
+            product_name: '',
+            requested_amount: 0,
+        };
+    };
+
+    const initialData = getInitialData();
+
     const [formData, setFormData] = useState({
-        customer_name: '',
-        mobile_number: '',
-        email: '',
-        bank_id: '' as string | number,
-        product_id: '' as string | number,
-        requested_amount: 0,
+        customer_name: initialData.customer_name,
+        mobile_number: initialData.mobile_number,
+        email: initialData.email,
+        bank_id: initialData.bank_id as string | number,
+        product_id: initialData.product_id as string | number,
+        requested_amount: initialData.requested_amount,
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isOtpSent, setIsOtpSent] = useState(false);
     const [otp, setOtp] = useState('');
+
+    // Update form if search params change (though usually one-shot)
+    useEffect(() => {
+        const data = getInitialData();
+        setFormData({
+            customer_name: data.customer_name,
+            mobile_number: data.mobile_number,
+            email: data.email,
+            bank_id: data.bank_id as string | number,
+            product_id: data.product_id as string | number,
+            requested_amount: data.requested_amount,
+        });
+    }, [searchParams]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -41,11 +93,20 @@ export function SubmitLead() {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await sendLeadOtp(formData.email);
-            setIsOtpSent(true);
-            toast.success('Verification OTP sent to your email.');
+            if (initialData.id) {
+                // Direct update for returned leads
+                await updateLead(initialData.id, formData);
+                toast.success('Lead updated successfully!');
+                // Redirect back to dashboard to refresh
+                window.location.href = '/dashboard/agent/main?tab=dashboard&view=leads';
+            } else {
+                // New lead submission with OTP
+                await sendLeadOtp(formData.email);
+                setIsOtpSent(true);
+                toast.success('Verification OTP sent to your email.');
+            }
         } catch (error) {
-            toast.error('Failed to send OTP. Please try again.');
+            toast.error(initialData.id ? 'Failed to update lead.' : 'Failed to send OTP. Please try again.');
             console.error(error);
         } finally {
             setIsSubmitting(false);
@@ -91,12 +152,14 @@ export function SubmitLead() {
                         </div>
                         <div className="space-y-1">
                             <h3 className="text-base sm:text-lg font-bold text-foreground leading-tight">
-                                {isOtpSent ? 'Verify Lead OTP' : 'Submit Lead (Basic Info)'}
+                                {isOtpSent ? 'Verify Lead OTP' : initialData.id ? 'Update Lead Details' : 'Submit Lead (Basic Info)'}
                             </h3>
                             <p className="text-[10px] sm:text-xs font-semibold text-text-muted opacity-80 leading-relaxed">
                                 {isOtpSent
                                     ? `Enter the OTP sent to customer: ${formData.mobile_number}`
-                                    : 'Submit basic customer details. Telecaller will collect documents later.'}
+                                    : initialData.id 
+                                        ? 'Update the customer basic details and resubmit.'
+                                        : 'Submit basic customer details. Telecaller will collect documents later.'}
                             </p>
                         </div>
                     </div>
@@ -138,6 +201,7 @@ export function SubmitLead() {
                                     value={formData.email}
                                     onChange={handleChange}
                                     placeholder="customer@email.com"
+                                    disabled={!!initialData.id}
                                 />
                             </div>
 
@@ -148,6 +212,7 @@ export function SubmitLead() {
                                     value={formData.bank_id}
                                     onChange={(val) => setFormData(prev => ({ ...prev, bank_id: val as number, product_id: '' }))}
                                     placeholder="Search bank..."
+                                    initialOptions={initialData.bank_id ? [{ id: Number(initialData.bank_id), name: initialData.bank_name }] : []}
                                 />
                             </div>
 
@@ -161,6 +226,7 @@ export function SubmitLead() {
                                     placeholder="Search product..."
                                     disabled={!formData.bank_id}
                                     extraParams={{ bank_id: formData.bank_id }}
+                                    initialOptions={initialData.product_id ? [{ id: Number(initialData.product_id), product_name: initialData.product_name }] : []}
                                 />
                             </div>
 
@@ -188,7 +254,7 @@ export function SubmitLead() {
                             ) : (
                                 <>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
-                                    Send OTP for Verification
+                                    {initialData.id ? 'Update and Resubmit Lead' : 'Send OTP for Verification'}
                                 </>
                             )}
                         </button>

@@ -4,13 +4,17 @@ import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CaseCard } from './CaseCard';
 import { CaseDetailsAnalyst } from './CaseDetailsAnalyst';
+import { Pagination } from '@/components/ui/Pagination';
 
 interface AnalystMainGridProps {
     cases: any[];
     onStatusUpdate?: () => void;
+    page: number;
+    totalCases: number;
+    limit: number;
 }
 
-export function AnalystMainGrid({ cases, onStatusUpdate }: AnalystMainGridProps) {
+export function AnalystMainGrid({ cases, onStatusUpdate, page, totalCases, limit }: AnalystMainGridProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const selectedId = searchParams.get('caseId');
@@ -65,6 +69,12 @@ export function AnalystMainGrid({ cases, onStatusUpdate }: AnalystMainGridProps)
                         </div>
                     )}
                 </div>
+
+                {totalCases > limit && (
+                    <div className="p-4 border-t border-border bg-muted/5">
+                        <Pagination page={page} total={totalCases} limit={limit} />
+                    </div>
+                )}
             </div>
 
             <div
