@@ -99,19 +99,26 @@ function AnalystDashboardContent() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            <StatTabs
-                tabs={analystTabs}
-                activeTab={activeTab}
-                baseUrl="/dashboard/analyst/main"
-                gridCols="grid-cols-1 sm:grid-cols-3 xl:grid-cols-6"
-            />
+            {stats ? (
+                <StatTabs
+                    tabs={analystTabs}
+                    activeTab={activeTab}
+                    baseUrl="/dashboard/analyst/main"
+                    gridCols="grid-cols-1 sm:grid-cols-3 xl:grid-cols-6"
+                />
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-6 gap-6">
+                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div key={i} className="h-28 bg-card border border-border rounded-2xl animate-pulse" />
+                    ))}
+                </div>
+            )}
 
             {loading ? (
-                <div className="flex items-center justify-center py-32">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-10 h-10 border-4 border-brand/30 border-t-brand rounded-full animate-spin" />
-                        <p className="text-sm font-bold text-text-muted uppercase tracking-widest">Loading cases...</p>
-                    </div>
+                <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-40 bg-card border border-border rounded-2xl animate-pulse" />
+                    ))}
                 </div>
             ) : (
                 <AnalystMainGrid 
