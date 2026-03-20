@@ -2,8 +2,8 @@
 
 :root {
   /* Base */
-  --background: #ffffff;
-  --foreground: #1f2937;
+  --background: #F0FDF4;
+  --foreground: #065F46;
 
   /* Card & Surface */
   --card: #ffffff;
@@ -11,7 +11,7 @@
   --border: #e6e8f0;
 
   /* Brand (Golden Header) */
-  --brand: #e6c04f;
+  --brand: #5E8F6B;
   --brand-foreground: #ffffff;
 
   /* Accent Pastels */
@@ -159,12 +159,16 @@ body {
   box-shadow: var(--shadow-card);
 }
 
+@utility stat-black {
+  border: 0.5px solid var(--black);
+}
+
 @utility stat-blue {
-  border-left: 4px solid var(--blue);
+  border-: 0.5px solid var(--blue);
 }
 
 @utility stat-green {
-  border-left: 4px solid var(--green);
+  border-left: 0.5px solid var(--green);
 }
 
 @utility stat-orange {
@@ -200,7 +204,7 @@ body {
 }
 
 @utility executive-header {
-  background: linear-gradient(135deg, #e6c04f, #d4af37);
+  background: linear-gradient(135deg, #065F46, #10B981);
   color: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }

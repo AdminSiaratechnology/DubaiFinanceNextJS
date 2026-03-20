@@ -73,17 +73,17 @@ export function LoginForm() {
             <div className="w-full max-w-md relative z-10">
                 <div className="bg-card border border-border rounded-3xl p-8 sm:p-10 shadow-2xl backdrop-blur-xl">
                     <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-                        <div className="w-10 h-10 bg-brand rounded-xl flex items-center justify-center shadow-lg">
-                            <span className="text-white font-bold">D</span>
+                        <div className="w-10 h-10 bg-foreground rounded-xl flex items-center justify-center shadow-lg">
+                            <span className="text-background font-bold">D</span>
                         </div>
-                        <h1 className="text-2xl font-black">Dubai Finance</h1>
+                        <h1 className="text-2xl font-black text-foreground">Dubai Finance</h1>
                     </div>
 
                     <div className="text-center mb-8">
-                        <h3 className="text-3xl font-black tracking-tight">
+                        <h3 className="text-3xl font-medium text-foreground tracking-tight">
                             Portal Access
                         </h3>
-                        <p className="text-sm text-muted-foreground mt-2 font-medium">
+                        <p className="text-[12px] sm:text-sm text-text-muted italic mt-1 uppercase tracking-widest font-medium opacity-80">
                             Sign in to continue to your dashboard
                         </p>
                     </div>
@@ -96,14 +96,14 @@ export function LoginForm() {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                            <label className="text-[10px] uppercase font-bold tracking-widest pl-1 text-text-muted">
                                 Email
                             </label>
                             <input
                                 type="text"
                                 required
                                 placeholder="Enter your email"
-                                className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-brand focus:border-brand outline-none transition-all text-sm font-semibold"
+                                className="w-full px-4 py-3 rounded-xl bg-muted/20 border border-border focus:ring-2 focus:ring-foreground/20 outline-none transition-all text-sm font-semibold"
                                 value={formData.email}
                                 onChange={(e) =>
                                     setFormData({ ...formData, email: e.target.value })
@@ -111,7 +111,7 @@ export function LoginForm() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                            <label className="text-[10px] uppercase font-bold tracking-widest pl-1 text-text-muted">
                                 Password
                             </label>
                             <div className="relative">
@@ -119,7 +119,7 @@ export function LoginForm() {
                                     type={showPassword ? 'text' : 'password'}
                                     required
                                     placeholder="••••••••"
-                                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-brand focus:border-brand outline-none transition-all text-sm font-semibold pr-11"
+                                    className="w-full px-4 py-3 rounded-xl bg-muted/20 border border-border focus:ring-2 focus:ring-foreground/20 outline-none transition-all text-sm font-semibold pr-11"
                                     value={formData.password}
                                     onChange={(e) =>
                                         setFormData({ ...formData, password: e.target.value })
@@ -143,39 +143,41 @@ export function LoginForm() {
                             type="submit"
                             disabled={isLoading}
                             className={`
-                                w-full py-3 rounded-2xl font-black uppercase tracking-widest text-xs
-                                bg-brand text-white shadow-xl shadow-brand/20
+                                w-full h-12 rounded-xl font-bold uppercase tracking-widest text-xs
+                                bg-foreground text-background shadow-xl
                                 transition-all duration-300 flex items-center justify-center gap-3
                                 ${isLoading
                                     ? 'opacity-70 cursor-not-allowed'
-                                    : 'hover:-translate-y-1 hover:shadow-brand/40 active:translate-y-0'
+                                    : 'hover:bg-foreground/90 hover:-translate-y-0.5 active:translate-y-0'
                                 }
                             `}
                         >
                             {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                             ) : (
                                 'Authorize Access'
                             )}
                         </button>
-                        <button
-                            type="button"
-                            onClick={() => router.push('/forgot-password')}
-                            className="w-full py-3 rounded-2xl font-black tracking-widest text-xs
-                        bg-gray-300 text-black shadow-xl shadow-brand/20
-                        transition-all duration-300 flex items-center justify-center gap-3"
-                        >
-                            Forgot Password
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => router.push('/register')}
-                            className="w-full py-3 rounded-2xl font-black tracking-widest text-xs
-                        bg-gray-500 text-black shadow-xl shadow-brand/20
-                        transition-all duration-300 flex items-center justify-center gap-3"
-                        >
-                            Register as Agent
-                        </button>
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                type="button"
+                                onClick={() => router.push('/forgot-password')}
+                                className="h-12 rounded-xl font-bold tracking-widest text-[10px] uppercase
+                                    bg-muted/50 text-text-muted border border-border
+                                    transition-all duration-300 flex items-center justify-center gap-3 hover:bg-muted"
+                            >
+                                Forgot Password
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => router.push('/register')}
+                                className="h-12 rounded-xl font-bold tracking-widest text-[10px] uppercase
+                                    bg-muted/50 text-text-muted border border-border
+                                    transition-all duration-300 flex items-center justify-center gap-3 hover:bg-muted"
+                            >
+                                Register
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

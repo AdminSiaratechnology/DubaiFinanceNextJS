@@ -23,7 +23,7 @@ const Field = ({
     children: React.ReactNode;
 }) => (
     <div className="space-y-2">
-        <Label className="text-sm font-medium text-text-muted">
+        <Label className="text-[10px] uppercase font-bold tracking-widest pl-1 text-text-muted">
             {label}
         </Label>
         {children}
@@ -132,17 +132,17 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                     <Card className="p-8 bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300 group">
                         <div className="space-y-6">
                             <div className="flex items-center gap-4 pb-5 border-b border-border/60">
-                                <div className="w-12 h-12 rounded-xl bg-blue/10 dark:bg-blue/20 flex items-center justify-center text-blue shadow-inner">
+                                <div className="w-12 h-12 rounded-xl bg-foreground/10 flex items-center justify-center text-foreground shadow-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                         <circle cx="12" cy="7" r="4" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold text-text-primary tracking-tight">
+                                    <h2 className="text-xl sm:text-2xl font-medium text-foreground tracking-tight leading-tight">
                                         Personal Information
                                     </h2>
-                                    <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Identity & Contact Details</p>
+                                    <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-80">Identity & Contact Details</p>
                                 </div>
                             </div>
 
@@ -294,7 +294,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                         <Card className="p-8 bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300">
                             <div className="space-y-6">
                                 <div className="flex items-center gap-4 pb-5 border-b border-border/60">
-                                    <div className="w-12 h-12 rounded-xl bg-purple/10 dark:bg-purple/20 flex items-center justify-center text-purple shadow-inner">
+                                    <div className="w-12 h-12 rounded-xl bg-foreground/10 flex items-center justify-center text-foreground shadow-sm">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <rect x="2" y="6" width="20" height="16" rx="2" />
                                             <path d="M2 10h20" />
@@ -304,10 +304,10 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                                         </svg>
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-text-primary tracking-tight">
+                                        <h2 className="text-xl sm:text-2xl font-medium text-foreground tracking-tight leading-tight">
                                             Banking Details
                                         </h2>
-                                        <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Payment & Settlement Information</p>
+                                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-80">Payment & Settlement Information</p>
                                     </div>
                                 </div>
 
@@ -360,7 +360,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                         <Card className="p-8 bg-card border border-border shadow-soft hover:shadow-card transition-all duration-300">
                             <div className="space-y-6">
                                 <div className="flex items-center gap-4 pb-5 border-b border-border/60">
-                                    <div className="w-12 h-12 rounded-xl bg-teal/10 dark:bg-teal/20 flex items-center justify-center text-teal shadow-inner">
+                                    <div className="w-12 h-12 rounded-xl bg-foreground/10 flex items-center justify-center text-foreground shadow-sm">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <line x1="19" x2="5" y1="5" y2="19" />
                                             <circle cx="6.5" cy="6.5" r="2.5" />
@@ -368,10 +368,10 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                                         </svg>
                                     </div>
                                     <div>
-                                        <h2 className="text-xl font-bold text-text-primary tracking-tight">
+                                        <h2 className="text-xl sm:text-2xl font-medium text-foreground tracking-tight leading-tight">
                                             Commissions
                                         </h2>
-                                        <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Product Rates & Agent Shares</p>
+                                        <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-80">Product Rates & Agent Shares</p>
                                     </div>
                                 </div>
 
@@ -461,11 +461,11 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                         <button
                             type="submit"
                             disabled={isSaving}
-                            className="px-10 py-3.5 bg-brand text-brand-foreground rounded-xl text-base font-black uppercase tracking-widest shadow-xl shadow-brand/20 hover:shadow-brand/40 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-70 flex items-center justify-center min-w-[200px]"
+                            className="px-10 py-3.5 bg-foreground text-background rounded-xl text-sm font-black uppercase tracking-widest shadow-xl hover:shadow-foreground/20 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-70 flex items-center justify-center min-w-[200px]"
                         >
                             {isSaving ? (
                                 <>
-                                    <div className="w-5 h-5 border-2 border-brand-foreground/30 border-t-brand-foreground rounded-full animate-spin mr-3" />
+                                    <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin mr-3" />
                                     Saving...
                                 </>
                             ) : (

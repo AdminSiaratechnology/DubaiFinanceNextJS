@@ -153,14 +153,19 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar">
 
                 {/* 1. Customer Summary Card */}
-                <div className="bg-blue-soft/30 dark:bg-blue/5 border border-blue/10 dark:border-blue/20 rounded-xl p-6 space-y-4 shadow-sm">
-                    <h3 className="text-lg font-bold text-foreground mb-4">{caseData.name}</h3>
+                <div className="bg-foreground/5 border border-border rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+                    <div>
+                        <h3 className="text-xl sm:text-3xl font-medium text-foreground leading-tight">{caseData.name}</h3>
+                        <p className="text-[12px] sm:text-sm text-text-muted italic mt-1 uppercase tracking-widest font-medium opacity-80">
+                            Case ID: #{caseData.id} • {caseData.date}
+                        </p>
+                    </div>
 
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {summaryItems.map((item, i) => (
-                            <div key={i} className="flex items-center gap-3 text-blue dark:text-blue-400">
-                                <span className="text-sm opacity-80">{item.icon}</span>
-                                <span className="text-base font-bold truncate">{item.text}</span>
+                            <div key={i} className="flex items-center gap-3 text-foreground">
+                                <span className="text-sm opacity-60">{item.icon}</span>
+                                <span className="text-[12px] sm:text-sm font-bold truncate tracking-tight">{item.text}</span>
                             </div>
                         ))}
                     </div>
@@ -168,23 +173,26 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
 
                 {/* 2. Action Card (Conditional) */}
                 {isPendingAcceptance ? (
-                    <div className="rounded-xl border border-blue/20 dark:border-blue/30 overflow-hidden bg-card shadow-sm">
-                        <div className="bg-blue p-5 text-white">
-                            <h4 className="text-base font-black uppercase tracking-widest">Step 1: Case Intake</h4>
-                            <p className="text-[10px] font-bold opacity-80 mt-1 uppercase">Review and accept this case or move to pending</p>
+                    <div className="rounded-2xl border border-border overflow-hidden bg-card shadow-sm">
+                        <div className="bg-foreground p-6 text-background">
+                            <h4 className="text-[10px] uppercase font-bold tracking-widest opacity-80 mb-1">Step 1: Case Intake</h4>
+                            <h5 className="text-xl font-medium">Review and Accept Case</h5>
                         </div>
                         <div className="p-6 space-y-4">
-                            <div className="p-4 rounded-md bg-blue-soft/40 dark:bg-blue/10 border-2 border-dashed border-blue/20 dark:border-blue/30">
-                                <p className="text-[11px] font-bold text-blue leading-tight uppercase"><input type="checkbox" className="mr-1" checked={isDocumentsChecked} onChange={(e) => setIsDocumentsChecked(e.target.checked)} /> Confirm that you have received all physical documents before proceeding.</p>
+                            <div className="p-4 rounded-xl bg-foreground/5 border-2 border-dashed border-border group-hover:border-foreground/20 transition-all">
+                                <p className="text-[11px] font-bold text-foreground leading-tight uppercase flex items-center gap-2">
+                                    <input type="checkbox" className="w-4 h-4 rounded border-border text-foreground focus:ring-foreground/20" checked={isDocumentsChecked} onChange={(e) => setIsDocumentsChecked(e.target.checked)} />
+                                    Confirm that you have received all physical documents before proceeding.
+                                </p>
                             </div>
 
                             <div className="space-y-3">
                                 <button
                                     onClick={() => handleStatusChange('under_review')}
                                     disabled={updating || !isDocumentsChecked}
-                                    className="w-full h-12 bg-green text-white rounded-[14px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-green/90 shadow-lg shadow-green/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
+                                    className="w-full h-12 bg-foreground text-background rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-foreground/90 shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    {updating ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
+                                    {updating ? <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" /> : null}
                                     Start Review Now
                                 </button>
 
@@ -223,21 +231,19 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                         </div>
                     </div>
                 ) : (
-                    <div className="rounded-xl border border-purple/20 dark:border-purple/30 overflow-hidden bg-card shadow-sm">
-                        <div className="bg-purple p-5 text-white">
-                            <h4 className="text-base font-black uppercase tracking-widest">Case Management</h4>
-                            <p className="text-[10px] font-medium opacity-90 mt-1 uppercase">Review documents and update status</p>
+                    <div className="rounded-2xl border border-border overflow-hidden bg-card shadow-sm">
+                        <div className="bg-foreground p-6 text-background">
+                            <h4 className="text-[10px] uppercase font-bold tracking-widest opacity-80 mb-1">Workflow Status</h4>
+                            <h5 className="text-xl font-medium">Case Management</h5>
                         </div>
 
                         <div className="p-6 space-y-8">
                             <div className="space-y-4">
-                                <div className="p-3 bg-muted/30 dark:bg-white/5 border border-border rounded-md flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-md bg-blue-soft dark:bg-blue/20 border border-blue/10 dark:border-blue/30 flex items-center justify-center text-blue">
-                                            📄
-                                        </div>
-                                        <h5 className="text-xs font-black uppercase tracking-widest text-foreground">Submitted Documents</h5>
+                                <div className="flex items-center gap-3 border-b border-border pb-3">
+                                    <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14 2 14 8 20 8" /></svg>
                                     </div>
+                                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Submitted Documents</h4>
                                 </div>
                                 <div className="space-y-2 max-h-[300px] overflow-y-auto px-1 no-scrollbar">
                                     {documentsList.length > 0 ? (
@@ -258,7 +264,7 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                                 {doc.url ? (
                                                     <button
                                                         onClick={() => window.open(doc.url!, '_blank')}
-                                                        className="flex items-center gap-1.5 px-3 py-2 bg-blue/5 border border-blue/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-blue hover:bg-blue hover:text-white transition-all active:scale-95"
+                                                        className="flex items-center gap-1.5 px-3 py-2 bg-foreground/5 border border-border rounded-xl text-[9px] font-black uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all active:scale-95"
                                                     >
                                                         👁️ View
                                                     </button>
@@ -279,22 +285,23 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
 
                             <div className="space-y-6 pt-4 border-t border-border">
                                 <div className="space-y-4">
-                                    <div className="space-y-1.5">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-blue-light dark:text-blue-400">Update Case Status</Label>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Update Case Status</Label>
                                         <Select
                                             value={selectedStatus}
                                             onChange={(e) => setSelectedStatus(e.target.value)}
                                             options={statusOptions}
+                                            className="h-11 rounded-xl! transition-all focus:ring-foreground/20"
                                         />
                                     </div>
 
-                                    <div className="space-y-1.5">
+                                    <div className="space-y-2">
                                         <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Analysis Notes</Label>
                                         <textarea
                                             value={notes}
                                             onChange={(e) => setNotes(e.target.value)}
                                             placeholder="Add your review notes..."
-                                            className="w-full h-32 p-4 bg-muted dark:bg-slate-900/50 border border-border rounded-md text-xs font-medium focus:ring-2 focus:ring-purple outline-none transition-all resize-none no-scrollbar"
+                                            className="w-full h-32 p-4 bg-muted dark:bg-slate-900/50 border border-border rounded-xl text-xs font-medium focus:ring-2 focus:ring-foreground/20 outline-none transition-all resize-none no-scrollbar"
                                         />
                                     </div>
                                 </div>
@@ -308,24 +315,23 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                     <button
                                         onClick={handleStatusUpdate}
                                         disabled={updating}
-                                        className="w-full h-14 bg-purple text-white rounded-[14px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-purple/90 shadow-lg shadow-purple/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
+                                        className="w-full h-14 bg-foreground text-background rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-foreground/90 shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {updating ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
+                                        {updating ? <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" /> : null}
                                         {updating ? 'Updating...' : 'Submit Status Update'}
                                     </button>
-
                                     <div className="grid grid-cols-2 gap-4">
                                         <button
                                             onClick={() => handleStatusChange(caseData.telecaller_id ? 'sent_back_to_telecaller' : 'sent_back_to_agent')}
                                             disabled={updating}
-                                            className="h-12 bg-muted text-text-muted rounded-[14px] font-black uppercase tracking-widest text-[9px] hover:bg-blue/5 hover:text-blue border border-border transition-all active:scale-95 shadow-sm"
+                                            className="h-12 bg-muted text-text-muted rounded-xl font-bold uppercase tracking-widest text-[9px] hover:bg-foreground/5 hover:text-foreground border border-border transition-all active:scale-95 shadow-sm"
                                         >
                                             {caseData.telecaller_id ? 'Back to Telecaller' : 'Back to Agent'}
                                         </button>
                                         <button
                                             onClick={() => handleStatusChange('rejected')}
                                             disabled={updating}
-                                            className="h-12 bg-red text-white rounded-[14px] font-black uppercase tracking-widest text-[9px] hover:bg-red/90 transition-all active:scale-95 shadow-lg shadow-red/20"
+                                            className="h-12 bg-red/10 text-red border border-red/20 rounded-xl font-bold uppercase tracking-widest text-[9px] hover:bg-red hover:text-white transition-all active:scale-95 shadow-lg shadow-red/20"
                                         >
                                             Reject Case
                                         </button>

@@ -100,8 +100,8 @@ export function EmailConfigForm() {
         <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl sm:text-2xl font-light text-foreground tracking-tight">Email Configuration</h1>
-                    <p className="text-[10px] sm:text-xs text-text-muted italic mt-1">
+                    <h1 className="text-xl sm:text-3xl font-medium text-foreground tracking-tight">Email Configuration</h1>
+                    <p className="text-[12px] sm:text-sm text-text-muted italic mt-1">
                         Configure SMTP settings for sending system emails and OTPs.
                     </p>
                 </div>
@@ -117,10 +117,10 @@ export function EmailConfigForm() {
                 <form onSubmit={handleSave} className="space-y-6">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3 border-b border-border pb-3">
-                            <div className="p-2 rounded-lg bg-brand/10 text-brand">
+                            <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
                             </div>
-                            <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">SMTP Settings</h4>
+                            <h4 className="text-[14px] uppercase font-bold tracking-widest text-foreground">SMTP Settings</h4>
                         </div>
 
                         <div className="space-y-4">
@@ -169,13 +169,13 @@ export function EmailConfigForm() {
                         <button
                             type="submit"
                             disabled={saving}
-                            className="w-full sm:flex-1 py-3 bg-brand text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-brand/90 transition-all shadow-lg shadow-brand/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full sm:flex-1 py-3 bg-foreground text-background rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-foreground/90 transition-all shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                             {saving ? (
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                             ) : (
                                 <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="17 3 17 8 15 8" /></svg>
                                     {config ? 'Update Configuration' : 'Save Configuration'}
                                 </>
                             )}
@@ -186,7 +186,7 @@ export function EmailConfigForm() {
                                 type="button"
                                 onClick={handleDelete}
                                 disabled={saving}
-                                className="w-full sm:w-auto px-6 py-3 bg-red-soft text-red rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red/10 transition-all border border-red/10 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full sm:w-auto px-6 py-3 bg-white border border-red text-red rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red/5 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 <>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>

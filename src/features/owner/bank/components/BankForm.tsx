@@ -109,12 +109,12 @@ export function BankForm({ bank, title, bankId }: BankFormProps) {
         <div className="max-w-5xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl sm:text-2xl font-light text-foreground">{title}</h1>
-                    <p className="text-[10px] sm:text-xs text-text-muted italic mt-1">Configure bank details and supported loan products.</p>
+                    <h1 className="text-xl sm:text-3xl font-medium text-foreground">{title}</h1>
+                    <p className="text-[12px] sm:text-sm text-text-muted italic mt-1">Configure bank details and supported loan products.</p>
                 </div>
                 <button
                     onClick={onCancel}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-muted/50 hover:bg-muted rounded-xl text-xs font-bold text-text-muted hover:text-foreground transition-all sm:w-auto w-full"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                     Back to Banks
@@ -126,10 +126,10 @@ export function BankForm({ bank, title, bankId }: BankFormProps) {
                     <div className="space-y-8">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 border-b border-border pb-3">
-                                <div className="p-2 rounded-lg bg-blue-soft text-blue">
+                                <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg>
                                 </div>
-                                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">Bank Information</h4>
+                                <h4 className="text-[14px] uppercase font-bold tracking-widest text-foreground">Bank Information</h4>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
@@ -227,7 +227,7 @@ export function BankForm({ bank, title, bankId }: BankFormProps) {
                                 onChange={handleChange}
                                 placeholder="Add any description about this bank..."
                                 rows={4}
-                                className="w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-purple-500 outline-none transition-all placeholder:text-text-muted/50 resize-none"
+                                className="w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-foreground/20 outline-none transition-all placeholder:text-text-muted/50 resize-none"
                             />
                         </div>
 
@@ -238,17 +238,17 @@ export function BankForm({ bank, title, bankId }: BankFormProps) {
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-border font-bold text-sm text-text-muted hover:bg-muted transition-all order-2 sm:order-1"
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-foreground font-bold text-sm text-foreground bg-white hover:bg-muted transition-all order-2 sm:order-1"
                     >
                         Discard Changes
                     </button>
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`w-full sm:w-auto px-10 py-3 bg-brand text-white rounded-xl font-bold text-sm transition-all shadow-lg order-1 sm:order-2 flex justify-center items-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-brand/90 active:scale-[0.98]'}`}
+                        className={`w-full sm:w-auto px-10 py-3 bg-foreground text-background rounded-xl font-bold text-sm transition-all shadow-lg order-1 sm:order-2 flex justify-center items-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-foreground/90 active:scale-[0.98]'}`}
                     >
                         {isSubmitting && (
-                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-background" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>

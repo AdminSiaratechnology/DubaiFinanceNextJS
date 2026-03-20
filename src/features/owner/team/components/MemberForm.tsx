@@ -169,13 +169,13 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
         <div className="max-w-5xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl sm:text-2xl font-light text-foreground">{title}</h1>
-                    <p className="text-[10px] sm:text-xs text-text-muted italic mt-1">Fill in the details below to manage your team member.</p>
+                    <h1 className="text-xl sm:text-3xl font-medium text-foreground">{title}</h1>
+                    <p className="text-[12px] sm:text-sm text-text-muted italic mt-1">Fill in the details below to manage your team member.</p>
                 </div>
                 <button
                     onClick={handleCancel}
                     type="button"
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-muted/50 hover:bg-muted rounded-xl text-xs font-bold text-text-muted hover:text-foreground transition-all sm:w-auto w-full"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                     Back to List
@@ -187,10 +187,10 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                     <div className="space-y-8">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 border-b border-border pb-3">
-                                <div className="p-2 rounded-lg bg-brand/10 text-brand">
+                                <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
                                 </div>
-                                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">Personal Information</h4>
+                                <h4 className="text-[14px] uppercase font-bold tracking-widest text-foreground">Personal Information</h4>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
@@ -255,10 +255,10 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                         {role === 'agent' && (
                             <div className="space-y-6">
                                 <div className="flex items-center gap-3 border-b border-border pb-3">
-                                    <div className="p-2 rounded-lg bg-brand/10 text-brand">
+                                    <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 8v8" /><path d="M8 12h8" /></svg>
                                     </div>
-                                    <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">Assign Commissions</h4>
+                                    <h4 className="text-[14px] uppercase font-bold tracking-widest text-foreground">Assign Commissions</h4>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end bg-muted/20 p-4 rounded-2xl border border-dashed border-border">
@@ -290,7 +290,7 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                                         type="button"
                                         onClick={handleAddCommission}
                                         disabled={!selectedBankId || !selectedProductId}
-                                        className="h-[46px] w-full px-6 bg-brand text-white rounded-xl font-bold text-xs hover:bg-brand/90 transition-all shadow-md flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                        className="h-[46px] w-full px-6 bg-foreground text-background rounded-xl font-bold text-xs hover:bg-foreground/90 transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
                                         Assign Commission
@@ -330,10 +330,10 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
 
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 border-b border-border pb-3">
-                                <div className="p-2 rounded-lg bg-green-soft text-green">
+                                <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="12" x="2" y="6" rx="2" /><circle cx="12" cy="12" r="2" /><path d="M6 12h.01M18 12h.01" /></svg>
                                 </div>
-                                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">Banking Details</h4>
+                                <h4 className="text-[14px] uppercase font-bold tracking-widest text-foreground">Banking Details</h4>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
@@ -362,14 +362,14 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                         type="button"
                         onClick={handleCancel}
                         disabled={isSubmitting}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-border font-bold text-sm text-text-muted hover:bg-muted transition-all order-2 sm:order-1"
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-foreground font-bold text-sm text-foreground bg-white hover:bg-muted transition-all order-2 sm:order-1"
                     >
                         Discard Changes
                     </button>
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full sm:w-auto px-10 py-3 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand/90 transition-all shadow-lg active:scale-[0.98] order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full sm:w-auto px-10 py-3 bg-foreground text-background rounded-xl font-bold text-sm hover:bg-foreground/90 transition-all shadow-lg order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isSubmitting ? 'Saving...' : 'Save Team Member'}
                     </button>

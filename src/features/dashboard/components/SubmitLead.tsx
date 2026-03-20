@@ -145,16 +145,16 @@ export function SubmitLead() {
     return (
         <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card noPadding className="border-border">
-                <div className="bg-green-soft dark:bg-green/10 p-4 sm:p-6 border-b border-green/10 dark:border-green/20">
+                <div className="p-4 sm:p-8 border-b border-border">
                     <div className="flex gap-4">
-                        <div className="text-green shrink-0 mt-1 sm:mt-0.5">
+                        <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
                         </div>
                         <div className="space-y-1">
-                            <h3 className="text-base sm:text-lg font-bold text-foreground leading-tight">
+                            <h3 className="text-xl sm:text-3xl font-medium text-foreground leading-tight">
                                 {isOtpSent ? 'Verify Lead OTP' : initialData.id ? 'Update Lead Details' : 'Submit Lead (Basic Info)'}
                             </h3>
-                            <p className="text-[10px] sm:text-xs font-semibold text-text-muted opacity-80 leading-relaxed">
+                            <p className="text-[12px] sm:text-sm text-text-muted italic leading-relaxed">
                                 {isOtpSent
                                     ? `Enter the OTP sent to customer: ${formData.mobile_number}`
                                     : initialData.id 
@@ -247,10 +247,10 @@ export function SubmitLead() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className={`w-full py-3 bg-green text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all hover:shadow-lg active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green/90 shadow-md shadow-green/20'}`}
+                            className={`w-full py-4 bg-foreground text-background rounded-xl font-bold flex items-center justify-center gap-3 transition-all hover:shadow-lg active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-foreground/90 shadow-md'}`}
                         >
                             {isSubmitting ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                             ) : (
                                 <>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
@@ -280,10 +280,10 @@ export function SubmitLead() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting || !otp}
-                                    className={`w-full py-4 bg-green text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all hover:shadow-lg active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-green/90 shadow-md'}`}
+                                    className={`w-full py-5 bg-foreground text-background rounded-xl font-bold flex items-center justify-center gap-3 transition-all hover:shadow-lg active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-foreground/90 shadow-md'}`}
                                 >
                                     {isSubmitting ? (
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                                     ) : (
                                         <>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
