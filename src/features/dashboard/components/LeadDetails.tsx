@@ -29,6 +29,7 @@ interface LeadDetailsProps {
   };
   caseData?: Case | null;
   onClose: () => void;
+  readOnly?: boolean;
 }
 
 const requiredDocs = [
@@ -87,7 +88,7 @@ const getStatusOptions = (currentStatus?: string, hasCase?: boolean) => {
     { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
   ];
 };
-export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
+export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadDetailsProps) {
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -118,7 +119,6 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
   // ✅ Sync form when case loads
   useEffect(() => {
     if (!caseData) return;
-
     setFormData({
       name: caseData.customer_name || lead.customer_name || "",
       mobile: caseData.mobile_number || lead.mobile_number || "",
@@ -213,189 +213,279 @@ export function LeadDetails({ lead, caseData, onClose }: LeadDetailsProps) {
     }
   };
 
+  const isFormValid = !!(formData.name.trim() && formData.mobile.trim() && formData.email.trim());
+
   return (
-    <Card noPadding className="h-full flex flex-col">
-      <div className="bg-green-soft/30 p-4 border-b border-border flex justify-between items-center">
-        <div>
-          <h3 className="font-bold text-lg">Lead Details</h3>
-
-          <span className="text-xs text-text-muted">
-            {lead.product?.product_name} • {lead.bank?.name}
-          </span>
-
-          {/* {caseData && (
-            <div className="mt-1">
-              <span className="text-[10px] px-2 py-1 rounded bg-green-100 text-green-700 font-semibold">
-                Case Created • {caseData.status}
-              </span>
-            </div>
-          )} */}
+    <Card noPadding className="h-full flex flex-col border-none shadow-none bg-transparent">
+      {/* Header */}
+      <div className="bg-blue/5 backdrop-blur-md p-5 sm:p-6 border-b border-border flex justify-between items-center sticky top-0 z-20">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-2xl bg-blue/10 flex items-center justify-center text-blue shadow-sm ring-1 ring-blue/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+          </div>
+          <div>
+            <h3 className="font-black text-base sm:text-lg tracking-tight text-foreground">Lead Information</h3>
+            <p className="text-[10px] sm:text-xs font-bold text-blue uppercase tracking-widest opacity-80 mt-0.5">
+              {lead.product?.product_name || "General inquiry"} • {lead.bank?.name || "Multiple Banks"}
+            </p>
+          </div>
         </div>
 
-        <button onClick={onClose} className="p-2 hover:bg-red-soft rounded-2xl">
-          ✕
+        <button
+          onClick={onClose}
+          className="p-2 sm:p-2.5 hover:bg-red/10 text-text-muted hover:text-red rounded-xl transition-all duration-200"
+          title="Close details"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-10">
-        <section className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h4 className="font-bold">Customer Information</h4>
+      <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-12 no-scrollbar scroll-smooth">
+        {/* Customer Information */}
+        <section className="space-y-8">
+          <div className="flex justify-between items-end border-b border-border pb-2">
+            <div className="space-y-1">
+              <h4 className="text-[11px] font-black text-text-muted uppercase tracking-[0.2em]">Primary Details</h4>
+              <p className="text-xs font-medium text-text-muted/60">Manage core customer profile and contact information</p>
+            </div>
 
             <button
               onClick={() => setIsEditing(!isEditing)}
-              className="px-1 py-0.5 border rounded text-xs"
+              disabled={readOnly || status === "submitted_to_coordinator"}
+              className={`
+                px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all
+                ${isEditing
+                  ? "bg-red/10 text-red border border-red/20 shadow-sm"
+                  : "bg-muted text-text-primary hover:bg-blue/5 hover:text-blue border border-border shadow-sm"
+                }
+                ${(readOnly || status === "submitted_to_coordinator") ? "opacity-50 cursor-not-allowed" : ""}
+              `}
             >
-              {isEditing ? "Cancel" : "Edit"}
+              {isEditing ? "Discard Changes" : "Edit Details"}
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-
-            <div>
-              <Label>Full Name</Label>
-              <Input name="name" value={formData.name} onChange={handleInputChange} disabled={!isEditing} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Full Name <span className="text-red-500">*</span></Label>
+              <Input
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+              />
             </div>
 
-            <div>
-              <Label>Mobile</Label>
-              <Input name="mobile" value={formData.mobile} onChange={handleInputChange} disabled={!isEditing} />
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Mobile Number <span className="text-red-500">*</span></Label>
+              <Input
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+              />
             </div>
 
-            <div>
-              <Label>Email</Label>
-              <Input name="email" value={formData.email} onChange={handleInputChange} disabled={!isEditing} />
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Email Address <span className="text-red-500">*</span></Label>
+              <Input
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+              />
             </div>
 
-            <div>
-              <Label>Emirates ID</Label>
-              <Input name="emirates_id" value={formData.emirates_id} onChange={handleInputChange} disabled={!isEditing} />
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Emirates ID</Label>
+              <Input
+                name="emirates_id"
+                value={formData.emirates_id}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+              />
             </div>
 
-            <div>
-              <Label>Employer</Label>
-              <Input name="employer_name" value={formData.employer_name} onChange={handleInputChange} disabled={!isEditing} />
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Employer / Company</Label>
+              <Input
+                name="employer_name"
+                value={formData.employer_name}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+              />
             </div>
 
-            <div>
-              <Label>Salary</Label>
-              <Input name="salary" type="number" value={formData.salary} onChange={handleInputChange} disabled={!isEditing} />
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Monthly Salary (AED)</Label>
+              <Input
+                name="salary"
+                type="number"
+                value={formData.salary}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+              />
             </div>
 
-            <div>
-              <Label>Requested Amount</Label>
-              <Input name="amount" value={formData.amount} onChange={handleInputChange} disabled={!isEditing} />
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Requested Amount</Label>
+              <Input
+                name="amount"
+                value={formData.amount}
+                onChange={handleInputChange}
+                disabled={!isEditing}
+                className="h-11 rounded-xl! transition-all focus:ring-blue/30 font-bold text-blue"
+              />
             </div>
 
-            <ApiSearchableSelect
-              label="Select Bank"
-              required
-              fetchFn={getBanks as any}
-              value={formData.bank_id}
-              initialOptions={(() => {
-                const options = [];
-                if (lead.bank?.id) options.push({ id: lead.bank.id, name: lead.bank.name });
-                if (caseData?.bank?.id) options.push({ id: caseData.bank.id, name: caseData.bank.name });
-                return options;
-              })()}
-              onChange={(val) => {
-                updateField("bank_id", String(val));
-                updateField("product_id", "");
-              }}
-              placeholder="Search bank..."
-              disabled={!isEditing}
-            />
+            <div className="space-y-2">
+              <ApiSearchableSelect
+                label="Select Bank"
+                required
+                fetchFn={getBanks as any}
+                value={formData.bank_id}
+                initialOptions={(() => {
+                  const options = [];
+                  if (lead.bank?.id) options.push({ id: lead.bank.id, name: lead.bank.name });
+                  if (caseData?.bank?.id) options.push({ id: caseData.bank.id, name: caseData.bank.name });
+                  return options;
+                })()}
+                onChange={(val) => {
+                  updateField("bank_id", String(val));
+                  updateField("product_id", "");
+                }}
+                placeholder="Search bank..."
+                disabled={!isEditing}
+              />
+            </div>
 
-            <ApiSearchableSelect
-              label="Select Product"
-              required
-              fetchFn={fetchProducts}
-              labelKey="product_name"
-              value={formData.product_id}
-              initialOptions={(() => {
-                const options = [];
-                if (lead.product?.id) options.push({ id: lead.product.id, product_name: lead.product.product_name });
-                if (caseData?.product?.id) options.push({ id: caseData.product.id, product_name: caseData.product.product_name });
-                return options;
-              })()}
-              onChange={(val) => updateField("product_id", String(val))}
-              placeholder="Search product..."
-              disabled={!isEditing || !formData.bank_id}
-            />
+            <div className="space-y-2 sm:col-span-2">
+              <ApiSearchableSelect
+                label="Select Product"
+                required
+                fetchFn={fetchProducts}
+                labelKey="product_name"
+                value={formData.product_id}
+                initialOptions={(() => {
+                  const options = [];
+                  if (lead.product?.id) options.push({ id: lead.product.id, product_name: lead.product.product_name });
+                  if (caseData?.product?.id) options.push({ id: caseData.product.id, product_name: caseData.product.product_name });
+                  return options;
+                })()}
+                onChange={(val) => updateField("product_id", String(val))}
+                placeholder="Search product..."
+                disabled={!isEditing || !formData.bank_id}
+              />
+            </div>
 
           </div>
-
         </section>
 
-        <section className="space-y-6">
-          <h4 className="font-bold">Upload Documents</h4>
+        {/* Documentation Section */}
+        <section className="space-y-8">
+          <div className="space-y-1 border-b border-border pb-2">
+            <h4 className="text-[11px] font-black text-text-muted uppercase tracking-[0.2em]">Documentation Vault</h4>
+            <p className="text-xs font-medium text-text-muted/60">Upload and verify all required KYC and financial documents</p>
+          </div>
 
-          {requiredDocs.map(doc => {
-            let docUrl = null;
-            if (caseData?.documents && caseData.documents.length > 0) {
-              const docData = caseData.documents[0];
-              const expectedKey = `${doc.id}_url`;
-              const alternateKey = doc.id === "residence_visa" ? "residencevisa_url" : expectedKey;
-              docUrl = docData[alternateKey] || null;
-            }
+          <div className="grid grid-cols-1 gap-4">
+            {requiredDocs.map(doc => {
+              let docUrl = null;
+              if (caseData?.documents && caseData.documents.length > 0) {
+                const docData = caseData.documents[0];
+                const expectedKey = `${doc.id}_url`;
+                const alternateKey = doc.id === "residence_visa" ? "residencevisa_url" : expectedKey;
+                docUrl = docData[alternateKey] || null;
+              }
 
-            return (
-              <FileUploader
-                key={doc.id}
-                id={doc.id}
-                label={doc.label}
-                file={files[doc.id] || null}
-                previewUrl={docUrl}
-                onChange={handleFileChange}
-                color="blue"
+              return (
+                <div key={doc.id} className="bg-muted/10 p-4 rounded-2xl border border-border/50 hover:border-blue/20 transition-all duration-300">
+                  <FileUploader
+                    id={doc.id}
+                    label={doc.label}
+                    file={files[doc.id] || null}
+                    previewUrl={docUrl}
+                    onChange={handleFileChange}
+                    color="blue"
+                    disabled={readOnly || status === "submitted_to_coordinator" || !isEditing}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Workflow Status */}
+        <section className="space-y-8">
+          <div className="space-y-1 border-b border-border pb-2">
+            <h4 className="text-[11px] font-black text-text-muted uppercase tracking-[0.2em]">Workflow Intelligence</h4>
+            <p className="text-xs font-medium text-text-muted/60">Current stage and coordinator communication log</p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Stage Alignment</Label>
+              <Select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                options={getStatusOptions(status, !!caseData)}
+                disabled={readOnly || status === "submitted_to_coordinator"}
+                className="h-11 rounded-xl! font-bold text-blue bg-blue/5 border-blue/20"
               />
-            );
-          })}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Internal Notes</Label>
+              <textarea
+                name="notes"
+                value={formData.notes}
+                onChange={handleInputChange as any}
+                disabled={readOnly || !isEditing}
+                placeholder="Describe any specific observations or pending requirements..."
+                className="w-full min-h-[120px] p-4 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-blue/20 outline-none transition-all resize-none disabled:bg-muted/50 disabled:text-text-muted"
+              />
+            </div>
+          </div>
         </section>
-
-        <section className="space-y-6">
-          <h4 className="font-bold">Update Status</h4>
-
-          <Select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            options={getStatusOptions(status, !!caseData)}
-            disabled={status === "submitted_to_coordinator"}
-          />
-          <Label>Notes</Label>
-          <Input name="notes" value={formData.notes} onChange={handleInputChange} placeholder="Notes" />
-        </section>
-
       </div>
 
-      <div className="p-6 border-t border-border grid grid-cols-2 gap-4">
+      {/* Action Bar */}
+      <div className="p-6 sm:p-8 bg-card border-t border-border flex flex-col sm:flex-row gap-4 sticky bottom-0 z-20 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
+        <div className="flex-1 grid grid-cols-2 gap-4">
+          <button
+            onClick={() => handleSubmitCase(status)}
+            disabled={readOnly || isSubmitting || !isFormValid || status === "submitted_to_coordinator"}
+            className="h-12 flex items-center justify-center gap-2 bg-blue text-white rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg shadow-blue/20 hover:bg-blue/90 disabled:opacity-50 transition-all active:scale-95 disabled:grayscale"
+          >
+            {isSubmitting ? "Syncing..." : "Update Progress"}
+          </button>
 
-        <button
-          onClick={() => handleSubmitCase(status)}
-          disabled={isSubmitting}
-          className="py-3 px-4 bg-brand text-white rounded-xl text-xs font-bold"
-        >
-          {isSubmitting ? "Submitting..." : "Update Status"}
-        </button>
+          <button
+            onClick={() => handleSubmitCase("submitted_to_coordinator")}
+            disabled={readOnly || isSubmitting || !isFormValid || status === "submitted_to_coordinator"}
+            className="h-12 flex items-center justify-center gap-2 bg-green text-white rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg shadow-green/20 hover:bg-green/90 disabled:opacity-50 transition-all active:scale-95 disabled:grayscale"
+          >
+            Submit to Coordinator
+          </button>
+        </div>
 
-        <button
-          onClick={() => handleSubmitCase("submitted_to_coordinator")}
-          disabled={isSubmitting || status !== "submitted_to_coordinator"}
-          className="py-3 px-4 bg-green text-white rounded-xl text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Submit to Coordinator
-        </button>
-
-        <button className="py-3 px-4 border border-border rounded-xl text-xs font-bold">
-          Call
-        </button>
-
-        <button className="py-3 px-4 border border-border rounded-xl text-xs font-bold">
-          Email
-        </button>
-
+        <div className="grid grid-cols-2 gap-4 sm:w-[200px]">
+          <button className="h-12 flex items-center justify-center gap-2 border border-border bg-card text-text-primary rounded-[14px] text-xs font-black uppercase tracking-widest hover:bg-muted transition-all active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+            Call
+          </button>
+          <button className="h-12 flex items-center justify-center gap-2 border border-border bg-card text-text-primary rounded-[14px] text-xs font-black uppercase tracking-widest hover:bg-muted transition-all active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+            Email
+          </button>
+        </div>
       </div>
-
     </Card>
   );
 }

@@ -246,16 +246,16 @@ export const updateCaseStatus = async (
 };
 
 export const agentStats = async () => {
-  const response = await apiClient.get("/cases/agent-stats");
+  const response = await apiClient.get("/dashboard/agent-stats");
   return response.data;
 };
 
 export const telecallerStats = async () => {
-  const response = await apiClient.get("/cases/telecaller-stats");
+  const response = await apiClient.get("/dashboard/telecaller-stats");
   return response.data;
 };
 
 export const coordinatorStats = async () => {
-  const response = await apiClient.get("/cases/coordinator-stats");
+  const response = await apiClient.get("/dashboard/coordinator-stats");
   return response.data;
 };  

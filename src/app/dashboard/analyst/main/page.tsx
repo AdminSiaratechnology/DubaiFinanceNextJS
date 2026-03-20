@@ -25,7 +25,7 @@ function AnalystDashboardContent() {
     const [totalCases, setTotalCases] = useState(0);
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState<any>(null);
-    
+
     const fetchStats = useCallback(async () => {
         const stats = await coordinatorStats();
         setStats(stats);
@@ -34,7 +34,7 @@ function AnalystDashboardContent() {
     useEffect(() => {
         fetchStats();
     }, []);
-    
+
     // Fetch cases for the active tab
     const fetchCases = useCallback(async () => {
         setLoading(true);
@@ -99,63 +99,63 @@ function AnalystDashboardContent() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            {stats ? (
-                <StatTabs
-                    tabs={analystTabs}
-                    activeTab={activeTab}
-                    baseUrl="/dashboard/analyst/main"
-                    gridCols="grid-cols-1 sm:grid-cols-3 xl:grid-cols-6"
-                />
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-6 gap-6">
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="h-28 bg-card border border-border rounded-2xl animate-pulse" />
-                    ))}
-                </div>
-            )}
-
-            {loading ? (
-                <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-40 bg-card border border-border rounded-2xl animate-pulse" />
-                    ))}
-                </div>
-            ) : (
-                <AnalystMainGrid 
-                    cases={mappedCases} 
-                    onStatusUpdate={() => { fetchCases(); }} 
-                    page={page}
-                    totalCases={totalCases}
-                    limit={limit}
-                />
-            )}
-
-            {/* How It Works Section */}
-            <section className="section-card bg-card border-border border shadow-sm rounded-2xl p-8">
-                <div className="flex items-center gap-2 mb-8">
-                    <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" x2="12.01" y1="17" y2="17" /></svg>
+                {stats ? (
+                    <StatTabs
+                        tabs={analystTabs}
+                        activeTab={activeTab}
+                        baseUrl="/dashboard/analyst/main"
+                        gridCols="grid-cols-1 sm:grid-cols-3 xl:grid-cols-6"
+                    />
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-6 gap-6">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <div key={i} className="h-28 bg-card border border-border rounded-2xl animate-pulse" />
+                        ))}
                     </div>
-                    <h3 className="text-lg font-bold text-foreground uppercase tracking-widest">Analyst Workflow</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-                    {[
-                        { step: 1, label: 'Accept Case', desc: 'Review and accept new cases', color: 'bg-blue-soft border-blue/10 text-blue' },
-                        { step: 2, label: 'Check Documents', desc: 'Verify all physical documents', color: 'bg-purple-soft border-purple/10 text-purple' },
-                        { step: 3, label: 'Analyze Credit', desc: 'Review credit worthiness', color: 'bg-blue-soft border-blue/10 text-blue' },
-                        { step: 4, label: 'Submit to Bank', desc: 'Send to preferred bank', color: 'bg-teal-soft border-teal/10 text-teal' },
-                        { step: 5, label: 'Update Status', desc: 'Finalize based on bank response', color: 'bg-green-soft border-green/10 text-green' },
-                    ].map((s) => (
-                        <div key={s.step} className={`p-4 rounded-xl border transition-all hover:shadow-md ${s.color} dark:bg-card/40 dark:border-border/50`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold mb-4 bg-background/80 dark:bg-muted shadow-sm border border-inherit`}>
-                                {s.step}
-                            </div>
-                            <h4 className="text-sm font-bold whitespace-nowrap">{s.label}</h4>
-                            <p className="text-[10px] opacity-80 mt-1 font-medium leading-relaxed">{s.desc}</p>
+                )}
+
+                {loading ? (
+                    <div className="space-y-4">
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="h-40 bg-card border border-border rounded-2xl animate-pulse" />
+                        ))}
+                    </div>
+                ) : (
+                    <AnalystMainGrid
+                        cases={mappedCases}
+                        onStatusUpdate={() => { fetchCases(); }}
+                        page={page}
+                        totalCases={totalCases}
+                        limit={limit}
+                    />
+                )}
+
+                {/* How It Works Section */}
+                <section className="section-card bg-card border-border border shadow-sm rounded-2xl p-8">
+                    <div className="flex items-center gap-2 mb-8">
+                        <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" x2="12.01" y1="17" y2="17" /></svg>
                         </div>
-                    ))}
-                </div>
-            </section>
+                        <h3 className="text-lg font-bold text-foreground uppercase tracking-widest">Analyst Workflow</h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                        {[
+                            { step: 1, label: 'Accept Case', desc: 'Review and accept new cases', color: 'bg-blue-soft border-blue/10 text-blue' },
+                            { step: 2, label: 'Check Documents', desc: 'Verify all physical documents', color: 'bg-purple-soft border-purple/10 text-purple' },
+                            { step: 3, label: 'Analyze Credit', desc: 'Review credit worthiness', color: 'bg-blue-soft border-blue/10 text-blue' },
+                            { step: 4, label: 'Submit to Bank', desc: 'Send to preferred bank', color: 'bg-teal-soft border-teal/10 text-teal' },
+                            { step: 5, label: 'Update Status', desc: 'Finalize based on bank response', color: 'bg-green-soft border-green/10 text-green' },
+                        ].map((s) => (
+                            <div key={s.step} className={`p-4 rounded-xl border transition-all hover:shadow-md ${s.color} dark:bg-card/40 dark:border-border/50`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold mb-4 bg-background/80 dark:bg-muted shadow-sm border border-inherit`}>
+                                    {s.step}
+                                </div>
+                                <h4 className="text-sm font-bold whitespace-nowrap">{s.label}</h4>
+                                <p className="text-[10px] opacity-80 mt-1 font-medium leading-relaxed">{s.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
         </div>
     );
 }

@@ -107,7 +107,7 @@ export function AgentLeadsCard({
             </span>
             {isReturned && (
               <button
-                className="mt-1 flex items-center gap-1 px-3 py-1 rounded-lg bg-orange/10 text-orange text-[10px] font-bold uppercase tracking-widest border border-orange/20 hover:bg-orange/20 transition"
+                className="mt-1 flex items-center gap-1 px-3 py-1 rounded-lg bg-purple/10 text-purple text-[10px] font-bold uppercase tracking-widest border border-purple/20 hover:bg-purple/20 transition"
                 onClick={handleEdit}
               >
                 {/* Edit Icon */}

@@ -27,6 +27,7 @@ interface FileUploaderProps {
     description?: string;
     className?: string;
     color?: 'brand' | 'purple' | 'blue';
+    disabled?: boolean;
 }
 
 export function FileUploader({

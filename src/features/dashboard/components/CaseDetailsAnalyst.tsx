@@ -182,7 +182,7 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                 <button
                                     onClick={() => handleStatusChange('under_review')}
                                     disabled={updating || !isDocumentsChecked}
-                                    className="w-full py-4 bg-green text-white rounded-md font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-green/90 shadow-lg shadow-green/10 active:scale-[0.98] transition-all disabled:opacity-50"
+                                    className="w-full h-12 bg-green text-white rounded-[14px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-green/90 shadow-lg shadow-green/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
                                 >
                                     {updating ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
                                     Start Review Now
@@ -192,24 +192,24 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                     <button
                                         onClick={() => handleStatusChange('pending_acceptance')}
                                         disabled={updating || !isDocumentsChecked}
-                                        className="w-full py-3 bg-blue/10 text-blue border border-blue/20 rounded-md font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-blue/20 transition-all disabled:opacity-50"
+                                        className="w-full h-12 bg-blue/10 text-blue border border-blue/20 rounded-[14px] font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-blue/20 transition-all active:scale-95 disabled:opacity-50"
                                     >
                                         Move to Pending Acceptance
                                     </button>
                                 )}
 
-                                <div className="grid grid-cols-2 gap-3 pt-2">
+                                <div className="grid grid-cols-2 gap-4 pt-2">
                                     <button
                                         onClick={() => handleStatusChange(caseData.telecaller_id ? 'sent_back_to_telecaller' : 'sent_back_to_agent')}
                                         disabled={updating}
-                                        className="py-3 bg-muted dark:bg-white/5 text-text-muted rounded-md font-black uppercase tracking-widest text-[9px] hover:bg-brand/10 hover:text-brand transition-all"
+                                        className="h-12 bg-muted text-text-muted rounded-[14px] font-black uppercase tracking-widest text-[9px] hover:bg-blue/5 hover:text-blue border border-border transition-all active:scale-95 shadow-sm"
                                     >
                                         Send Back
                                     </button>
                                     <button
                                         onClick={() => handleStatusChange('rejected')}
                                         disabled={updating}
-                                        className="py-3 bg-red/5 text-red/60 border border-red/10 rounded-md font-black uppercase tracking-widest text-[9px] hover:bg-red hover:text-white transition-all"
+                                        className="h-12 bg-red/5 text-red/60 border border-red/20 rounded-[14px] font-black uppercase tracking-widest text-[9px] hover:bg-red hover:text-white transition-all active:scale-95 shadow-sm"
                                     >
                                         Quick Reject
                                     </button>
@@ -258,7 +258,7 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                                 {doc.url ? (
                                                     <button
                                                         onClick={() => window.open(doc.url!, '_blank')}
-                                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-muted dark:bg-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest text-text-muted dark:text-text-muted/80 hover:bg-brand/10 hover:text-brand transition-colors"
+                                                        className="flex items-center gap-1.5 px-3 py-2 bg-blue/5 border border-blue/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-blue hover:bg-blue hover:text-white transition-all active:scale-95"
                                                     >
                                                         👁️ View
                                                     </button>
@@ -304,28 +304,28 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                     </div>
                                 )}
 
-                                <div className="space-y-3 pt-6 border-t border-border">
+                                <div className="space-y-4 pt-6 border-t border-border">
                                     <button
                                         onClick={handleStatusUpdate}
                                         disabled={updating}
-                                        className="w-full py-4 bg-purple text-white rounded-md font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-purple/90 shadow-lg shadow-purple/10 active:scale-[0.98] transition-all disabled:opacity-50"
+                                        className="w-full h-14 bg-purple text-white rounded-[14px] font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-purple/90 shadow-lg shadow-purple/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
                                     >
                                         {updating ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
                                         {updating ? 'Updating...' : 'Submit Status Update'}
                                     </button>
 
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-2 gap-4">
                                         <button
                                             onClick={() => handleStatusChange(caseData.telecaller_id ? 'sent_back_to_telecaller' : 'sent_back_to_agent')}
                                             disabled={updating}
-                                            className="py-3 bg-muted dark:bg-white/5 text-text-muted rounded-md font-black uppercase tracking-widest text-[9px] hover:bg-brand/10 hover:text-brand transition-all"
+                                            className="h-12 bg-muted text-text-muted rounded-[14px] font-black uppercase tracking-widest text-[9px] hover:bg-blue/5 hover:text-blue border border-border transition-all active:scale-95 shadow-sm"
                                         >
                                             {caseData.telecaller_id ? 'Back to Telecaller' : 'Back to Agent'}
                                         </button>
                                         <button
                                             onClick={() => handleStatusChange('rejected')}
                                             disabled={updating}
-                                            className="py-3 bg-red/5 text-red/60 border border-red/10 rounded-md font-black uppercase tracking-widest text-[9px] hover:bg-red hover:text-white transition-all"
+                                            className="h-12 bg-red text-white rounded-[14px] font-black uppercase tracking-widest text-[9px] hover:bg-red/90 transition-all active:scale-95 shadow-lg shadow-red/20"
                                         >
                                             Reject Case
                                         </button>
@@ -338,7 +338,7 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
 
                 <button
                     onClick={onClose}
-                    className="w-full py-3 bg-card dark:bg-white/5 border border-border text-foreground rounded-md font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-muted transition-all active:scale-[0.99]"
+                    className="w-full h-12 bg-card dark:bg-white/5 border border-border text-foreground rounded-[14px] font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-muted transition-all active:scale-95 shadow-sm"
                 >
                     Close
                 </button>
