@@ -43,16 +43,20 @@ function TelecallerDashboardContent() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-            <TelecallerStats />
+            <header>
+                <TelecallerStats />
+            </header>
             
-            {loading ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                    <div className="section-card bg-card border-border border shadow-sm rounded-2xl h-[700px] animate-pulse" />
-                    <div className="section-card bg-card border-border border shadow-sm rounded-2xl h-[700px] animate-pulse" />
-                </div>
-            ) : (
-                <TelecallerMainGrid leads={leads} page={page} limit={limit} />
-            )}
+            <main className="transition-all duration-500">
+                {loading ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+                        <div className="lg:col-span-5 section-card bg-card border-border border shadow-soft rounded-[24px] h-[600px] lg:h-[750px] animate-pulse" />
+                        <div className="hidden lg:block lg:col-span-7 section-card bg-card border-border border shadow-soft rounded-[24px] h-[750px] animate-pulse" />
+                    </div>
+                ) : (
+                    <TelecallerMainGrid leads={leads} page={page} limit={limit} />
+                )}
+            </main>
         </div>
     );
 }

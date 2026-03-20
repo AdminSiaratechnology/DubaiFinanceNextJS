@@ -65,6 +65,7 @@ export function AgentCasesGrid({ cases }: AgentCasesGridProps) {
                     <LeadDetails
                         lead={selectedCase as any}
                         onClose={handleClose}
+                        // readOnly={true}
                     />
                 ) : (
                     <div className="section-card bg-card border-border border shadow-sm rounded-2xl h-full flex flex-col items-center justify-center p-8 text-center text-text-muted">

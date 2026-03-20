@@ -6,6 +6,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuthStore } from '@/store/useAuthStore';
 import { adminLogout } from '@/features/owner/api/auth.api';
 import { toast } from 'sonner';
+import NotificationPopover from '@/features/notifications/components/NotificationPopover';
 
 interface TopHeaderProps {
     onMenuClick?: () => void;
@@ -73,7 +74,7 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
                 </button>
 
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-brand text-white shadow-lg">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg ${['agent', 'telecaller', 'analyst'].includes(role) ? 'bg-blue' : 'bg-brand'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
                 </div>
                 <div className="leading-tight cursor-pointer" onClick={() => router.push('/profile')}>
@@ -86,8 +87,8 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
                 </div>
             </div>
 
-            {/* Right Section */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-4">
+                <NotificationPopover />
                 <ThemeToggle />
 
                 <button

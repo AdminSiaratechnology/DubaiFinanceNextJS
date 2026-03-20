@@ -60,127 +60,178 @@ function AgentDashboardContent() {
     const totalLeads = leads.length >= limit ? (page * limit) + 1 : (page - 1) * limit + leads.length;
 
     return (
-        <main className="space-y-8 animate-in fade-in duration-500 pb-10">
-            <TabSwitcher
-                tabs={agentTabs}
-                activeTab={activeTab}
-                baseUrl="/dashboard/agent/main"
-            />
+        <main className="space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-700 pb-12">
+            <div className="flex flex-col gap-6">
+                <TabSwitcher
+                    tabs={agentTabs}
+                    activeTab={activeTab}
+                    baseUrl="/dashboard/agent/main"
+                />
+            </div>
 
             {activeTab === 'dashboard' ? (
-                <>
+                <div className="space-y-8">
                     <AgentStats />
 
-                    <section className="section-card bg-card border-border border shadow-sm rounded-2xl overflow-hidden">
-                        <div className="p-4 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/20">
-                            <div className="flex bg-muted p-1 rounded-xl">
-                                <Link 
-                                    href={`/dashboard/agent/main?tab=dashboard&view=cases${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
-                                    className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${viewType === 'cases' ? 'bg-card text-blue shadow-sm' : 'text-text-muted hover:text-foreground'}`}
-                                >
-                                    My Cases
-                                </Link>
-                                <Link 
-                                    href={`/dashboard/agent/main?tab=dashboard&view=leads${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
-                                    className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${viewType === 'leads' ? 'bg-card text-blue shadow-sm' : 'text-text-muted hover:text-foreground'}`}
-                                >
-                                    My Leads
-                                </Link>
+                    <section className="section-card bg-card border-border border shadow-soft rounded-[24px] overflow-hidden transition-all duration-300">
+                        {/* Control Bar */}
+                        <div className="px-6 py-5 border-b border-border flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-muted/5">
+                            <div className="flex flex-col gap-1">
+                                <h2 className="text-lg font-bold text-foreground tracking-tight">Activity Overview</h2>
+                                <p className="text-xs font-medium text-muted-foreground">Manage and track your active pipeline</p>
                             </div>
 
-                            <div className="w-full md:w-auto min-w-[300px]">
-                                <SearchBar
-                                    placeholder={`Search ${viewType === 'cases' ? 'Cases' : 'Leads'}...`}
-                                    syncWithUrl
-                                    paramKey="q"
-                                    preserveParams={['tab', 'view']}
-                                    debounce={300}
-                                />
+                            <div className="flex flex-col sm:flex-row items-center gap-4">
+                                {/* Segmented Control */}
+                                <div className="flex bg-muted/50 p-1.5 rounded-2xl border border-border/50 backdrop-blur-sm self-start sm:self-auto">
+                                    <Link 
+                                        href={`/dashboard/agent/main?tab=dashboard&view=cases${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                                        className={`
+                                            px-6 py-2 text-xs font-bold rounded-xl transition-all duration-300 flex items-center gap-2
+                                            ${viewType === 'cases' 
+                                                ? 'bg-card text-blue shadow-soft ring-1 ring-black/5' 
+                                                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                                            }
+                                        `}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg>
+                                        My Cases
+                                    </Link>
+                                    <Link 
+                                        href={`/dashboard/agent/main?tab=dashboard&view=leads${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                                        className={`
+                                            px-6 py-2 text-xs font-bold rounded-xl transition-all duration-300 flex items-center gap-2
+                                            ${viewType === 'leads' 
+                                                ? 'bg-card text-blue shadow-soft ring-1 ring-black/5' 
+                                                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                                            }
+                                        `}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" /></svg>
+                                        My Leads
+                                    </Link>
+                                </div>
+
+                                <div className="w-full sm:w-72 lg:w-80">
+                                    <SearchBar
+                                        placeholder={`Search ${viewType === 'cases' ? 'Cases' : 'Leads'}...`}
+                                        syncWithUrl
+                                        paramKey="q"
+                                        preserveParams={['tab', 'view']}
+                                        debounce={300}
+                                        className="h-11 rounded-2xl!"
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        <div className="p-6 space-y-6 bg-card/50">
+                        {/* List Content */}
+                        <div className="p-6 md:p-8 space-y-6 bg-transparent">
                             {loading ? (
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     {[1, 2, 3].map((i) => (
-                                        <div key={i} className="h-40 bg-card border border-border rounded-xl animate-pulse" />
+                                        <div key={i} className="h-44 bg-muted/30 border border-border/50 rounded-2xl animate-pulse" />
                                     ))}
                                 </div>
                             ) : viewType === 'cases' ? (
-                                <>
+                                <div className="space-y-5">
                                     {cases.length > 0 ? (
                                         cases.map((c) => (
-                                            <CaseCard
-                                                key={c.id}
-                                                id={String(c.id)}
-                                                name={c.customer_name || 'N/A'}
-                                                mobile={c.mobile_number || 'N/A'}
-                                                email={c.email || 'N/A'}
-                                                emiratesId={c.emirates_id || 'N/A'}
-                                                employer={c.employer || c.company_name || 'N/A'}
-                                                salary={c.salary ? String(c.salary) : '0'}
-                                                product={c.product?.product_name || c.product_type || 'N/A'}
-                                                bank={c.bank?.name || 'N/A'}
-                                                amount={String(c.requested_amount || c.amount || 0)}
-                                                date={new Date(c.created_at || c.date || "").toLocaleDateString()}
-                                                commission={"0 (Pending)"}
-                                                status={c.status}
-                                                step={3}
-                                            />
+                                            <div key={c.id} className="transition-all duration-300 hover:translate-y-[-2px]">
+                                                <CaseCard
+                                                    id={String(c.id)}
+                                                    name={c.customer_name || 'N/A'}
+                                                    mobile={c.mobile_number || 'N/A'}
+                                                    email={c.email || 'N/A'}
+                                                    emiratesId={c.emirates_id || 'N/A'}
+                                                    employer={c.employer || c.company_name || 'N/A'}
+                                                    salary={c.salary ? String(c.salary) : '0'}
+                                                    product={c.product?.product_name || c.product_type || 'N/A'}
+                                                    bank={c.bank?.name || 'N/A'}
+                                                    amount={String(c.requested_amount || c.amount || 0)}
+                                                    date={new Date(c.created_at || c.date || "").toLocaleDateString()}
+                                                    commission={"0 (Pending)"}
+                                                    status={c.status}
+                                                    step={3}
+                                                />
+                                            </div>
                                         ))
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border rounded-2xl">
-                                            <span className="text-sm font-semibold text-text-muted opacity-80">No cases found</span>
+                                        <div className="flex flex-col items-center justify-center p-16 text-center border-2 border-dashed border-border/50 rounded-3xl bg-muted/10">
+                                            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4 opacity-50">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg>
+                                            </div>
+                                            <h3 className="text-sm font-bold text-foreground">No cases found</h3>
+                                            <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">We couldn't find any cases matching your current filters.</p>
                                         </div>
                                     )}
                                     
                                     {totalCases > limit && (
-                                        <Pagination page={page} total={totalCases} limit={limit} />
+                                        <div className="pt-4 mt-8 border-t border-border">
+                                            <Pagination page={page} total={totalCases} limit={limit} />
+                                        </div>
                                     )}
-                                </>
+                                </div>
                             ) : (
-                                <>
+                                <div className="space-y-5">
                                     {leads.length > 0 ? (
                                         leads.map((lead) => (
-                                            <AgentLeadsCard
-                                                key={lead.id}
-                                                id={lead.id}
-                                                customer_name={lead.customer_name}
-                                                mobile_number={lead.mobile_number}
-                                                email={lead.email}
-                                                requested_amount={lead.requested_amount}
-                                                product_name={lead.product?.product_name || 'N/A'}
-                                                product_id={lead.product?.id}
-                                                bank_name={lead.bank?.name || 'N/A'}
-                                                bank_id={lead.bank?.id}
-                                                created_at={lead.created_at}
-                                                status={lead.case?.status}
-                                                isReturned={lead.is_returned}
-                                            />
+                                            <div key={lead.id} className="transition-all duration-300 hover:translate-y-[-2px]">
+                                                <AgentLeadsCard
+                                                    id={lead.id}
+                                                    customer_name={lead.customer_name}
+                                                    mobile_number={lead.mobile_number}
+                                                    email={lead.email}
+                                                    requested_amount={lead.requested_amount}
+                                                    product_name={lead.product?.product_name || 'N/A'}
+                                                    product_id={lead.product?.id}
+                                                    bank_name={lead.bank?.name || 'N/A'}
+                                                    bank_id={lead.bank?.id}
+                                                    created_at={lead.created_at}
+                                                    status={lead.case?.status}
+                                                    isReturned={lead.is_returned}
+                                                />
+                                            </div>
                                         ))
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-border rounded-2xl">
-                                            <span className="text-sm font-semibold text-text-muted opacity-80">No leads found</span>
+                                        <div className="flex flex-col items-center justify-center p-16 text-center border-2 border-dashed border-border/50 rounded-3xl bg-muted/10">
+                                            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4 opacity-50">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg>
+                                            </div>
+                                            <h3 className="text-sm font-bold text-foreground">No leads found</h3>
+                                            <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">Your lead pipeline is currently empty. Submit a new lead to get started.</p>
                                         </div>
                                     )}
 
                                     {(leads.length === limit || page > 1) && (
-                                        <Pagination page={page} total={totalLeads} limit={limit} />
+                                        <div className="pt-4 mt-8 border-t border-border">
+                                            <Pagination page={page} total={totalLeads} limit={limit} />
+                                        </div>
                                     )}
-                                </>
+                                </div>
                             )}
                         </div>
                     </section>
-                </>
+                </div>
             ) : activeTab === 'calculator' ? (
-                <CommissionCalculator />
+                <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <CommissionCalculator />
+                </div>
             ) : activeTab === 'submit-lead' ? (
-                <SubmitLead />
+                <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <SubmitLead />
+                </div>
             ) : activeTab === 'submit-case' ? (
-                <SubmitCase />
+                <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                    <SubmitCase />
+                </div>
             ) : (
-                <div className="flex flex-col items-center justify-center h-64 text-text-muted italic bg-card border border-border rounded-2xl">
-                    <p>{agentTabs.find(t => t.id === activeTab)?.label} section is coming soon...</p>
+                <div className="flex flex-col items-center justify-center h-80 text-center bg-card border border-border border-dashed rounded-[32px] p-12">
+                    <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-6 opacity-40">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground">{agentTabs.find(t => t.id === activeTab)?.label}</h3>
+                    <p className="text-sm text-muted-foreground mt-2 max-w-sm">This section is currently under development. Please check back later for updates.</p>
                 </div>
             )}
         </main>
