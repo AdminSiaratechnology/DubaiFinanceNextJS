@@ -67,7 +67,7 @@ export function CommissionSearch({ showFilter = true, filterOptions = ['active',
                     value={searchValue}
                     onChange={handleSearch}
                     placeholder="Search commission rules..."
-                    className="w-full sm:w-80 pl-10 pr-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all placeholder:text-text-muted/50"
+                    className="w-full sm:w-150 pl-10 pr-4 py-3 bg-white border border-brand  rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all placeholder:text-brand"
                 />
             </div>
             {showFilter && (
@@ -89,7 +89,7 @@ export function CommissionSearch({ showFilter = true, filterOptions = ['active',
                     <select
                         value={status}
                         onChange={handleStatusChange}
-                        className="w-full pl-10 pr-10 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all appearance-none cursor-pointer"
+                        className="w-full pl-10 pr-10 py-3 bg-white border border-brand rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none cursor-pointer"
                     >
                         <option value="">All Status</option>
                         {filterOptions.map((option) => (

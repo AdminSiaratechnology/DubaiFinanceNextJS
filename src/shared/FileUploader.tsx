@@ -26,7 +26,7 @@ interface FileUploaderProps {
     placeholder?: string;
     description?: string;
     className?: string;
-    color?: 'brand' | 'purple' | 'blue';
+    color?: 'brand' | 'purple' | 'blue' | 'foreground';
     disabled?: boolean;
 }
 
@@ -152,6 +152,12 @@ export function FileUploader({
             hover: 'hover:border-blue/20',
             bg: 'bg-blue',
             text: 'text-blue'
+        },
+        foreground: {
+            border: 'border-foreground/30 bg-foreground/5',
+            hover: 'hover:border-foreground/20',
+            bg: 'bg-foreground',
+            text: 'text-foreground'
         }
     };
 

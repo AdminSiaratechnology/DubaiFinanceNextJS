@@ -83,12 +83,12 @@ export function BankProductForm({ bankProduct, title, bankProductId }: BankProdu
         <div className="max-w-6xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl sm:text-2xl font-light text-foreground">{title}</h1>
-                    <p className="text-[10px] sm:text-xs text-text-muted italic mt-1">Configure bank product details and lending criteria.</p>
+                    <h1 className="text-xl sm:text-3xl font-medium text-foreground">{title}</h1>
+                    <p className="text-[12px] sm:text-sm text-text-muted italic mt-1">Configure bank product details and lending criteria.</p>
                 </div>
                 <button
                     onClick={onCancel}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-muted/50 hover:bg-muted rounded-xl text-xs font-bold text-text-muted hover:text-foreground transition-all sm:w-auto w-full"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                     Back to Bank Products
@@ -100,10 +100,10 @@ export function BankProductForm({ bankProduct, title, bankProductId }: BankProdu
                     <div className="space-y-8">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 border-b border-border pb-3">
-                                <div className="p-2 rounded-lg bg-teal-soft text-teal">
+                                <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
                                 </div>
-                                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">Product Information</h4>
+                                <h4 className="text-[14px] uppercase font-bold tracking-widest text-foreground">Product Information</h4>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
@@ -163,10 +163,10 @@ export function BankProductForm({ bankProduct, title, bankProductId }: BankProdu
                         {/* Loan Amount & Tenure */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 border-b border-border pb-3">
-                                <div className="p-2 rounded-lg bg-green-soft text-green">
+                                <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="2" y2="22" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
                                 </div>
-                                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">Loan Limits & Tenure</h4>
+                                <h4 className="text-[14px] uppercase font-bold tracking-widest text-foreground">Loan Limits & Tenure</h4>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
@@ -219,10 +219,10 @@ export function BankProductForm({ bankProduct, title, bankProductId }: BankProdu
                         {/* Configuration & Settings */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 border-b border-border pb-3">
-                                <div className="p-2 rounded-lg bg-orange-soft text-orange">
+                                <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
                                 </div>
-                                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">Configuration & Settings</h4>
+                                <h4 className="text-[14px] uppercase font-bold tracking-widest text-foreground">Configuration & Settings</h4>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4">
                                 <div className="space-y-2">
@@ -283,7 +283,7 @@ export function BankProductForm({ bankProduct, title, bankProductId }: BankProdu
                                         onChange={handleChange}
                                         placeholder="Add any internal notes about this product..."
                                         rows={4}
-                                        className="w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-purple-500 outline-none transition-all placeholder:text-text-muted/50 resize-none"
+                                        className="w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-foreground/20 outline-none transition-all placeholder:text-text-muted/50 resize-none"
                                     />
                                 </div>
                             </div>
@@ -295,18 +295,18 @@ export function BankProductForm({ bankProduct, title, bankProductId }: BankProdu
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-border font-bold text-sm text-text-muted hover:bg-muted transition-all order-2 sm:order-1"
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-foreground font-bold text-sm text-foreground bg-white hover:bg-muted transition-all order-2 sm:order-1"
                     >
                         Discard Changes
                     </button>
 
                     <button
                         type="submit"
-                        className="w-full sm:w-auto px-10 py-3 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand/90 transition-all shadow-lg active:scale-[0.98] order-1 sm:order-2 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full sm:w-auto px-10 py-3 bg-foreground text-background rounded-xl font-bold text-sm hover:bg-foreground/90 transition-all shadow-lg active:scale-[0.98] order-1 sm:order-2 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                         disabled={isSubmitting}
                     >
                         {isSubmitting && (
-                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-background" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>

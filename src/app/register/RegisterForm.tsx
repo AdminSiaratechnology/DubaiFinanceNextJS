@@ -23,14 +23,14 @@ function SectionCard({ number, title, icon, children }: SectionCardProps) {
     return (
         <div className="bg-card border border-border rounded-xl p-6 sm:p-8 shadow-sm overflow-visible">
             <div className="flex items-center gap-3 border-b border-border pb-3 mb-6">
-                <div className="flex items-center justify-center p-2 rounded-lg bg-blue-soft text-blue">
+                <div className="flex items-center justify-center p-2 rounded-lg bg-foreground/10 text-foreground">
                     {icon || (
                         <span className="text-[10px] font-black tracking-tighter font-mono">
                             {number}
                         </span>
                     )}
                 </div>
-                <h4 className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-widest">{title}</h4>
+                <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">{title}</h4>
             </div>
 
             <div className="space-y-6">
@@ -164,13 +164,13 @@ export function RegisterForm() {
     return (
         <Card noPadding className="relative bg-background border border-border rounded-xl shadow-card overflow-visible">
             <form onSubmit={handleSubmit}>
-                <div className="px-7 py-7 border-b border-border bg-card/60 backdrop-blur-xl">
+                <div className="px-7 py-7 border-b border-border bg-foreground/5 backdrop-blur-xl">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <h2 className="text-2xl font-bold bg-linear-to-r from-blue to-purple bg-clip-text text-transparent">
+                            <h2 className="text-2xl sm:text-3xl font-medium text-foreground tracking-tight">
                                 Agent Registration
                             </h2>
-                            <p className="text-sm text-text-secondary mt-1">
+                            <p className="text-[12px] sm:text-sm text-text-muted italic mt-1">
                                 Complete your profile to unlock commissions & payouts
                             </p>
                         </div>
@@ -185,7 +185,7 @@ export function RegisterForm() {
                     >
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="md:col-span-2 space-y-2">
-                                <Label required>Full Name (as per Emirates ID)</Label>
+                                <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Full Name (as per Emirates ID)</Label>
                                 <Input
                                     required
                                     placeholder="Enter your legal name"
@@ -194,7 +194,7 @@ export function RegisterForm() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label required>Email Address</Label>
+                                <Label className="text-[10px] uppercase font-bold tracking-widest pl-1" required>Email Address</Label>
                                 <Input
                                     type="email"
                                     required
@@ -303,9 +303,9 @@ export function RegisterForm() {
                         </div>
                     </SectionCard>
 
-                    <div className="relative overflow-visible rounded-2xl border border-blue/10 bg-linear-to-br from-blue-soft to-purple-soft p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h4 className="text-sm font-semibold text-text-primary">
+                    <div className="relative overflow-visible rounded-2xl border border-border bg-foreground/5 p-6">
+                        <div className="flex items-center justify-between mb-4 border-b border-border pb-3">
+                            <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">
                                 Commission Structure
                             </h4>
                         </div>
@@ -339,7 +339,7 @@ export function RegisterForm() {
                                 type="button"
                                 onClick={handleAddCommission}
                                 disabled={!selectedProductId}
-                                className="md:col-span-2 w-full py-2.5 bg-blue text-white rounded-lg text-xs font-bold hover:bg-blue/90 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="md:col-span-2 w-full h-11 bg-foreground text-background rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-foreground/90 transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
                                 Add to My Portfolio
@@ -361,18 +361,18 @@ export function RegisterForm() {
                                         </span>
                                     </div>
                                     <div className="flex flex-col items-end gap-3">
-                                        <div className="flex flex-wrap gap-1.5 justify-end">
-                                            <div className="flex flex-col items-center bg-blue/5 border border-blue/10 px-2.5 py-1 rounded-lg">
+                                         <div className="flex flex-wrap gap-1.5 justify-end">
+                                            <div className="flex flex-col items-center bg-foreground/5 border border-border px-2.5 py-1 rounded-lg">
                                                 <span className="text-[8px] font-black uppercase tracking-tighter text-text-muted">Agent</span>
-                                                <span className="text-[11px] font-bold text-blue leading-none mt-0.5">{comm.agent_share}%</span>
+                                                <span className="text-[11px] font-bold text-foreground leading-none mt-0.5">{comm.agent_share}%</span>
                                             </div>
-                                            <div className="flex flex-col items-center bg-green-soft dark:bg-green/5 border border-green/10 px-2.5 py-1 rounded-lg">
+                                            <div className="flex flex-col items-center bg-foreground/5 border border-border px-2.5 py-1 rounded-lg">
                                                 <span className="text-[8px] font-black uppercase tracking-tighter text-text-muted">Caller</span>
-                                                <span className="text-[11px] font-bold text-green leading-none mt-0.5">{comm.telecaller_share}%</span>
+                                                <span className="text-[11px] font-bold text-foreground leading-none mt-0.5">{comm.telecaller_share}%</span>
                                             </div>
-                                            <div className="flex flex-col items-center bg-purple-soft dark:bg-purple/5 border border-purple/10 px-2.5 py-1 rounded-lg">
+                                            <div className="flex flex-col items-center bg-foreground/5 border border-border px-2.5 py-1 rounded-lg">
                                                 <span className="text-[8px] font-black uppercase tracking-tighter text-text-muted">Analyst</span>
-                                                <span className="text-[11px] font-bold text-purple leading-none mt-0.5">{comm.coordinator_share}%</span>
+                                                <span className="text-[11px] font-bold text-foreground leading-none mt-0.5">{comm.coordinator_share}%</span>
                                             </div>
                                         </div>
 
@@ -414,7 +414,7 @@ export function RegisterForm() {
                                     <input
                                         type="checkbox"
                                         checked={formData[item.key] as boolean}
-                                        className="peer h-5 w-5 cursor-pointer appearance-none rounded-lg border border-border bg-background transition-all checked:bg-blue checked:border-blue focus:outline-none focus:ring-2 focus:ring-blue/20"
+                                        className="peer h-5 w-5 cursor-pointer appearance-none rounded-lg border border-border bg-background transition-all checked:bg-foreground checked:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20"
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => update(item.key as keyof FormData, e.target.checked)}
                                     />
                                     <svg
@@ -450,11 +450,11 @@ export function RegisterForm() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="px-8 py-3 rounded-xl bg-linear-to-r from-blue to-purple hover:opacity-90 text-white text-sm font-semibold shadow-soft disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+                        className="px-10 py-3.5 rounded-xl bg-foreground text-background text-xs font-black uppercase tracking-widest shadow-xl hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
                     >
                         {isLoading ? (
                             <>
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
                                 Processing...
                             </>
                         ) : (

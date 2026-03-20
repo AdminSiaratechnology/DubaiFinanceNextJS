@@ -30,14 +30,15 @@ const formatCurrency = (amount: number) => {
 
 export function BankProductTable({ bankProducts, page, total, limit }: BankProductTableProps) {
     return (
-        <div className="space-y-6">
+        <>
+            <div className="space-y-6 bg-white p-4 sm:p-6 rounded-2xl">
             <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
                 <div className="w-full sm:w-auto">
                     <BankProductSearch showFilter={true} />
                 </div>
                 <Link
                     href="/owner/bankproducts/new"
-                    className="flex items-center justify-center gap-2 px-6 py-2.5 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand/90 transition-all shadow-md active:scale-95 w-full sm:w-auto"
+                    className="flex items-center justify-center gap-2 px-6 py-3 bg-foreground text-background rounded-xl font-bold text-sm hover:bg-foreground/90 transition-all shadow-md active:scale-95 w-full sm:w-auto"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
                     Add New Product
@@ -48,15 +49,15 @@ export function BankProductTable({ bankProducts, page, total, limit }: BankProdu
                 <div className="overflow-x-auto no-scrollbar">
                     <table className="w-full text-left border-collapse min-w-[1100px] lg:min-w-0">
                         <thead>
-                            <tr className="bg-muted/50 border-b border-border">
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">S.No</th>
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Product Details</th>
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Bank</th>
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Segment</th>
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Loan Range</th>
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-center">Priority</th>
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest">Status</th>
-                                <th className="p-3 sm:p-4 text-[10px] font-bold text-text-muted uppercase tracking-widest text-right">Actions</th>
+                            <tr className="bg-foreground/10 border-b border-border">
+                                <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">S.No</th>
+                                <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">Product Details</th>
+                                <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">Bank</th>
+                                <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">Segment</th>
+                                <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">Loan Range</th>
+                                <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest text-center">Priority</th>
+                                <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest text-right">Status</th>
+                                <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -64,40 +65,35 @@ export function BankProductTable({ bankProducts, page, total, limit }: BankProdu
                                 bankProducts.map((product, index) => (
                                     <tr key={product.id} className="hover:bg-muted/30 transition-colors group">
                                         <td className="p-3 sm:p-4">
-                                            <p className="text-xs font-bold text-foreground">
+                                            <p className="text-[14px] font-bold text-black">
                                                 {((page || 1) - 1) * (limit || 10) + index + 1}
                                             </p>
                                         </td>
                                         <td className="p-3 sm:p-4">
-                                            <div className="flex items-center gap-2 sm:gap-3">
-                                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-teal-soft text-teal flex items-center justify-center font-bold text-xs border border-teal/20">
-                                                    {product.loan_type?.name?.substring(0, 2).toUpperCase()}
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs sm:text-sm font-bold text-foreground leading-tight">{product.product_name}</p>
-                                                    <p className="text-[9px] sm:text-[10px] text-text-muted mt-0.5">{product.loan_type?.name}</p>
-                                                </div>
+                                            <div>
+                                                <p className="text-sm sm:text-sm font-medium text-black leading-tight">{product.product_name}</p>
+                                                <p className="text-[9px] sm:text-[10px] text-text-muted mt-0.5">{product.loan_type?.name}</p>
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4">
-                                            <p className="text-xs font-bold text-foreground">{product.bank?.name}</p>
+                                            <p className="text-sm sm:text-sm font-medium text-black">{product.bank?.name}</p>
                                         </td>
                                         <td className="p-3 sm:p-4">
-                                            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${product.customer_segment?.toLowerCase() === 'salaried'
-                                                ? 'bg-blue-soft text-blue border-blue/10'
+                                            <span className={`px-2.5 py-1 rounded-lg text-sm font-bold border ${product.customer_segment?.toLowerCase() === 'salaried'
+                                                ? 'bg-foreground/10 text-foreground border-foreground/10'
                                                 : product.customer_segment?.toLowerCase() === 'self-employed'
-                                                    ? 'bg-purple-soft text-purple border-purple/10'
-                                                    : 'bg-orange-soft text-orange border-orange/10'
+                                                    ? 'bg-foreground/10 text-foreground border-foreground/10'
+                                                    : 'bg-foreground/10 text-foreground border-foreground/10'
                                                 }`}>
                                                 {segmentLabels[product.customer_segment] || product.customer_segment}
                                             </span>
                                         </td>
                                         <td className="p-3 sm:p-4">
                                             <div className="space-y-0.5">
-                                                <p className="text-[10px] font-bold text-foreground">
+                                                <p className="text-sm sm:text-sm font-medium text-black">
                                                     {formatCurrency(product.min_loan_amount)} - {formatCurrency(product.max_loan_amount)}
                                                 </p>
-                                                <p className="text-[9px] text-text-muted">
+                                                <p className="text-[10px] text-text-muted">
                                                     {product.min_tenure}-{product.max_tenure} months
                                                 </p>
                                             </div>
@@ -108,8 +104,8 @@ export function BankProductTable({ bankProducts, page, total, limit }: BankProdu
                                                 <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                                                     <div
                                                         className={`h-full ${product.priority_score >= 90 ? 'bg-green' :
-                                                            product.priority_score >= 75 ? 'bg-teal' :
-                                                                product.priority_score >= 50 ? 'bg-orange' : 'bg-red'
+                                                            product.priority_score >= 75 ? 'bg-foreground' :
+                                                                product.priority_score >= 50 ? 'bg-foreground' : 'bg-red'
                                                             }`}
                                                         style={{ width: `${product.priority_score}%` }}
                                                     />
@@ -117,9 +113,9 @@ export function BankProductTable({ bankProducts, page, total, limit }: BankProdu
                                             </div>
                                         </td>
                                         <td className="p-3 sm:p-4">
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center justify-end gap-2">
                                                 <span className={`w-2 h-2 rounded-full ${product.status === 'active' ? 'bg-green' : 'bg-red'}`} />
-                                                <span className={`text-xs font-bold ${product.status === 'active' ? 'text-green' : 'text-red'}`}>
+                                                <span className={`text-sm font-bold ${product.status === 'active' ? 'text-green' : 'text-red'}`}>
                                                     {product.status === 'active' ? 'Active' : 'Inactive'}
                                                 </span>
                                             </div>
@@ -140,7 +136,8 @@ export function BankProductTable({ bankProducts, page, total, limit }: BankProdu
                     </table>
                 </div>
             </div>
+            </div>
             <Pagination page={page} total={total} limit={limit} />
-        </div>
+        </>
     );
 }

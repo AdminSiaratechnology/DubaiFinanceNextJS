@@ -218,14 +218,14 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
   return (
     <Card noPadding className="h-full flex flex-col border-none shadow-none bg-transparent">
       {/* Header */}
-      <div className="bg-blue/5 backdrop-blur-md p-5 sm:p-6 border-b border-border flex justify-between items-center sticky top-0 z-20">
+      <div className="bg-foreground/5 backdrop-blur-md p-5 sm:p-8 border-b border-border flex justify-between items-center sticky top-0 z-20">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-2xl bg-blue/10 flex items-center justify-center text-blue shadow-sm ring-1 ring-blue/20">
+          <div className="w-10 h-10 rounded-2xl bg-foreground/10 flex items-center justify-center text-foreground shadow-sm ring-1 ring-foreground/20">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
           </div>
           <div>
-            <h3 className="font-black text-base sm:text-lg tracking-tight text-foreground">Lead Information</h3>
-            <p className="text-[10px] sm:text-xs font-bold text-blue uppercase tracking-widest opacity-80 mt-0.5">
+            <h3 className="text-xl sm:text-3xl font-medium tracking-tight text-foreground leading-tight">Lead Information</h3>
+            <p className="text-[12px] sm:text-sm italic font-medium text-text-muted mt-0.5">
               {lead.product?.product_name || "General inquiry"} • {lead.bank?.name || "Multiple Banks"}
             </p>
           </div>
@@ -243,10 +243,12 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
       <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-12 no-scrollbar scroll-smooth">
         {/* Customer Information */}
         <section className="space-y-8">
-          <div className="flex justify-between items-end border-b border-border pb-2">
-            <div className="space-y-1">
-              <h4 className="text-[11px] font-black text-text-muted uppercase tracking-[0.2em]">Primary Details</h4>
-              <p className="text-xs font-medium text-text-muted/60">Manage core customer profile and contact information</p>
+          <div className="flex justify-between items-end border-b border-border pb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+              </div>
+              <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Primary Details</h4>
             </div>
 
             <button
@@ -256,7 +258,7 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
                 px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all
                 ${isEditing
                   ? "bg-red/10 text-red border border-red/20 shadow-sm"
-                  : "bg-muted text-text-primary hover:bg-blue/5 hover:text-blue border border-border shadow-sm"
+                  : "bg-muted text-text-primary hover:bg-foreground/5 hover:text-foreground border border-border shadow-sm font-bold"
                 }
                 ${(readOnly || status === "submitted_to_coordinator") ? "opacity-50 cursor-not-allowed" : ""}
               `}
@@ -306,7 +308,7 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
                 value={formData.emirates_id}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+                className="h-11 rounded-xl transition-all focus:ring-foreground/20"
               />
             </div>
 
@@ -389,9 +391,11 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
 
         {/* Documentation Section */}
         <section className="space-y-8">
-          <div className="space-y-1 border-b border-border pb-2">
-            <h4 className="text-[11px] font-black text-text-muted uppercase tracking-[0.2em]">Documentation Vault</h4>
-            <p className="text-xs font-medium text-text-muted/60">Upload and verify all required KYC and financial documents</p>
+          <div className="flex items-center gap-3 border-b border-border pb-3">
+            <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+            </div>
+            <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Documentation Vault</h4>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
@@ -405,15 +409,15 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
               }
 
               return (
-                <div key={doc.id} className="bg-muted/10 p-4 rounded-2xl border border-border/50 hover:border-blue/20 transition-all duration-300">
+                <div key={doc.id} className="bg-muted/10 p-4 rounded-2xl border border-border/50 hover:border-foreground/20 transition-all duration-300">
                   <FileUploader
                     id={doc.id}
                     label={doc.label}
                     file={files[doc.id] || null}
                     previewUrl={docUrl}
                     onChange={handleFileChange}
-                    color="blue"
-                    disabled={readOnly || status === "submitted_to_coordinator" || !isEditing}
+                    color="foreground"
+                    disabled={readOnly || status === "submitted_to_coordinator"}
                   />
                 </div>
               );
@@ -423,9 +427,11 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
 
         {/* Workflow Status */}
         <section className="space-y-8">
-          <div className="space-y-1 border-b border-border pb-2">
-            <h4 className="text-[11px] font-black text-text-muted uppercase tracking-[0.2em]">Workflow Intelligence</h4>
-            <p className="text-xs font-medium text-text-muted/60">Current stage and coordinator communication log</p>
+          <div className="flex items-center gap-3 border-b border-border pb-3">
+            <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+            </div>
+            <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Workflow Intelligence</h4>
           </div>
 
           <div className="space-y-6">
@@ -448,7 +454,7 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
                 onChange={handleInputChange as any}
                 disabled={readOnly || !isEditing}
                 placeholder="Describe any specific observations or pending requirements..."
-                className="w-full min-h-[120px] p-4 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-blue/20 outline-none transition-all resize-none disabled:bg-muted/50 disabled:text-text-muted"
+                className="w-full min-h-[120px] p-4 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-foreground/20 outline-none transition-all resize-none disabled:bg-muted/50 disabled:text-text-muted"
               />
             </div>
           </div>
@@ -461,7 +467,7 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
           <button
             onClick={() => handleSubmitCase(status)}
             disabled={readOnly || isSubmitting || !isFormValid || status === "submitted_to_coordinator"}
-            className="h-12 flex items-center justify-center gap-2 bg-blue text-white rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg shadow-blue/20 hover:bg-blue/90 disabled:opacity-50 transition-all active:scale-95 disabled:grayscale"
+            className="h-12 flex items-center justify-center gap-2 bg-foreground text-background rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg active:scale-95 disabled:grayscale transition-all"
           >
             {isSubmitting ? "Syncing..." : "Update Progress"}
           </button>

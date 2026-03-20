@@ -67,10 +67,10 @@ export function BankCategoryForm({
         <div className="max-w-5xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl sm:text-2xl font-light text-foreground">
+                    <h1 className="text-xl sm:text-3xl font-medium text-foreground">
                         {title}
                     </h1>
-                    <p className="text-[10px] sm:text-xs text-text-muted italic mt-1">
+                    <p className="text-[12px] sm:text-sm text-text-muted italic mt-1">
                         Configure Category details.
                     </p>
                 </div>
@@ -78,7 +78,7 @@ export function BankCategoryForm({
                 <button
                     onClick={onCancel}
                     type="button"
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-muted/50 hover:bg-muted rounded-xl text-xs font-bold text-text-muted hover:text-foreground transition-all sm:w-auto w-full"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
                 >
                     Back to Bank Categories
                 </button>
@@ -133,7 +133,7 @@ export function BankCategoryForm({
                                         onChange={handleChange}
                                         placeholder="Describe this loan type, its purpose, and typical use cases..."
                                         rows={4}
-                                        className="w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-purple-500 outline-none transition-all placeholder:text-text-muted/50 resize-none"
+                                        className="w-full px-4 py-2.5 bg-muted/20 border border-border rounded-xl text-sm font-semibold focus:ring-2 focus:ring-foreground/20 outline-none transition-all placeholder:text-text-muted/50 resize-none"
                                     />
                                 </div>
                             </div>
@@ -146,7 +146,7 @@ export function BankCategoryForm({
                         type="button"
                         onClick={onCancel}
                         disabled={loading}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-border font-bold text-sm text-text-muted hover:bg-muted transition-all"
+                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-foreground font-bold text-sm text-foreground bg-white hover:bg-muted transition-all"
                     >
                         Discard Changes
                     </button>
@@ -154,7 +154,7 @@ export function BankCategoryForm({
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full sm:w-auto px-10 py-3 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand/90 transition-all shadow-lg active:scale-[0.98] disabled:opacity-60"
+                        className="w-full sm:w-auto px-10 py-3 bg-foreground text-background rounded-xl font-bold text-sm hover:bg-foreground/90 transition-all shadow-lg active:scale-[0.98] disabled:opacity-60"
                     >
                         {loading ? 'Saving...' : 'Save Category'}
                     </button>
