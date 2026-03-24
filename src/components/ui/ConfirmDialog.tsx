@@ -32,7 +32,7 @@ export default function ConfirmDialog({
         onClick={onCancel}
       />
 
-      <div className="relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <div className="relative z-10 w-full max-w-md rounded-2xl bg-card p-6 shadow-xl">
         <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
 
         <p className="mt-2 text-sm text-text-secondary">{description}</p>

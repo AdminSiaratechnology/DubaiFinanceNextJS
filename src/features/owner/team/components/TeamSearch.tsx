@@ -58,7 +58,7 @@ export function TeamSearch({ role, showFilter = true, filterOptions = ['active',
                     placeholder={`Search ${role}s...`}
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
-                    className="pl-10 pr-4 py-3 bg-white border border-brand rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all w-full placeholder:text-brand"
+                    className="pl-10 pr-4 py-3 bg-card border border-brand rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all w-full placeholder:text-brand"
                 />
             </div>
 
@@ -81,7 +81,7 @@ export function TeamSearch({ role, showFilter = true, filterOptions = ['active',
                     <select
                         value={status}
                         onChange={handleStatusChange}
-                        className="w-full pl-10 pr-10 py-3 bg-white border border-brand rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none cursor-pointer"
+                        className="w-full pl-10 pr-10 py-3 bg-card border border-brand rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none cursor-pointer"
                     >
                         <option value="">All Status</option>
                         {filterOptions.map((option) => (

@@ -164,9 +164,9 @@ export function SubmitCase() {
             <Card noPadding className="border-border">
                 {/* Header */}
                 <div className="p-4 sm:p-8 border-b border-border">
-                    <div className="flex gap-4">
-                        <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M12 18v-6" /><path d="m9 15 3 3 3-3" /></svg>
+                    <div className="flex items-start gap-4">
+                        <div className="p-2.5 rounded-xl bg-foreground/10 text-foreground shrink-0 mt-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M12 18v-6" /><path d="m9 15 3 3 3-3" /></svg>
                         </div>
                         <div className="space-y-1">
                             <h3 className="text-xl sm:text-3xl font-medium text-foreground leading-tight">
@@ -298,7 +298,7 @@ export function SubmitCase() {
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value)}
                                     placeholder="Enter OTP"
-                                    className="text-center text-3xl font-black h-20 tracking-[0.5em] border-2 focus:border-purple"
+                                    className="text-center text-3xl font-black h-20 tracking-[0.5em] border-2 focus:border-foreground focus:ring-1 focus:ring-foreground"
                                     maxLength={6}
                                     autoFocus
                                 />

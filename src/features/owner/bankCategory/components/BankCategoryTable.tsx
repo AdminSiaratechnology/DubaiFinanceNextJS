@@ -20,7 +20,7 @@ export function BankCategoryTable({
 }: BankCategoryTableProps) {
     return (
         <>
-            <div className="space-y-6 bg-white p-4 sm:p-6 rounded-2xl">
+            <div className="space-y-6 bg-card p-4 sm:p-6 rounded-2xl">
                 <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
                     <div className="w-full sm:w-auto">
                         <BankCategorySearch showFilter />
@@ -42,17 +42,17 @@ export function BankCategoryTable({
                         <table className="w-full text-left border-collapse min-w-[700px] lg:min-w-0">
                             <thead>
                                 <tr className="bg-foreground/10 border-b border-border">
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">S.No</th>
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest">S.No</th>
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest">
                                         Bank Category Name
                                     </th>
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest">
                                         Description
                                     </th>
-                                    <th className="p-3 sm:p-4 text-right text-[14px] font-bold text-black uppercase tracking-widest">
+                                    <th className="p-3 sm:p-4 text-right text-[14px] font-bold text-adaptive uppercase tracking-widest">
                                         Status
                                     </th>
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest text-right">
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest text-right">
                                         Actions
                                     </th>
                                 </tr>
@@ -63,7 +63,7 @@ export function BankCategoryTable({
                                     bankCategories.map((bankCategory, index) => (
                                         <tr key={bankCategory.id} className="hover:bg-muted/30 transition-colors group">
                                             <td className="p-3 sm:p-4">
-                                                <p className="text-[14px] font-bold text-black">
+                                                <p className="text-[14px] font-bold text-adaptive">
                                                     {((page || 1) - 1) * (limit || 10) + index + 1}
                                                 </p>
                                             </td>
@@ -73,7 +73,7 @@ export function BankCategoryTable({
                                                         {bankCategory.name.substring(0, 2).toUpperCase()}
                                                     </div> */}
                                                     <div>
-                                                        <p className="text-sm sm:text-sm font-medium text-black leading-tight">
+                                                        <p className="text-sm sm:text-sm font-medium text-adaptive leading-tight">
                                                             {bankCategory.name}
                                                         </p>
                                                     </div>
@@ -81,7 +81,7 @@ export function BankCategoryTable({
                                             </td>
 
                                             <td className="p-3 sm:p-4">
-                                                <p className="text-sm sm:text-sm text-black line-clamp-2 max-w-md">
+                                                <p className="text-sm sm:text-sm text-adaptive line-clamp-2 max-w-md">
                                                     {bankCategory.description}
                                                 </p>
                                             </td>
@@ -110,7 +110,7 @@ export function BankCategoryTable({
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={4} className="p-12 text-center text-text-muted italic">
+                                        <td colSpan={4} className="p-12 text-center text-adaptive italic">
                                             No loan types found matching your search.
                                         </td>
                                     </tr>
@@ -122,7 +122,7 @@ export function BankCategoryTable({
 
                 {/* Reusable Pagination */}
             </div>
-                <Pagination page={page} total={total} limit={limit} />
+            <Pagination page={page} total={total} limit={limit} />
         </>
     );
 }       

@@ -9,7 +9,7 @@ interface StatTab {
     title: string;
     value: string | number;
     icon: React.ReactNode;
-    color: 'blue' | 'green' | 'purple' | 'teal' | 'orange' | 'red' | 'dark';
+    color: 'blue' | 'green' | 'purple' | 'teal' | 'orange' | 'red' | 'dark' | 'foreground';
 }
 
 interface StatTabsProps {

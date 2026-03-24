@@ -146,9 +146,9 @@ export function SubmitLead() {
         <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card noPadding className="border-border">
                 <div className="p-4 sm:p-8 border-b border-border">
-                    <div className="flex gap-4">
-                        <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
+                    <div className="flex items-start gap-4">
+                        <div className="p-2.5 rounded-xl bg-foreground/10 text-foreground shrink-0 mt-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
                         </div>
                         <div className="space-y-1">
                             <h3 className="text-xl sm:text-3xl font-medium text-foreground leading-tight">
@@ -269,7 +269,7 @@ export function SubmitLead() {
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value)}
                                     placeholder="Enter 4-6 digit OTP"
-                                    className="text-center text-2xl font-black tracking-[0.5em] h-16 border-2 focus:border-green"
+                                    className="text-center text-2xl font-black tracking-[0.5em] h-16 border-2 focus:border-foreground focus:ring-1 focus:ring-foreground"
                                     maxLength={6}
                                     autoFocus
                                 />

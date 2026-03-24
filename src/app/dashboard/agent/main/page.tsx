@@ -77,8 +77,8 @@ function AgentDashboardContent() {
                         {/* Control Bar */}
                         <div className="px-6 py-5 border-b border-border flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-muted/5">
                             <div className="flex flex-col gap-1">
-                                <h2 className="text-lg font-bold text-foreground tracking-tight">Activity Overview</h2>
-                                <p className="text-xs font-medium text-muted-foreground">Manage and track your active pipeline</p>
+                                <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">Activity Overview</h2>
+                                <p className="text-[13px] font-medium text-muted-foreground">Manage and track your active pipeline</p>
                             </div>
 
                             <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -87,9 +87,9 @@ function AgentDashboardContent() {
                                     <Link 
                                         href={`/dashboard/agent/main?tab=dashboard&view=cases${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                                         className={`
-                                            px-6 py-2 text-xs font-bold rounded-xl transition-all duration-300 flex items-center gap-2
+                                            px-6 py-2 text-[13px] font-bold rounded-xl transition-all duration-300 flex items-center gap-2
                                             ${viewType === 'cases' 
-                                                ? 'bg-card text-blue shadow-soft ring-1 ring-black/5' 
+                                                ? 'bg-card text-foreground shadow-soft ring-1 ring-black/5' 
                                                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                                             }
                                         `}
@@ -100,9 +100,9 @@ function AgentDashboardContent() {
                                     <Link 
                                         href={`/dashboard/agent/main?tab=dashboard&view=leads${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                                         className={`
-                                            px-6 py-2 text-xs font-bold rounded-xl transition-all duration-300 flex items-center gap-2
+                                            px-6 py-2 text-[13px] font-bold rounded-xl transition-all duration-300 flex items-center gap-2
                                             ${viewType === 'leads' 
-                                                ? 'bg-card text-blue shadow-soft ring-1 ring-black/5' 
+                                                ? 'bg-card text-foreground shadow-soft ring-1 ring-black/5' 
                                                 : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                                             }
                                         `}
@@ -230,8 +230,8 @@ function AgentDashboardContent() {
                     <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-6 opacity-40">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
                     </div>
-                    <h3 className="text-lg font-bold text-foreground">{agentTabs.find(t => t.id === activeTab)?.label}</h3>
-                    <p className="text-sm text-muted-foreground mt-2 max-w-sm">This section is currently under development. Please check back later for updates.</p>
+                    <h3 className="text-xl font-black text-foreground">{agentTabs.find(t => t.id === activeTab)?.label}</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground mt-2 max-w-sm">This section is currently under development. Please check back later for updates.</p>
                 </div>
             )}
         </main>

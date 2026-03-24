@@ -79,15 +79,15 @@ export function AgentLeadsCard({
             const isActive = i + 1 === currentStep;
             return (
               <div key={s} className="flex flex-col items-center gap-2 relative z-10">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${isCompleted ? 'bg-blue border-blue text-white shadow-sm' :
-                  isActive ? 'bg-card dark:bg-card/40 border-blue text-blue shadow-sm' :
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${isCompleted ? 'bg-foreground border-foreground text-background shadow-sm' :
+                  isActive ? 'bg-card dark:bg-card/40 border-foreground text-foreground shadow-sm' :
                     'bg-muted dark:bg-muted/40 border-border text-text-muted'
                   }`}>
                   {isCompleted ? (
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   ) : i + 1}
                 </div>
-                <span className={`text-[10px] font-bold uppercase tracking-tight ${isActive ? 'text-blue' : 'text-text-muted'}`}>{s}</span>
+                <span className={`text-[12px] font-bold uppercase tracking-tight ${isActive ? 'text-foreground' : 'text-text-muted'}`}>{s}</span>
               </div>
             );
           })}
@@ -96,18 +96,18 @@ export function AgentLeadsCard({
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h4 className="text-lg font-bold text-foreground leading-none">
+            <h4 className="text-xl sm:text-2xl font-black text-foreground leading-tight">
               {customer_name || "No Name"}
             </h4>
           </div>
 
           <div className="flex flex-col items-end gap-2">
-            <span className="px-3 py-1 rounded-lg bg-muted text-[10px] font-bold text-text-secondary uppercase tracking-widest border border-border">
+            <span className="px-3 py-1 rounded-lg bg-muted text-[11px] font-bold text-text-secondary uppercase tracking-widest border border-border">
               Lead
             </span>
             {isReturned && (
               <button
-                className="mt-1 flex items-center gap-1 px-3 py-1 rounded-lg bg-purple/10 text-purple text-[10px] font-bold uppercase tracking-widest border border-purple/20 hover:bg-purple/20 transition"
+                className="mt-1 flex items-center gap-1 px-3 py-1 rounded-lg bg-purple/10 text-purple text-[11px] font-bold uppercase tracking-widest border border-purple/20 hover:bg-purple/20 transition"
                 onClick={handleEdit}
               >
                 {/* Edit Icon */}
@@ -130,7 +130,7 @@ export function AgentLeadsCard({
               </button>
             )}
             {formattedStatus && (
-              <span className="px-3 py-1 rounded-lg bg-blue/10 text-[10px] font-bold text-blue uppercase tracking-widest border border-blue/20">
+              <span className="px-3 py-1 rounded-lg bg-foreground/10 text-[11px] font-bold text-foreground uppercase tracking-widest border border-foreground/20">
                 {formattedStatus}
               </span>
             )}
@@ -145,55 +145,55 @@ export function AgentLeadsCard({
       <div className="bg-muted/30 grid grid-cols-2 md:grid-cols-4 gap-y-4 p-6 border-t border-border">
 
         <div>
-          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">
+          <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">
             Mobile
           </label>
-          <p className="text-sm font-semibold text-foreground">
+          <p className="text-[15px] font-semibold text-foreground">
             {mobile_number}
           </p>
         </div>
 
         <div>
-          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">
+          <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">
             Email
           </label>
-          <p className="text-sm font-semibold text-foreground truncate max-w-[150px]">
+          <p className="text-[15px] font-semibold text-foreground truncate max-w-[150px]">
             {email}
           </p>
         </div>
 
         <div>
-          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">
+          <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">
             Product
           </label>
-          <p className="text-sm font-semibold text-foreground">
+          <p className="text-[15px] font-semibold text-foreground">
             {product_name}
           </p>
         </div>
 
         <div>
-          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">
+          <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">
             Bank
           </label>
-          <p className="text-sm font-semibold text-foreground">
+          <p className="text-[15px] font-semibold text-foreground">
             {bank_name}
           </p>
         </div>
 
         <div>
-          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">
+          <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">
             Requested Amount
           </label>
-          <p className="text-sm font-semibold text-blue">
+          <p className="text-[15px] font-semibold text-foreground">
             AED {requested_amount}
           </p>
         </div>
 
         <div>
-          <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">
+          <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">
             Created On
           </label>
-          <p className="text-sm font-semibold text-foreground">
+          <p className="text-[15px] font-semibold text-foreground">
             {new Date(created_at).toLocaleDateString()}
           </p>
         </div>

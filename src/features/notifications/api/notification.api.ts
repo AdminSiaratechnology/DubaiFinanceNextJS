@@ -20,3 +20,14 @@ export const markNotificationAsRead = async (notificationId: number): Promise<{ 
   const response = await apiClient.put(`/notification/${notificationId}/read`);
   return response.data;
 };
+
+
+export const sendNotification = async (token: string, deviceId: string, deviceType: string) => {
+  const response = await apiClient.post("/dashboard/send-notification", { token, deviceId, deviceType });
+  return response.data;
+}
+
+export const saveFcmToken = async (device_id: string | null, device_type: string, token: string) => {
+  const response = await apiClient.post("/fcm-token/save-token", { device_id, device_type, token });
+  return response.data;
+}

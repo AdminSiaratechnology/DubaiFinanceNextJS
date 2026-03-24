@@ -9,40 +9,40 @@ interface CommissionSearchProps {
 }
 export function CommissionSearch({ showFilter = true, filterOptions = ['active', 'inactive'] }: CommissionSearchProps) {
     const searchParams = useSearchParams();
-        const router = useRouter();
-        const [searchValue, setSearchValue] = useState(searchParams.get('query') || '');
-        const status = searchParams.get('status') || '';
-    
-        const updateParams = (key: string, value: string) => {
-            const params = new URLSearchParams(searchParams.toString());
-    
-            params.set('page', '1');
-    
-            if (value) {
-                params.set(key, value);
-            } else {
-                params.delete(key);
-            }
-    
-            router.push(`?${params.toString()}`);
-        };
-    
-        // debounce search
-        useEffect(() => {
-            const timer = setTimeout(() => {
-                updateParams('query', searchValue);
-            }, 500);
-    
-            return () => clearTimeout(timer);
-        }, [searchValue]);
-    
-        const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-            setSearchValue(e.target.value);
-        };
-    
-        const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-            updateParams('status', e.target.value);
-        };
+    const router = useRouter();
+    const [searchValue, setSearchValue] = useState(searchParams.get('query') || '');
+    const status = searchParams.get('status') || '';
+
+    const updateParams = (key: string, value: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        params.set('page', '1');
+
+        if (value) {
+            params.set(key, value);
+        } else {
+            params.delete(key);
+        }
+
+        router.push(`?${params.toString()}`);
+    };
+
+    // debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            updateParams('query', searchValue);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchValue]);
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchValue(e.target.value);
+    };
+
+    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        updateParams('status', e.target.value);
+    };
 
     return (
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
@@ -67,7 +67,7 @@ export function CommissionSearch({ showFilter = true, filterOptions = ['active',
                     value={searchValue}
                     onChange={handleSearch}
                     placeholder="Search commission rules..."
-                    className="w-full sm:w-150 pl-10 pr-4 py-3 bg-white border border-brand  rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all placeholder:text-brand"
+                    className="w-full sm:w-150 pl-10 pr-4 py-3 bg-card border border-brand  rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand outline-none transition-all placeholder:text-brand"
                 />
             </div>
             {showFilter && (
@@ -89,7 +89,7 @@ export function CommissionSearch({ showFilter = true, filterOptions = ['active',
                     <select
                         value={status}
                         onChange={handleStatusChange}
-                        className="w-full pl-10 pr-10 py-3 bg-white border border-brand rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none cursor-pointer"
+                        className="w-full pl-10 pr-10 py-3 bg-card border border-brand rounded-xl text-sm font-semibold focus:ring-2 focus:ring-brand/20 outline-none transition-all appearance-none cursor-pointer"
                     >
                         <option value="">All Status</option>
                         {filterOptions.map((option) => (

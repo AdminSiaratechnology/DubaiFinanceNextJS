@@ -1,5 +1,6 @@
 'use client';
 
+import { Label } from '@/components/ui/Form';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -267,10 +268,11 @@ export function ApiSearchableSelect<T extends ApiSelectItem = ApiSelectItem>({
         <div className={`relative ${className}`} ref={wrapperRef}>
             {/* Label */}
             {label && (
-                <label className="block pl-1 mb-1.5 text-[10px] font-black text-secondary uppercase tracking-widest transition-colors">
+                <Label
+                    required={required}
+                >
                     {label}
-                    {required && <span className="text-red-500 ml-1 font-bold">*</span>}
-                </label>
+                </Label>
             )}
 
             {/* Trigger */}

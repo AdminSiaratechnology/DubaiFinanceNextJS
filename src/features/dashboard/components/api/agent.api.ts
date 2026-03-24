@@ -245,17 +245,7 @@ export const updateCaseStatus = async (
   return response.data;
 };
 
-export const agentStats = async () => {
-  const response = await apiClient.get("/dashboard/agent-stats");
+export const dashboardApi = async () => {
+  const response = await apiClient.get("/dashboard/dashboard-api");
   return response.data;
 };
-
-export const telecallerStats = async () => {
-  const response = await apiClient.get("/dashboard/telecaller-stats");
-  return response.data;
-};
-
-export const coordinatorStats = async () => {
-  const response = await apiClient.get("/dashboard/coordinator-stats");
-  return response.data;
-};  

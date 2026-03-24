@@ -25,7 +25,7 @@ export function Pagination({ page, total, limit }: PaginationProps) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="flex items-center justify-between mt-6 flex-wrap gap-3 bg-white p-4 rounded-2xl">
+    <div className="flex items-center justify-between mt-6 flex-wrap gap-3 bg-card p-4 rounded-2xl">
       <p className="text-sm text-black">
         Page {page} of {totalPages}
       </p>
@@ -43,11 +43,10 @@ export function Pagination({ page, total, limit }: PaginationProps) {
           <button
             key={p}
             onClick={() => handlePageChange(p)}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition ${
-              p === page
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition ${p === page
                 ? 'bg-foreground text-white border-foreground'
                 : 'border-border hover:bg-muted'
-            }`}
+              }`}
           >
             {p}
           </button>

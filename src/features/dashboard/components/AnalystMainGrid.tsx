@@ -62,7 +62,7 @@ export function AnalystMainGrid({ cases, onStatusUpdate, page, totalCases, limit
                     ))}
                     {cases.length === 0 && (
                         <div className="h-full flex flex-col items-center justify-center text-text-muted italic py-32 opacity-50">
-                            <div className="w-16 h-16 rounded-full bg-muted dark:bg-white/5 flex items-center justify-center mb-4">
+                            <div className="w-16 h-16 rounded-full bg-muted dark:bg-card/5 flex items-center justify-center mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
                             </div>
                             <p>No cases in this category</p>
