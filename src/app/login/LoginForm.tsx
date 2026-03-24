@@ -6,6 +6,10 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import { adminLogin } from '@/features/owner/api/auth.api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getMe } from '@/features/owner/api/auth.api';
+import { saveFcmToken } from '@/features/notifications/api/notification.api';
+import { getFcmToken } from "@/lib/getFcmToken";
+import { getDeviceId } from "@/lib/device";
+
 export function LoginForm() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +27,12 @@ export function LoginForm() {
 
         try {
             const response = await adminLogin(formData);
+            const token = await getFcmToken();
+            if (token) {
+                const device_id = getDeviceId();
+                const device_type = "web";
+                await saveFcmToken(device_id, device_type, token);
+            }
             const role = response.data.user.role
             const me = await getMe();
             setUser(me.data);

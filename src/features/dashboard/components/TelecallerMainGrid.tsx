@@ -68,18 +68,30 @@ export function TelecallerMainGrid({ leads, page, limit }: TelecallerMainGridPro
     fetchData();
   }, [selectedId]);
 
+  const TAB_LABELS: Record<string, string> = {
+    'new-leads': 'New Leads',
+    'working': 'Working On',
+    'submitted': 'Submitted',
+    'docs-required': 'Docs Required',
+    'sent_back_to_telecaller': 'Sent Back To You',
+  };
+
+  const activeTab = searchParams.get('tab') || 'new-leads';
+  const tabLabel = TAB_LABELS[activeTab] ?? 'Leads';
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
       {/* Sidebar List */}
       <div className="lg:col-span-5 section-card bg-card border-border border shadow-soft rounded-[24px] overflow-hidden flex flex-col h-[600px] lg:h-[750px] transition-shadow duration-300">
-        <div className="p-4 sm:p-5 border-b border-border bg-muted/5">
+        <div className="p-4 sm:p-5 border-b border-border bg-muted/5 space-y-3">
+          <h2 className="text-[16px] font-bold uppercase tracking-widest text-adaptive px-1">{tabLabel}</h2>
           <SearchBar
             placeholder="Search by Case No, Name, Mobile..."
             syncWithUrl
             paramKey="q"
             preserveParams={['tab']}
             debounce={300}
-            className="h-11 rounded-2xl! border-none shadow-none focus-within:ring-2 focus-within:ring-blue/30 transition-all bg-muted/30"
+            className="h-11 rounded-2xl! border-none shadow-none focus-within:ring-2 focus-within:ring-foreground/30 transition-all bg-muted/30"
           />
         </div>
 

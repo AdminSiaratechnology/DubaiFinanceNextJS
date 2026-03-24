@@ -15,7 +15,7 @@ export interface FinancialMetric {
 export interface FunnelStep {
     step: number;
     label: string;
-    status: 'completed' | 'active' | 'pending';
+    value: number;
 }
 
 export const getDashboardData = async () => {

@@ -41,8 +41,8 @@ export function CaseCard({
 
     return (
         <div className={`section-card overflow-hidden transition-all duration-300 cursor-pointer border shadow-sm ${isActive
-            ? 'bg-blue/5 border-blue/50 ring-1 ring-blue/20 shadow-blue/5 dark:bg-blue/10 scale-[1.02] z-10'
-            : 'bg-card border-border hover:shadow-md hover:border-blue/30'
+            ? 'bg-foreground/3 border-foreground/30 ring-1 ring-foreground/10 shadow-soft scale-[1.02] z-10'
+            : 'bg-card border-border hover:shadow-md hover:border-foreground/30'
             }`}>
 
             {/* Steps Progress - Hidden/Simplified in Compact Mode */}
@@ -55,15 +55,15 @@ export function CaseCard({
                             const isStepActive = i + 1 === currentStep;
                             return (
                                 <div key={s} className="flex flex-col items-center gap-2 relative z-10">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${isCompleted ? 'bg-blue border-blue text-white shadow-sm' :
-                                        isStepActive ? 'bg-card dark:bg-card/40 border-blue text-blue shadow-sm' :
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${isCompleted ? 'bg-foreground border-foreground text-background shadow-sm' :
+                                        isStepActive ? 'bg-card dark:bg-card/40 border-foreground text-foreground shadow-sm' :
                                             'bg-muted dark:bg-muted/40 border-border text-text-muted'
                                         }`}>
                                         {isCompleted ? (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                                         ) : i + 1}
                                     </div>
-                                    <span className={`text-[10px] font-bold uppercase tracking-tight ${isStepActive ? 'text-blue' : 'text-text-muted'}`}>{s}</span>
+                                    <span className={`text-[11px] font-bold uppercase tracking-tight ${isStepActive ? 'text-foreground' : 'text-text-muted'}`}>{s}</span>
                                 </div>
                             );
                         })}
@@ -75,71 +75,71 @@ export function CaseCard({
                         {[1, 2, 3, 4, 5].map((i) => (
                             <div
                                 key={i}
-                                className={`w-1.5 h-1.5 rounded-full ${i < currentStep ? 'bg-blue' : i === currentStep ? 'bg-blue border border-blue' : 'bg-border'}`}
+                                className={`w-1.5 h-1.5 rounded-full ${i < currentStep ? 'bg-foreground' : i === currentStep ? 'bg-foreground border border-foreground' : 'bg-border'}`}
                             />
                         ))}
                     </div>
-                    <span className="text-[9px] font-black uppercase text-text-muted tracking-widest">Step {currentStep}/5</span>
+                    <span className="text-[10px] font-black uppercase text-text-muted tracking-widest">Step {currentStep}/5</span>
                 </div>
             )}
 
             <div className={`${isCompact ? 'p-4' : 'p-6 pt-0'}`}>
                 <div className={`flex justify-between items-start ${isCompact ? 'gap-2' : 'mb-4'}`}>
                     <div className="min-w-0">
-                        <h4 className={`${isCompact ? 'text-sm' : 'text-lg'} font-bold text-foreground leading-snug truncate`}>{name}</h4>
-                        {isCompact && <p className="text-[10px] text-blue font-bold tracking-tight mt-0.5">{amount}</p>}
+                        <h4 className={`${isCompact ? 'text-sm' : 'text-xl'} font-bold text-foreground leading-snug truncate`}>{name}</h4>
+                        {isCompact && <p className="text-[11px] text-foreground font-bold tracking-tight mt-0.5">{amount}</p>}
                     </div>
-                    <span className={`${isCompact ? 'px-2 py-0.5 text-[8px]' : 'px-3 py-1 text-[10px]'} shrink-0 rounded-lg bg-blue/10 font-bold text-blue uppercase tracking-widest border border-blue/20`}>
+                    <span className={`${isCompact ? 'px-2 py-0.5 text-[9px]' : 'px-3 py-1 text-[11px]'} shrink-0 rounded-lg bg-foreground/10 font-bold text-foreground uppercase tracking-widest border border-foreground/20`}>
                         {formattedStatus}
                     </span>
                 </div>
 
                 <div className={`bg-muted/30 grid ${isCompact ? 'grid-cols-1 gap-y-3' : 'grid-cols-2 md:grid-cols-4 gap-y-4'} p-6 border-y border-border -mx-6 my-4`}>
                     <div>
-                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Mobile</label>
-                        <p className={`text-xs font-semibold text-foreground`}>{mobile}</p>
+                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">Mobile</label>
+                        <p className={`text-sm font-semibold text-foreground`}>{mobile}</p>
                     </div>
                     <div>
-                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Email</label>
-                        <p className={`text-xs font-semibold text-foreground truncate max-w-[150px]`}>{email}</p>
+                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">Email</label>
+                        <p className={`text-sm font-semibold text-foreground truncate max-w-[150px]`}>{email}</p>
                     </div>
                     <div>
-                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Emirates ID</label>
-                        <p className={`text-xs font-semibold text-foreground truncate`}>{emiratesId}</p>
+                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">Emirates ID</label>
+                        <p className={`text-sm font-semibold text-foreground truncate`}>{emiratesId}</p>
                     </div>
                     <div>
-                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Employer</label>
-                        <p className={`text-xs font-semibold text-foreground`}>{employer}</p>
+                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">Employer</label>
+                        <p className={`text-sm font-semibold text-foreground`}>{employer}</p>
                     </div>
                     <div>
-                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Monthly Salary</label>
-                        <p className={`text-xs font-semibold text-foreground`}>{salary}</p>
+                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">Monthly Salary</label>
+                        <p className={`text-sm font-semibold text-foreground`}>{salary}</p>
                     </div>
                     <div>
-                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Product Type</label>
-                        <p className={`text-xs font-semibold text-foreground`}>{product}</p>
+                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">Product Type</label>
+                        <p className={`text-sm font-semibold text-foreground`}>{product}</p>
                     </div>
                     {bank && (
                         <div>
-                            <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Bank</label>
-                            <p className={`text-xs font-semibold text-foreground`}>{bank}</p>
+                            <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">Bank</label>
+                            <p className={`text-sm font-semibold text-foreground`}>{bank}</p>
                         </div>
                     )}
                     <div>
-                        <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-0.5">Requested Amount</label>
-                        <p className={`text-xs font-semibold text-blue`}>{amount}</p>
+                        <label className="text-[11px] font-bold text-text-muted uppercase tracking-wider block mb-1">Requested Amount</label>
+                        <p className={`text-sm font-semibold text-foreground`}>{amount}</p>
                     </div>
                 </div>
             </div>
 
             {/* Expected Commission Banner */}
             {showCommission && (
-                <div className="p-4 bg-blue-soft border-t border-blue/10 flex justify-between items-center">
-                    <div className="flex items-center gap-2 text-blue">
+                <div className="p-4 bg-foreground/3 border-t border-foreground/10 flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-foreground">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg>
-                        <span className="text-xs font-bold uppercase tracking-wider">Expected Commission</span>
+                        <span className="text-[11px] font-bold uppercase tracking-wider">Expected Commission</span>
                     </div>
-                    <div className="text-blue font-bold tracking-tight">AED {commission}</div>
+                    <div className="text-foreground font-bold tracking-tight">AED {commission}</div>
                 </div>
             )}
         </div>

@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createBankCategory, BankCategory, updateBankCategory, CreateBankCategoryPayload } from '@/features/owner/bankCategory/api/bankCategory.api';
 import { Card } from '@/components/ui/Card';
+import { FormActions } from '@/shared/FormActions';
 import { Label, Input, Select } from '@/components/ui/Form';
-import { toast } from 'sonner'; 
+import { toast } from 'sonner';
 interface BankCategoryFormProps {
     bankCategory?: BankCategory;
     bankCategoryId?: number;
@@ -78,7 +79,7 @@ export function BankCategoryForm({
                 <button
                     onClick={onCancel}
                     type="button"
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-card border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
                 >
                     Back to Bank Categories
                 </button>
@@ -141,24 +142,7 @@ export function BankCategoryForm({
                     </div>
                 </Card>
 
-                <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        disabled={loading}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-foreground font-bold text-sm text-foreground bg-white hover:bg-muted transition-all"
-                    >
-                        Discard Changes
-                    </button>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full sm:w-auto px-10 py-3 bg-foreground text-background rounded-xl font-bold text-sm hover:bg-foreground/90 transition-all shadow-lg active:scale-[0.98] disabled:opacity-60"
-                    >
-                        {loading ? 'Saving...' : 'Save Category'}
-                    </button>
-                </div>
+                <FormActions onCancel={onCancel} isSubmitting={loading} submitText="Save Category" />
             </form>
         </div>
     );

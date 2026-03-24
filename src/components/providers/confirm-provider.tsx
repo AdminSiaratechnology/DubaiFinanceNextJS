@@ -52,12 +52,12 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
           />
 
           {/* Modal */}
-          <div className="relative z-10 w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <h2 className="text-lg font-semibold text-gray-900">
+          <div className="relative z-10 w-full max-w-md rounded-2xl bg-card p-6 shadow-2xl animate-in fade-in zoom-in-95">
+            <h2 className="text-lg font-semibold text-adaptive">
               {options.title || 'Are you sure?'}
             </h2>
 
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-adaptive">
               {options.description || 'This action cannot be undone.'}
             </p>
 

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
+import { FormActions } from '@/shared/FormActions';
 import { Label, Input, Select } from '@/components/ui/Form';
 import { Coordinator, CoordinatorCreate, createCoordinator, updateCoordinator } from '../api/analyst.api';
 import { Telecaller, TelecallerCreate, createTelecaller, updateTelecaller } from '../api/telecaller.api';
@@ -175,7 +176,7 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                 <button
                     onClick={handleCancel}
                     type="button"
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-card border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                     Back to List
@@ -232,10 +233,10 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                                     <Input name="experience" type="number" value={formData.experience} onChange={handleChange} placeholder="e.g. 5" min={0} />
                                 </div>
                                 {role === 'agent' && (
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Business Name</Label>
-                                    <Input name="business_name" value={formData.business_name} onChange={handleChange} placeholder="Business Name" />
-                                </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Business Name</Label>
+                                        <Input name="business_name" value={formData.business_name} onChange={handleChange} placeholder="Business Name" />
+                                    </div>
                                 )}
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-widest pl-1">Status</Label>
@@ -357,23 +358,7 @@ export function MemberForm({ member, title, role, memberId }: MemberFormProps) {
                     </div>
                 </Card>
 
-                <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
-                    <button
-                        type="button"
-                        onClick={handleCancel}
-                        disabled={isSubmitting}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-foreground font-bold text-sm text-foreground bg-white hover:bg-muted transition-all order-2 sm:order-1"
-                    >
-                        Discard Changes
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full sm:w-auto px-10 py-3 bg-foreground text-background rounded-xl font-bold text-sm hover:bg-foreground/90 transition-all shadow-lg order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isSubmitting ? 'Saving...' : 'Save Team Member'}
-                    </button>
-                </div>
+                <FormActions onCancel={handleCancel} isSubmitting={isSubmitting} submitText="Save Team Member" />
             </form>
         </div>
     );

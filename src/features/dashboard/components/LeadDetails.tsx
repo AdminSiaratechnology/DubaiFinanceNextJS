@@ -63,31 +63,35 @@ const requiredDocs = [
   { id: "memorandum_of_association", label: "(MOA) Memorandum of Association" },
 ];
 
+const lockedStatuses = ["submitted_to_coordinator", "under_review", "approved", "rejected", "more_info_required"];
+
+const formatStatus = (s: string) => s.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
 const getStatusOptions = (currentStatus?: string, hasCase?: boolean) => {
-  if (!hasCase) {
-    return [
-      { value: "sent_back_to_agent", label: "Sent Back to Agent" },
-      { value: "documents_collected", label: "Documents Collected" },
-      { value: "follow_up", label: "Follow Up Required" },
-      { value: "documents_required", label: "Documents Required" },
-      { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
-    ];
+  if (currentStatus && lockedStatuses.includes(currentStatus)) {
+    return [{ value: currentStatus, label: formatStatus(currentStatus) }];
   }
 
-  // 🚫 Already submitted → no change allowed
-  if (currentStatus === "submitted_to_coordinator") {
-    return [
-      { value: "submitted_to_coordinator", label: "Submitted to Coordinator" }
-    ];
-  }
-
-  return [
+  let options = hasCase ? [
+    { value: "documents_collected", label: "Documents Collected" },
+    { value: "follow_up", label: "Follow Up Required" },
+    { value: "documents_required", label: "Documents Required" },
+    { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
+  ] : [
+    { value: "sent_back_to_agent", label: "Sent Back to Agent" },
     { value: "documents_collected", label: "Documents Collected" },
     { value: "follow_up", label: "Follow Up Required" },
     { value: "documents_required", label: "Documents Required" },
     { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
   ];
+
+  if (currentStatus && !options.find(o => o.value === currentStatus)) {
+    options = [{ value: currentStatus, label: formatStatus(currentStatus) }, ...options];
+  }
+
+  return options;
 };
+
 export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadDetailsProps) {
 
   const [isEditing, setIsEditing] = useState(false);
@@ -110,6 +114,8 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
   const [files, setFiles] = useState<{ [key: string]: File | null }>({});
   const [status, setStatus] = useState("sent_back_to_agent");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isLocked = lockedStatuses.includes(status);
 
   // ✅ Optimized update function
   const updateField = (name: keyof typeof formData, value: string) => {
@@ -216,93 +222,118 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
   const isFormValid = !!(formData.name.trim() && formData.mobile.trim() && formData.email.trim());
 
   return (
-    <Card noPadding className="h-full flex flex-col border-none shadow-none bg-transparent">
+    <Card noPadding className="h-full flex flex-col relative border-none shadow-soft bg-card ">
       {/* Header */}
-      <div className="bg-foreground/5 backdrop-blur-md p-5 sm:p-8 border-b border-border flex justify-between items-center sticky top-0 z-20">
+      <div className="bg-card backdrop-blur-md p-5 sm:p-8 border-b border-border flex flex-col sticky top-0 z-20">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 sm:top-5 sm:right-5 p-1 hover:bg-red/10 text-text-muted hover:text-red rounded-xl transition-all duration-200 z-30 shadow-sm cursor-pointer"
+          title="Close details"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+        </button>
+
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-2xl bg-foreground/10 flex items-center justify-center text-foreground shadow-sm ring-1 ring-foreground/20">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
           </div>
           <div>
-            <h3 className="text-xl sm:text-3xl font-medium tracking-tight text-foreground leading-tight">Lead Information</h3>
-            <p className="text-[12px] sm:text-sm italic font-medium text-text-muted mt-0.5">
+            <h3 className="text-xl sm:text-3xl font-black tracking-tight text-foreground leading-tight">Lead Information</h3>
+            <p className="text-[14px] sm:text-base italic font-bold text-text-muted mt-0.5">
               {lead.product?.product_name || "General inquiry"} • {lead.bank?.name || "Multiple Banks"}
             </p>
           </div>
         </div>
-
-        <button
-          onClick={onClose}
-          className="p-2 sm:p-2.5 hover:bg-red/10 text-text-muted hover:text-red rounded-xl transition-all duration-200"
-          title="Close details"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-        </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-12 no-scrollbar scroll-smooth">
+      <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-12 no-scrollbar scroll-smooth bg-card">
         {/* Customer Information */}
         <section className="space-y-8">
           <div className="flex justify-between items-end border-b border-border pb-3">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
               </div>
-              <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Primary Details</h4>
+              <h4 className="text-[13px] uppercase font-black tracking-widest text-foreground">Primary Details</h4>
             </div>
 
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              disabled={readOnly || status === "submitted_to_coordinator"}
-              className={`
-                px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all
-                ${isEditing
-                  ? "bg-red/10 text-red border border-red/20 shadow-sm"
-                  : "bg-muted text-text-primary hover:bg-foreground/5 hover:text-foreground border border-border shadow-sm font-bold"
-                }
-                ${(readOnly || status === "submitted_to_coordinator") ? "opacity-50 cursor-not-allowed" : ""}
-              `}
-            >
-              {isEditing ? "Discard Changes" : "Edit Details"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={(e) => { e.preventDefault(); if (formData.mobile) window.location.href = `tel:${formData.mobile}`; }}
+                className="p-2 sm:px-3 sm:py-1.5 flex items-center justify-center gap-1.5 border border-border bg-card rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-muted transition-all active:scale-95 shadow-sm"
+                title="Call"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                <span className="hidden sm:inline">Call</span>
+              </button>
+
+              <button
+                onClick={(e) => { e.preventDefault(); if (formData.email) window.location.href = `mailto:${formData.email}`; }}
+                className="p-2 sm:px-3 sm:py-1.5 flex items-center justify-center gap-1.5 border border-border bg-card rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-muted transition-all active:scale-95 shadow-sm"
+                title="Email"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+                <span className="hidden sm:inline">Email</span>
+              </button>
+
+              <button
+                onClick={() => setIsEditing(!isEditing)}
+                disabled={readOnly || isLocked}
+                className={`
+                  px-3 sm:px-4 py-1.5 flex items-center justify-center gap-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all
+                  ${isEditing
+                    ? "bg-red/10 text-red border border-red/20 shadow-sm"
+                    : "bg-card hover:bg-foreground/5 hover:text-foreground border border-border shadow-sm font-bold"
+                  }
+                  ${(readOnly) ? "opacity-50 cursor-not-allowed" : ""}
+                `}
+              >
+                {isEditing ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
+                )}
+                {isEditing ? "Discard Changes" : "Edit Details"}
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Full Name <span className="text-red-500">*</span></Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Full Name <span className="text-red-500">*</span></Label>
               <Input
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+                className="h-11 rounded-xl! transition-all focus:ring-foreground/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Mobile Number <span className="text-red-500">*</span></Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Mobile Number <span className="text-red-500">*</span></Label>
               <Input
                 name="mobile"
                 value={formData.mobile}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+                className="h-11 rounded-xl! transition-all focus:ring-foreground/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Email Address <span className="text-red-500">*</span></Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Email Address <span className="text-red-500">*</span></Label>
               <Input
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+                className="h-11 rounded-xl! transition-all focus:ring-foreground/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Emirates ID</Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Emirates ID</Label>
               <Input
                 name="emirates_id"
                 value={formData.emirates_id}
@@ -313,36 +344,36 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Employer / Company</Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Employer / Company</Label>
               <Input
                 name="employer_name"
                 value={formData.employer_name}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+                className="h-11 rounded-xl! transition-all focus:ring-foreground/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Monthly Salary (AED)</Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Monthly Salary (AED)</Label>
               <Input
                 name="salary"
                 type="number"
                 value={formData.salary}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="h-11 rounded-xl! transition-all focus:ring-blue/30"
+                className="h-11 rounded-xl! transition-all focus:ring-foreground/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Requested Amount</Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Requested Amount</Label>
               <Input
                 name="amount"
                 value={formData.amount}
                 onChange={handleInputChange}
                 disabled={!isEditing}
-                className="h-11 rounded-xl! transition-all focus:ring-blue/30 font-bold text-blue"
+                className="h-11 rounded-xl! transition-all focus:ring-foreground/20 font-bold"
               />
             </div>
 
@@ -393,9 +424,9 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
         <section className="space-y-8">
           <div className="flex items-center gap-3 border-b border-border pb-3">
             <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
             </div>
-            <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Documentation Vault</h4>
+            <h4 className="text-[13px] uppercase font-black tracking-widest text-foreground">Documentation Vault</h4>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
@@ -417,7 +448,7 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
                     previewUrl={docUrl}
                     onChange={handleFileChange}
                     color="foreground"
-                    disabled={readOnly || status === "submitted_to_coordinator"}
+                    disabled={readOnly || isLocked}
                   />
                 </div>
               );
@@ -429,25 +460,25 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
         <section className="space-y-8">
           <div className="flex items-center gap-3 border-b border-border pb-3">
             <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
             </div>
-            <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Workflow Intelligence</h4>
+            <h4 className="text-[13px] uppercase font-black tracking-widest text-foreground">Workflow Intelligence</h4>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Stage Alignment</Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Stage Alignment</Label>
               <Select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 options={getStatusOptions(status, !!caseData)}
-                disabled={readOnly || status === "submitted_to_coordinator"}
-                className="h-11 rounded-xl! font-bold text-blue bg-blue/5 border-blue/20"
+                disabled={readOnly || isLocked}
+                className="h-11 rounded-xl! font-bold text-foreground bg-foreground/5 border-border"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-wider text-text-muted/80">Internal Notes</Label>
+              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Internal Notes</Label>
               <textarea
                 name="notes"
                 value={formData.notes}
@@ -461,37 +492,27 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
         </section>
       </div>
 
-      {/* Action Bar */}
-      <div className="p-6 sm:p-8 bg-card border-t border-border flex flex-col sm:flex-row gap-4 sticky bottom-0 z-20 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
-        <div className="flex-1 grid grid-cols-2 gap-4">
-          <button
-            onClick={() => handleSubmitCase(status)}
-            disabled={readOnly || isSubmitting || !isFormValid || status === "submitted_to_coordinator"}
-            className="h-12 flex items-center justify-center gap-2 bg-foreground text-background rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg active:scale-95 disabled:grayscale transition-all"
-          >
-            {isSubmitting ? "Syncing..." : "Update Progress"}
-          </button>
+      {!readOnly && (
+        <div className="p-6 sm:p-8 bg-card border-t border-border flex flex-col gap-4 sticky bottom-0 z-20 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
+          <div className="w-full grid grid-cols-2 gap-4">
+            <button
+              onClick={() => handleSubmitCase(status)}
+              disabled={isSubmitting || !isFormValid}
+              className="h-12 flex items-center justify-center gap-2 border-2 border-foreground bg-transparent text-foreground rounded-[14px] text-xs font-black uppercase tracking-widest hover:bg-foreground/5 transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+            >
+              {isSubmitting ? "Syncing..." : "Update Progress"}
+            </button>
 
-          <button
-            onClick={() => handleSubmitCase("submitted_to_coordinator")}
-            disabled={readOnly || isSubmitting || !isFormValid || status === "submitted_to_coordinator"}
-            className="h-12 flex items-center justify-center gap-2 bg-green text-white rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg shadow-green/20 hover:bg-green/90 disabled:opacity-50 transition-all active:scale-95 disabled:grayscale"
-          >
-            Submit to Coordinator
-          </button>
+            <button
+              onClick={() => handleSubmitCase("submitted_to_coordinator")}
+              disabled={isSubmitting || !isFormValid || status !== "submitted_to_coordinator"}
+              className="h-12 flex items-center justify-center gap-2 bg-foreground text-background rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg shadow-foreground/20 hover:bg-foreground/90 transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+            >
+              Submit to Coordinator
+            </button>
+          </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-4 sm:w-[200px]">
-          <button className="h-12 flex items-center justify-center gap-2 border border-border bg-card text-text-primary rounded-[14px] text-xs font-black uppercase tracking-widest hover:bg-muted transition-all active:scale-95">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-            Call
-          </button>
-          <button className="h-12 flex items-center justify-center gap-2 border border-border bg-card text-text-primary rounded-[14px] text-xs font-black uppercase tracking-widest hover:bg-muted transition-all active:scale-95">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
-            Email
-          </button>
-        </div>
-      </div>
+      )}
     </Card>
   );
 }

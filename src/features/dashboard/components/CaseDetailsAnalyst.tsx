@@ -156,9 +156,9 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                 <div className="bg-foreground/5 border border-border rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
                     <div>
                         <h3 className="text-xl sm:text-3xl font-medium text-foreground leading-tight">{caseData.name}</h3>
-                        <p className="text-[12px] sm:text-sm text-text-muted italic mt-1 uppercase tracking-widest font-medium opacity-80">
+                        {/* <p className="text-[12px] sm:text-sm text-text-muted italic mt-1 uppercase tracking-widest font-medium opacity-80">
                             Case ID: #{caseData.id} • {caseData.date}
-                        </p>
+                        </p> */}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -255,7 +255,7 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                                             ✓
                                                         </div>
                                                     ) : (
-                                                        <div className="w-5 h-5 rounded-full bg-muted dark:bg-white/10 text-text-muted flex items-center justify-center text-[8px]">
+                                                        <div className="w-5 h-5 rounded-full bg-muted dark:bg-card/10 text-text-muted flex items-center justify-center text-[8px]">
                                                             —
                                                         </div>
                                                     )}
@@ -344,7 +344,7 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
 
                 <button
                     onClick={onClose}
-                    className="w-full h-12 bg-card dark:bg-white/5 border border-border text-foreground rounded-[14px] font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-muted transition-all active:scale-95 shadow-sm"
+                    className="w-full h-12 bg-card dark:bg-card/5 border border-border text-foreground rounded-[14px] font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-muted transition-all active:scale-95 shadow-sm"
                 >
                     Close
                 </button>

@@ -34,7 +34,7 @@ export default function NotificationsPage() {
 
     useEffect(() => {
         fetchNotifications();
-    }, [fetchNotifications]);
+    }, []);
 
     const handleNotificationClick = async (notification: Notification) => {
         if (!notification.is_read) {

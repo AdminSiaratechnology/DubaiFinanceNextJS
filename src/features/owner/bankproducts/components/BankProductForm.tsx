@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BankProduct, createBankProduct, updateBankProduct } from '../api/bankproducts.api';
 import { Card } from '@/components/ui/Card';
+import { FormActions } from '@/shared/FormActions';
 import { Label, Input, Select } from '@/components/ui/Form';
 import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
 import { getBanks } from '@/features/owner/bank/api/bank.api';
@@ -88,7 +89,7 @@ export function BankProductForm({ bankProduct, title, bankProductId }: BankProdu
                 </div>
                 <button
                     onClick={onCancel}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-card border border-foreground hover:bg-muted rounded-xl text-xs font-bold text-foreground hover:text-foreground transition-all sm:w-auto w-full"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                     Back to Bank Products
@@ -291,29 +292,7 @@ export function BankProductForm({ bankProduct, title, bankProductId }: BankProdu
                     </div>
                 </Card>
 
-                <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        className="w-full sm:w-auto px-8 py-3 rounded-xl border border-foreground font-bold text-sm text-foreground bg-white hover:bg-muted transition-all order-2 sm:order-1"
-                    >
-                        Discard Changes
-                    </button>
-
-                    <button
-                        type="submit"
-                        className="w-full sm:w-auto px-10 py-3 bg-foreground text-background rounded-xl font-bold text-sm hover:bg-foreground/90 transition-all shadow-lg active:scale-[0.98] order-1 sm:order-2 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting && (
-                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-background" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        )}
-                        {isSubmitting ? 'Saving...' : 'Save Product'}
-                    </button>
-                </div>
+                <FormActions onCancel={onCancel} isSubmitting={isSubmitting} submitText="Save Product" />
             </form>
         </div>
     );

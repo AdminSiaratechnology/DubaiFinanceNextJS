@@ -45,12 +45,12 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                 {/* Mobile Trigger */}
                 <button
                     onClick={onMenuClick}
-                    className="lg:hidden p-2 -ml-1 hover:bg-white/10 rounded-lg transition-colors border border-white/20"
+                    className="lg:hidden p-2 -ml-1 hover:bg-card/10 rounded-lg transition-colors border border-white/20"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
                 </button>
 
-                <div className="p-2 sm:p-3 bg-white/20 rounded-lg backdrop-blur-sm border border-white/30 shrink-0">
+                <div className="p-2 sm:p-3 bg-card/20 rounded-lg backdrop-blur-sm border border-white/30 shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-8 sm:h-8">
                         <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
                     </svg>
@@ -68,7 +68,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                     <p className="text-[12px] text-white/80">{getRoleTitle()}</p>
                 </div>
                 <div className="w-10 h-10 rounded-full border-2 border-white/30 p-0.5">
-                    <div className="w-full h-full rounded-full bg-white/20 flex items-center justify-center font-bold text-xs">
+                    <div className="w-full h-full rounded-full bg-card/20 flex items-center justify-center font-bold text-xs">
                         {getInitials()}
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 // import AuthInitializer from "@/components/auth/AuthInitializer";
 import { ConfirmProvider } from '@/components/providers/confirm-provider';
 import { Toaster } from "sonner";
+import FcmProvider from "@/providers/FcmProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -47,8 +48,8 @@ export default function RootLayout({
         />
       </head>
       <body className={`${roboto.variable} font-sans antialiased`}>
-        {/* <AuthInitializer> */}
         <ThemeProvider>
+          <FcmProvider>
           <ConfirmProvider>
             {children}
             <Toaster
@@ -60,8 +61,8 @@ export default function RootLayout({
               }}
             />
           </ConfirmProvider>
+          </FcmProvider>
         </ThemeProvider>
-        {/* </AuthInitializer> */}
       </body>
     </html>
   );

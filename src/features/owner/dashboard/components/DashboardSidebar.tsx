@@ -215,8 +215,8 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                             <span className="text-white font-bold text-xl">D</span>
                         </div>
                         <div className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed ? 'w-0 opacity-0' : 'w-32 opacity-100'}`}>
-                            <h2 className="text-lg font-bold tracking-tight text-foreground">Dubai Finance</h2>
-                            <p className="text-[10px] text-text-muted uppercase tracking-[0.2em] font-medium">Wealth Management</p>
+                            <h2 className="text-xl font-bold tracking-tight text-foreground">Dubai Finance</h2>
+                            <p className="text-[11.5px] text-text-muted uppercase tracking-[0.2em] font-medium">Wealth Management</p>
                         </div>
                     </div>
 
@@ -251,7 +251,7 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                         // Unified rendering for smooth transition
                         const content = (
                             <div
-                                className={`w-full flex items-center gap-4 py-3.5 rounded-xl transition-all duration-300 group relative ${isCollapsed ? 'px-0 justify-center' : 'px-4 cursor-pointer'
+                                className={`w-full flex items-center gap-4 py-3 rounded-xl transition-all duration-300 group relative ${isCollapsed ? 'justify-end' : 'px-4 cursor-pointer'
                                     } ${isActive && !hasSubItems
                                         ? 'bg-brand/10 text-brand shadow-sm border border-brand/20'
                                         : 'text-text-secondary hover:bg-muted hover:text-foreground'
@@ -260,7 +260,7 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                                 <div className={`shrink-0 transition-colors duration-200 flex items-center justify-center ${isActive ? 'text-brand' : 'text-text-muted group-hover:text-text-secondary'}`}>
                                     {item.icon}
                                 </div>
-                                <span className={`text-base font-semibold tracking-wide whitespace-nowrap transition-all duration-300 overflow-hidden ${isCollapsed ? 'w-0 opacity-0' : 'flex-1 opacity-100'}`}>
+                                <span className={`text-[17px] font-semibold tracking-wide whitespace-nowrap transition-all duration-300 overflow-hidden ${isCollapsed ? 'w-0 opacity-0' : 'flex-1 opacity-100'}`}>
                                     {item.name}
                                 </span>
                                 {isActive && !hasSubItems && !isCollapsed && (
@@ -303,7 +303,7 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                                                     key={sub.name}
                                                     href={sub.href}
                                                     onClick={() => onClose?.()}
-                                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${isSubActive
+                                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${isSubActive
                                                         ? 'text-brand bg-brand/5'
                                                         : 'text-text-muted hover:text-foreground hover:bg-muted'
                                                         }`}
@@ -324,7 +324,7 @@ export function DashboardSidebar({ isOpen, onClose, onHoverChange }: DashboardSi
                 <div className={`p-4 border-t border-border mt-auto space-y-2 relative`}>
                     <button
                         onClick={handleLogout}
-                        className={`w-full flex items-center gap-3 py-3 rounded-xl text-xs font-bold text-text-muted hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100 dark:hover:bg-red-950/20 group relative ${isCollapsed ? 'justify-center px-0' : 'px-4'}`}
+                        className={`w-full flex items-center gap-3 py-3 rounded-xl text-sm font-bold text-text-muted hover:bg-red-50 hover:text-red-600 transition-all border border-transparent hover:border-red-100 dark:hover:bg-red-950/20 group relative ${isCollapsed ? 'justify-center px-0' : 'px-4'}`}
                     >
                         <div className="shrink-0 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>

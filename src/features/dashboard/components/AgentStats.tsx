@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { StatCard } from './StatCard';
-import { agentStats } from './api/agent.api';
+import { dashboardApi } from './api/agent.api';
 
 export function AgentStats() {
     const [stats, setStats] = useState({
@@ -16,7 +16,7 @@ export function AgentStats() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await agentStats();
+                const res = await dashboardApi();
                 setStats(res);
             } catch (err) {
                 console.error('Failed to fetch agent stats:', err);
@@ -42,7 +42,7 @@ export function AgentStats() {
             <StatCard
                 title="Total Cases"
                 value={stats.total}
-                color="blue"
+                color="foreground"
                 icon={<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>}
             />
             <StatCard

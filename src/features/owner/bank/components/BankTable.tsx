@@ -14,7 +14,7 @@ interface BankTableProps {
 export function BankTable({ banks, page, total, limit }: BankTableProps) {
     return (
         <>
-            <div className="space-y-6 bg-white p-4 sm:p-6 rounded-2xl">
+            <div className="space-y-6 bg-card p-4 sm:p-6 rounded-2xl">
                 <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
                     <div className="w-full sm:w-auto">
                         <BankSearch showFilter />
@@ -33,13 +33,13 @@ export function BankTable({ banks, page, total, limit }: BankTableProps) {
                         <table className="w-full text-left border-collapse min-w-[900px] lg:min-w-0">
                             <thead>
                                 <tr className="bg-foreground/10 border-b border-border">
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">S.No</th>
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">Bank Name</th>
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">Category</th>
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest">Loan Types</th>
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest text-center">TAT</th>
-                                    <th className="p-3 sm:p-4 text-right text-[14px] font-bold text-black uppercase tracking-widest">Status</th>
-                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-black uppercase tracking-widest text-right">Actions</th>
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest">S.No</th>
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest">Bank Name</th>
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest">Category</th>
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest">Loan Types</th>
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest text-center">TAT</th>
+                                    <th className="p-3 sm:p-4 text-right text-[14px] font-bold text-adaptive uppercase tracking-widest">Status</th>
+                                    <th className="p-3 sm:p-4 text-[14px] font-bold text-adaptive uppercase tracking-widest text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
@@ -47,17 +47,17 @@ export function BankTable({ banks, page, total, limit }: BankTableProps) {
                                     banks.map((bank, index) => (
                                         <tr key={bank.id} className="hover:bg-muted/30 transition-colors group">
                                             <td className="p-3 sm:p-4">
-                                                <p className="text-[14px] font-bold text-black">
+                                                <p className="text-[14px] font-bold text-adaptive">
                                                     {((page || 1) - 1) * (limit || 10) + index + 1}
                                                 </p>
                                             </td>
                                             <td className="p-3 sm:p-4">
                                                 <div>
-                                                    <p className="text-sm sm:text-sm font-medium text-black leading-tight">{bank.name}</p>
+                                                    <p className="text-sm sm:text-sm font-medium text-adaptive leading-tight">{bank.name}</p>
                                                 </div>
                                             </td>
                                             <td className="p-3 sm:p-4">
-                                                <p className="text-sm sm:text-sm font-medium text-black">{bank.category?.name}</p>
+                                                <p className="text-sm sm:text-sm font-medium text-adaptive">{bank.category?.name}</p>
                                             </td>
                                             <td className="p-3 sm:p-4">
                                                 <div className="flex flex-wrap gap-1">

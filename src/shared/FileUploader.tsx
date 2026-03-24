@@ -185,7 +185,6 @@ export function FileUploader({
                         <FileRow
                             key={`new-${index}`}
                             name={file.name}
-                            size={`${(file.size / 1024).toFixed(1)} KB`}
                             previewUrl={isImage ? objectUrls[index] : undefined}
                             activeColor={activeColor}
                             onRemove={(e) => removeFile(index, e)}
@@ -201,7 +200,6 @@ export function FileUploader({
                         <FileRow
                             key={`existing-${index}`}
                             name="Current Image"
-                            size="Existing"
                             previewUrl={fullUrl}
                             activeColor={activeColor}
                         >
@@ -231,10 +229,10 @@ export function FileUploader({
                                     </svg>
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <p className={`text-xs font-bold truncate text-foreground`}>
+                                    <p className={`text-sm font-bold truncate text-foreground`}>
                                         {placeholder}
                                     </p>
-                                    <p className="text-[10px] text-text-muted font-medium">
+                                    <p className="text-[12px] text-text-muted font-medium">
                                         {multiple ? `Upload up to ${maxFiles} files` : 'No file chosen'}
                                     </p>
                                 </div>
@@ -257,13 +255,13 @@ export function FileUploader({
     );
 }
 
-function FileRow({ name, size, previewUrl, activeColor, onRemove, children }: { name: string, size: string, previewUrl?: string, activeColor: any, onRemove?: (e: React.MouseEvent) => void, children?: React.ReactNode }) {
+function FileRow({ name, previewUrl, activeColor, onRemove, children }: { name: string, previewUrl?: string, activeColor: any, onRemove?: (e: React.MouseEvent) => void, children?: React.ReactNode }) {
     return (
         <div className={`relative border rounded-xl p-4 transition-all duration-200 ${activeColor.border}`}>
             {children}
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 overflow-hidden relative group z-20 ${previewUrl ? 'bg-white shadow-sm border border-border scale-105' : `${activeColor.bg} text-white shadow-md scale-105`}`}>
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 overflow-hidden relative group z-20 ${previewUrl ? 'bg-card shadow-sm border border-border scale-105' : `${activeColor.bg} text-white shadow-md scale-105`}`}>
                         {previewUrl ? (
                             <a href={previewUrl} target="_blank" rel="noopener noreferrer" className="block w-full h-full relative" onClick={(e) => e.stopPropagation()}>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -283,11 +281,8 @@ function FileRow({ name, size, previewUrl, activeColor, onRemove, children }: { 
                         )}
                     </div>
                     <div className="min-w-0 flex-1">
-                        <p className={`text-xs font-bold truncate ${activeColor.text}`}>
+                        <p className={`text-sm font-bold truncate ${activeColor.text}`}>
                             {name}
-                        </p>
-                        <p className="text-[10px] text-text-muted font-medium">
-                            {size}
                         </p>
                     </div>
                 </div>

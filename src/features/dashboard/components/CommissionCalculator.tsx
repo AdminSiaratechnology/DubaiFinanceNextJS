@@ -35,10 +35,10 @@ export function CommissionCalculator() {
 
     return (
         <div className="max-w-4xl mx-auto animate-in zoom-in duration-300">
-            <div className="section-card bg-card border-border border shadow-sm rounded-2xl overflow-hidden">
+            <div className="section-card bg-card border-foreground/30 border shadow-sm shadow-foreground/30 rounded-2xl overflow-hidden">
                 {/* Header */}
-                <div className="bg-blue-50/50 dark:bg-blue-900/10 p-4 border-b border-border">
-                    <h3 className="text-sm font-bold text-foreground">Commission Calculator</h3>
+                <div className="bg-foreground/5 p-4 border-b border-border">
+                    <h3 className="text-base font-bold text-foreground">Commission Calculator</h3>
                 </div>
 
                 <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -49,7 +49,7 @@ export function CommissionCalculator() {
                             <select
                                 value={selectedProductId}
                                 onChange={(e) => setSelectedProductId(e.target.value)}
-                                className="w-full p-3 bg-muted border border-border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none cursor-pointer font-medium"
+                                className="w-full p-3 bg-muted border border-border rounded-xl text-sm focus:ring-2 focus:ring-foreground outline-none transition-all appearance-none cursor-pointer font-medium"
                             >
                                 {products.map(p => (
                                     <option key={p.id} value={p.id}>
@@ -66,7 +66,7 @@ export function CommissionCalculator() {
                                 placeholder="Enter amount"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
-                                className="w-full p-3 bg-muted border border-border rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
+                                className="w-full p-3 bg-muted border border-border rounded-xl text-sm focus:ring-2 focus:ring-foreground outline-none transition-all font-medium"
                             />
                         </div>
                     </div>
@@ -74,13 +74,13 @@ export function CommissionCalculator() {
                     {/* Right: Results & Examples */}
                     <div className="space-y-8">
                         {/* Result Card */}
-                        <div className="bg-blue text-white p-8 rounded-2xl shadow-lg shadow-blue/20 flex flex-col items-center justify-center text-center relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                            <span className="text-xs font-bold uppercase tracking-widest opacity-80 mb-2 relative z-10">Your Commission</span>
-                            <div className="text-4xl font-black mb-1 relative z-10">
+                        <div className="bg-foreground text-background p-8 rounded-2xl shadow-xl flex flex-col items-center justify-center text-center relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-card/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                            <span className="text-[11px] font-bold uppercase tracking-widest opacity-80 mb-2 relative z-10 text-background">Your Commission</span>
+                            <div className="text-4xl font-black mb-1 relative z-10 text-background">
                                 AED {commission.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </div>
-                            <p className="text-[10px] font-bold opacity-70 relative z-10">
+                            <p className="text-[11px] font-bold opacity-70 relative z-10 text-background">
                                 {selectedProduct.type === 'percent' ? `${selectedProduct.rate}% of AED ${parseFloat(amount) || 0}` : selectedProduct.label}
                             </p>
                         </div>
@@ -92,7 +92,7 @@ export function CommissionCalculator() {
                                 {quickExamples.map((ex, i) => (
                                     <div key={i} className="flex justify-between items-center p-3 bg-muted/50 rounded-xl border border-border/50">
                                         <span className="text-xs font-bold text-text-secondary">AED {ex.amount.toLocaleString()}</span>
-                                        <span className="text-xs font-black text-blue">AED {ex.commission.toLocaleString()}</span>
+                                        <span className="text-sm font-black text-foreground">AED {ex.commission.toLocaleString()}</span>
                                     </div>
                                 ))}
                             </div>

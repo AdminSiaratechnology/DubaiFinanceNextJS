@@ -15,8 +15,8 @@ export function DashboardTabs({ tabs, activeTab, onTabChange }: DashboardTabsPro
                 <button
                     key={tab.id}
                     onClick={() => onTabChange(tab.id)}
-                    className={`pb-2 px-2 text-sm transition-all relative flex items-center gap-2.5 whitespace-nowrap group ${activeTab === tab.id
-                        ? 'text-blue'
+                    className={`pb-2 px-2 text-[15px] font-semibold transition-all relative flex items-center gap-2.5 whitespace-nowrap group ${activeTab === tab.id
+                        ? 'text-foreground'
                         : 'text-text-primary hover:text-text-secondary'
                         }`}
                 >
@@ -32,7 +32,7 @@ export function DashboardTabs({ tabs, activeTab, onTabChange }: DashboardTabsPro
                         <span className={`
                             text-[10px] px-1.5 py-0.5 rounded-full font-bold transition-all
                             ${activeTab === tab.id
-                                ? 'bg-blue-soft text-blue shadow-sm shadow-blue/10'
+                                ? 'bg-foreground/10 text-foreground'
                                 : 'bg-muted text-text-muted group-hover:bg-muted/80'
                             }
                         `}>
@@ -40,7 +40,7 @@ export function DashboardTabs({ tabs, activeTab, onTabChange }: DashboardTabsPro
                         </span>
                     )}
                     {activeTab === tab.id && (
-                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue rounded-t-full" />
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-foreground rounded-t-full" />
                     )}
                 </button>
             ))}

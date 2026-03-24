@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-type Color = 'blue' | 'green' | 'purple' | 'teal' | 'orange' | 'red' | 'dark';
+type Color = 'blue' | 'green' | 'purple' | 'teal' | 'orange' | 'red' | 'dark' | 'foreground' | 'background';
 
 interface StatCardProps {
     title: string;
@@ -26,6 +26,8 @@ const variants: Record<Color, {
     orange: { solid: 'var(--orange)', soft: 'var(--orange-soft)', border: 'rgba(245,158,11,0.25)',  glow: '0 8px 32px rgba(245,158,11,0.18)' },
     red:    { solid: 'var(--red)',    soft: 'var(--red-soft)',    border: 'rgba(239,68,68,0.25)',   glow: '0 8px 32px rgba(239,68,68,0.18)' },
     dark:   { solid: 'var(--text-secondary)', soft: 'var(--muted)', border: 'var(--border)', glow: 'var(--shadow-soft)' },
+    foreground: { solid: 'var(--foreground)', soft: 'rgba(var(--foreground-rgb), 0.1)', border: 'rgba(var(--foreground-rgb), 0.2)', glow: '0 8px 32px rgba(var(--foreground-rgb), 0.15)' },
+    background: { solid: 'var(--background)', soft: 'rgba(var(--background-rgb), 0.1)', border: 'var(--border)', glow: 'var(--shadow-soft)' },
 };
 
 export function StatCard({
