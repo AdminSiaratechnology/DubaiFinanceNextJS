@@ -10,6 +10,7 @@ import { getBanks } from "@/features/owner/bank/api/bank.api";
 import { getBankProductByBankId } from "@/features/owner/bankproducts/api/bankproducts.api";
 import { Case, submitCompleteCase, updateCase } from "./api/agent.api";
 import { toast } from "sonner";
+import { useTelecallerStore } from "@/store/useTelecallerStore";
 
 interface LeadDetailsProps {
   lead: {
@@ -110,6 +111,7 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
     product_id: lead.product?.id?.toString() || "",
     notes: caseData?.notes || "",
   });
+  const { fetchStats, triggerRefreshLeads } = useTelecallerStore();
 
   const [files, setFiles] = useState<{ [key: string]: File | null }>({});
   const [status, setStatus] = useState("sent_back_to_agent");
@@ -210,6 +212,8 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
       };
 
       toast.success(getSuccessMessage(statusToSend, !!caseData));
+      fetchStats();
+      triggerRefreshLeads();
     } catch (err) {
       console.error(err);
       toast.error("Submission failed");

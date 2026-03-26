@@ -4,32 +4,39 @@ import React, { useEffect, useState } from 'react';
 import { StatTabs } from '@/features/dashboard/components/StatTabs';
 import { dashboardApi } from '@/features/dashboard/components/api/agent.api';
 import { useSearchParams } from 'next/navigation';
+import { useTelecallerStore } from '@/store/useTelecallerStore';
 
 export function TelecallerStats() {
-  const [stats, setStats] = useState({
-    new_leads: 0,
-    working_leads: 0,
-    submitted_leads: 0,
-    docs_required_leads: 0,
-    sent_back_to_telecaller_leads: 0,
-  });
+  // const [stats, setStats] = useState({
+  //   new_leads: 0,
+  //   working_leads: 0,
+  //   submitted_leads: 0,
+  //   docs_required_leads: 0,
+  //   sent_back_to_telecaller_leads: 0,
+  // });
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const fetchStats = async () => {
+  //     try {
+  //       const res = await dashboardApi();
+  //       setStats(res);
+  //     } catch (e) {
+  //       console.error("Stats error", e);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchStats();
+  // }, []);
+  const { stats, loading, fetchStats } = useTelecallerStore();
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await dashboardApi();
-        setStats(res);
-      } catch (e) {
-        console.error("Stats error", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
+    fetchStats(); // initial load
   }, []);
+
 
   const tabs = [
     {

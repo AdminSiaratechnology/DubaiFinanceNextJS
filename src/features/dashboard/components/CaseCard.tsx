@@ -9,7 +9,10 @@ interface CaseCardProps {
     employer: string;
     salary: string;
     product: string;
+    productId?: string | number;
     bank?: string;
+    bankId?: string | number;
+    documents?: any[];
     amount: string;
     date: string;
     commission: string;
@@ -21,7 +24,7 @@ interface CaseCardProps {
 }
 
 export function CaseCard({
-    id, name, mobile, email, emiratesId, employer, salary, product, bank, amount, date, commission, status, step, isActive, isAnyCaseSelected, showCommission = true
+    id, name, mobile, email, emiratesId, employer, salary, product, productId, bank, bankId, documents, amount, date, commission, status, step, isActive, isAnyCaseSelected, showCommission = true
 }: CaseCardProps) {
     const steps = ['Lead', 'Documents', 'Review', 'Bank', 'Approved'];
 
@@ -38,6 +41,27 @@ export function CaseCard({
 
     // Compact mode when a case is selected in the UI
     const isCompact = isAnyCaseSelected || isActive;
+
+    const handleEdit = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const caseData = {
+            id,
+            name,
+            mobile,
+            email,
+            emiratesId,
+            employer,
+            salary,
+            product,
+            product_id: productId,
+            bank,
+            bank_id: bankId,
+            documents,
+            amount
+        };
+        const encodedData = encodeURIComponent(JSON.stringify(caseData));
+        window.location.href = `/dashboard/agent/main?tab=submit-case&editData=${encodedData}`;
+    };
 
     return (
         <div className={`section-card overflow-hidden transition-all duration-300 cursor-pointer border shadow-sm ${isActive
@@ -89,9 +113,20 @@ export function CaseCard({
                         <h4 className={`${isCompact ? 'text-sm' : 'text-xl'} font-bold text-foreground leading-snug truncate`}>{name}</h4>
                         {isCompact && <p className="text-[11px] text-foreground font-bold tracking-tight mt-0.5">{amount}</p>}
                     </div>
-                    <span className={`${isCompact ? 'px-2 py-0.5 text-[9px]' : 'px-3 py-1 text-[11px]'} shrink-0 rounded-lg bg-foreground/10 font-bold text-foreground uppercase tracking-widest border border-foreground/20`}>
-                        {formattedStatus}
-                    </span>
+                    <div className="flex flex-col items-end gap-2">
+                        <span className={`${isCompact ? 'px-2 py-0.5 text-[9px]' : 'px-3 py-1 text-[11px]'} shrink-0 rounded-lg bg-foreground/10 font-bold text-foreground uppercase tracking-widest border border-foreground/20`}>
+                            {formattedStatus}
+                        </span>
+                        {normalizedStatus === 'sent_back_to_agent' && !isCompact && (
+                            <button
+                                onClick={handleEdit}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple/10 text-purple text-[11px] font-bold uppercase tracking-widest border border-purple/20 hover:bg-purple/20 transition-all active:scale-95"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                Edit Case
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 <div className={`bg-muted/30 grid ${isCompact ? 'grid-cols-1 gap-y-3' : 'grid-cols-2 md:grid-cols-4 gap-y-4'} p-6 border-y border-border -mx-6 my-4`}>

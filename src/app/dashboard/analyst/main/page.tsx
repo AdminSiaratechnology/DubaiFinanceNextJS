@@ -123,7 +123,10 @@ function AnalystDashboardContent() {
                 ) : (
                     <AnalystMainGrid
                         cases={mappedCases}
-                        onStatusUpdate={() => { fetchCases(); }}
+                        onStatusUpdate={() => { 
+                            fetchCases(); 
+                            fetchStats();
+                        }}
                         page={page}
                         totalCases={totalCases}
                         limit={limit}

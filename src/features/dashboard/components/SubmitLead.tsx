@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
-import { Label, Input, Select } from '@/components/ui/Form';
+import { Label, Input } from '@/components/ui/Form';
 
 import { getBanks } from '@/features/owner/bank/api/bank.api';
 import { getBankProductByBankId } from '@/features/owner/bankproducts/api/bankproducts.api';
@@ -11,10 +11,32 @@ import { submitLead, sendLeadOtp, updateLead } from './api/agent.api'
 import { toast } from 'sonner';
 import { useSearchParams } from 'next/navigation';
 
+const DRAFT_KEY = 'submit_lead_draft';
+
+const loadDraft = () => {
+    try {
+        const raw = sessionStorage.getItem(DRAFT_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch {
+        return null;
+    }
+};
+
+const saveDraft = (data: object) => {
+    try {
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+    } catch {}
+};
+
+const clearDraft = () => {
+    try {
+        sessionStorage.removeItem(DRAFT_KEY);
+    } catch {}
+};
+
 export function SubmitLead() {
     const searchParams = useSearchParams();
-    
-    // Check for prefilled data from 'Edit' navigation
+
     const getInitialData = () => {
         const editDataStr = searchParams.get('editData');
         if (editDataStr) {
@@ -61,10 +83,38 @@ export function SubmitLead() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isOtpSent, setIsOtpSent] = useState(false);
+    const [isHydrated, setIsHydrated] = useState(false);
     const [otp, setOtp] = useState('');
 
-    // Update form if search params change (though usually one-shot)
+    // ✅ Step 1: Hydrate from sessionStorage after mount (client-side only)
     useEffect(() => {
+        if (initialData.id) {
+            // Edit mode — skip draft restore entirely
+            setIsHydrated(true);
+            return;
+        }
+        const draft = loadDraft();
+        if (draft?.formData) {
+            setFormData(draft.formData);
+        }
+        if (draft?.isOtpSent) {
+            setIsOtpSent(draft.isOtpSent);
+        }
+        setIsHydrated(true);
+    }, []);
+
+    // ✅ Step 2: Persist to sessionStorage — only AFTER hydration to avoid overwriting draft with empty defaults
+    useEffect(() => {
+        if (!initialData.id && isHydrated) {
+            saveDraft({ formData, isOtpSent });
+        }
+    }, [formData, isOtpSent, isHydrated]);
+
+    // ✅ Step 3: Sync form if editData search params change — ONLY for edit mode, never overwrite draft
+    useEffect(() => {
+        const editDataStr = searchParams.get('editData');
+        if (!editDataStr) return; // skip if no editData, don't overwrite draft
+
         const data = getInitialData();
         setFormData({
             customer_name: data.customer_name,
@@ -94,13 +144,10 @@ export function SubmitLead() {
         setIsSubmitting(true);
         try {
             if (initialData.id) {
-                // Direct update for returned leads
                 await updateLead(initialData.id, formData);
                 toast.success('Lead updated successfully!');
-                // Redirect back to dashboard to refresh
                 window.location.href = '/dashboard/agent/main?tab=dashboard&view=leads';
             } else {
-                // New lead submission with OTP
                 await sendLeadOtp(formData.email);
                 setIsOtpSent(true);
                 toast.success('Verification OTP sent to your email.');
@@ -124,6 +171,10 @@ export function SubmitLead() {
         try {
             await submitLead(formData, otp);
             toast.success('Lead verified and submitted successfully!');
+
+            // Clear draft on successful submission
+            clearDraft();
+
             setIsOtpSent(false);
             setFormData({
                 customer_name: '',
@@ -142,6 +193,10 @@ export function SubmitLead() {
         }
     };
 
+    const handleEditDetails = () => {
+        setIsOtpSent(false);
+    };
+
     return (
         <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
             <Card noPadding className="border-border">
@@ -157,7 +212,7 @@ export function SubmitLead() {
                             <p className="text-[12px] sm:text-sm text-text-muted italic leading-relaxed">
                                 {isOtpSent
                                     ? `Enter the OTP sent to customer: ${formData.mobile_number}`
-                                    : initialData.id 
+                                    : initialData.id
                                         ? 'Update the customer basic details and resubmit.'
                                         : 'Submit basic customer details. Telecaller will collect documents later.'}
                             </p>
@@ -294,7 +349,7 @@ export function SubmitLead() {
 
                                 <button
                                     type="button"
-                                    onClick={() => setIsOtpSent(false)}
+                                    onClick={handleEditDetails}
                                     className="text-xs font-bold text-text-muted hover:text-foreground transition-colors py-2"
                                 >
                                     Edit Contact Details
