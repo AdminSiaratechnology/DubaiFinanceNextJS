@@ -9,8 +9,9 @@ import { FileUploader } from '@/shared/FileUploader';
 import { getBanks } from '@/features/owner/bank/api/bank.api';
 import { getBankProductByBankId } from '@/features/owner/bankproducts/api/bankproducts.api';
 import { ApiSearchableSelect } from '@/shared/ApiSearchableSelect';
-import { sendCaseOtp, submitCompleteCase } from './api/agent.api';
+import { sendCaseOtp, submitCompleteCase, updateCase } from './api/agent.api';
 import { toast } from 'sonner';
+import { useSearchParams } from 'next/navigation';
 
 const requiredDocs = [
     { id: 'emirates_id_front', label: 'Emirates ID (Front) *' },
@@ -44,20 +45,81 @@ const requiredDocs = [
 ];
 
 export function SubmitCase() {
+    const searchParams = useSearchParams();
+
+    const getInitialData = () => {
+        const editDataStr = searchParams.get('editData');
+        if (editDataStr) {
+            try {
+                const data = JSON.parse(decodeURIComponent(editDataStr));
+                return {
+                    id: data.id || null,
+                    fullName: data.name || '',
+                    mobileNumber: data.mobile || '',
+                    email: data.email || '',
+                    emiratesId: data.emiratesId || '',
+                    employerName: data.employer || '',
+                    monthlySalary: data.salary ? String(data.salary).replace(/[^0-9.]/g, '') : '',
+                    bank_id: data.bank_id || '',
+                    bankName: data.bank || '',
+                    product_id: data.product_id || '',
+                    productName: data.product || '',
+                    amount: data.amount ? String(data.amount).replace(/[^0-9.]/g, '') : '',
+                    status: 'submitted_to_coordinator',
+                    notes: data.notes || '',
+                    documents: data.documents || [],
+                };
+            } catch (e) {
+                console.error("Failed to parse editData", e);
+            }
+        }
+        return {
+            id: null,
+            fullName: '',
+            mobileNumber: '',
+            email: '',
+            emiratesId: '',
+            employerName: '',
+            monthlySalary: '',
+            bank_id: '',
+            bankName: '',
+            product_id: '',
+            productName: '',
+            amount: '',
+            status: 'submitted_to_coordinator',
+            notes: '',
+            documents: [],
+        };
+    };
+
+    const initialData = getInitialData();
+
+    // Build a map of existing doc URLs: { emirates_id_front: 'https://...' }
+    const existingDocUrls: Record<string, string> = {};
+    if (initialData.documents && initialData.documents.length > 0) {
+        const docObj = initialData.documents[0];
+        Object.entries(docObj).forEach(([key, val]) => {
+            if (key.endsWith('_url') && val) {
+                const docId = key.replace(/_url$/, '');
+                existingDocUrls[docId] = val as string;
+            }
+        });
+    }
+
     const [formData, setFormData] = useState({
-        fullName: '',
-        mobileNumber: '',
-        email: '',
-        emiratesId: '',
-        employerName: '',
-        monthlySalary: '',
-        bank_id: '' as string | number,
-        bankName: '',
-        product_id: '' as string | number,
-        productName: '',
-        amount: '',
-        status: 'submitted_to_coordinator',
-        notes: '',
+        fullName: initialData.fullName,
+        mobileNumber: initialData.mobileNumber,
+        email: initialData.email,
+        emiratesId: initialData.emiratesId,
+        employerName: initialData.employerName,
+        monthlySalary: initialData.monthlySalary,
+        bank_id: initialData.bank_id as string | number,
+        bankName: initialData.bankName,
+        product_id: initialData.product_id as string | number,
+        productName: initialData.productName,
+        amount: initialData.amount,
+        status: initialData.status,
+        notes: initialData.notes,
     });
 
     const [files, setFiles] = useState<{ [key: string]: File | null }>({});
@@ -91,11 +153,34 @@ export function SubmitCase() {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await sendCaseOtp(formData.email);
-            setIsOtpSent(true);
-            toast.success('Verification OTP sent to your email.');
+            if (initialData.id) {
+                const multipart = new FormData();
+                multipart.append('customer_name', formData.fullName);
+                multipart.append('mobile_number', formData.mobileNumber);
+                multipart.append('email', formData.email);
+                multipart.append('employer_name', formData.employerName);
+                multipart.append('monthly_salary', String(formData.monthlySalary));
+                multipart.append('bank_id', String(formData.bank_id));
+                multipart.append('product_id', String(formData.product_id));
+                multipart.append('requested_amount', String(formData.amount));
+                multipart.append('emirates_id', formData.emiratesId);
+                multipart.append('status', formData.status);
+                multipart.append('notes', formData.notes);
+                Object.entries(files).forEach(([id, file]) => {
+                    if (file) {
+                        multipart.append(id, file);
+                    }
+                });
+                await updateCase(initialData.id, multipart);
+                toast.success('Case updated successfully!');
+                window.location.href = '/dashboard/agent/main?tab=dashboard&view=cases';
+            } else {
+                await sendCaseOtp(formData.email);
+                setIsOtpSent(true);
+                toast.success('Verification OTP sent to your email.');
+            }
         } catch (error) {
-            toast.error('Failed to send OTP. Please try again.');
+            toast.error(initialData.id ? 'Failed to update case.' : 'Failed to send OTP. Please try again.');
             console.error(error);
         } finally {
             setIsSubmitting(false);
@@ -170,12 +255,14 @@ export function SubmitCase() {
                         </div>
                         <div className="space-y-1">
                             <h3 className="text-xl sm:text-3xl font-medium text-foreground leading-tight">
-                                {isOtpSent ? 'Verify Case Submission' : 'Submit Complete Case'}
+                                {isOtpSent ? 'Verify Case Submission' : initialData.id ? 'Update Complete Case' : 'Submit Complete Case'}
                             </h3>
                             <p className="text-[12px] sm:text-sm text-text-muted italic leading-relaxed">
                                 {isOtpSent
                                     ? `Enter the verification code sent to ${formData.email}`
-                                    : 'Submit complete application with all required documents attached.'}
+                                    : initialData.id
+                                        ? 'Update application and attach any newly required documents.'
+                                        : 'Submit complete application with all required documents attached.'}
                             </p>
                         </div>
                     </div>
@@ -188,7 +275,7 @@ export function SubmitCase() {
                                 <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
                                 </div>
-                                <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Customer Information</h4>
+                                <h4 className="text-[12px] uppercase font-bold tracking-widest text-foreground">Customer Information</h4>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
@@ -263,7 +350,7 @@ export function SubmitCase() {
                                 <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
                                 </div>
-                                <h4 className="text-[10px] uppercase font-bold tracking-widest text-foreground">Documents (Upload All)</h4>
+                                <h4 className="text-[12px] uppercase font-bold tracking-widest text-foreground">Documents (Upload All)</h4>
                             </div>
 
                             <div className="space-y-3">
@@ -275,6 +362,7 @@ export function SubmitCase() {
                                         file={files[doc.id] || null}
                                         onChange={handleFileChange}
                                         color="foreground"
+                                        previewUrl={existingDocUrls[doc.id] || null}
                                     />
                                 ))}
                             </div>
@@ -285,7 +373,7 @@ export function SubmitCase() {
                             disabled={isSubmitting}
                             className={`w-full py-4 bg-foreground text-background rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-foreground/90 hover:shadow-xl active:scale-[0.98]'}`}
                         >
-                            {isSubmitting ? <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" /> : <><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> Send OTP to Verify</>}
+                            {isSubmitting ? <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" /> : <><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> {initialData.id ? 'Update & Submit Case' : 'Send OTP to Verify'}</>}
                         </button>
                     </form>
                 ) : (

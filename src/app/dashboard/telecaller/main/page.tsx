@@ -5,6 +5,8 @@ import { TelecallerMainGrid } from '@/features/dashboard/components/TelecallerMa
 import { getLeads, Lead } from '@/features/dashboard/components/api/agent.api';
 import { TelecallerStats } from '@/features/dashboard/components/TelecallerStats';
 import { useSearchParams } from 'next/navigation';
+import { useTelecallerStore } from '@/store/useTelecallerStore';
+
 
 function TelecallerDashboardContent() {
     const params = useSearchParams();
@@ -15,6 +17,7 @@ function TelecallerDashboardContent() {
 
     const [leads, setLeads] = useState<Lead[]>([]);
     const [loading, setLoading] = useState(true);
+    const refreshLeadsTrigger = useTelecallerStore((state) => state.refreshLeadsTrigger);
 
     useEffect(() => {
         const fetchLeads = async () => {
@@ -39,7 +42,7 @@ function TelecallerDashboardContent() {
         };
 
         fetchLeads();
-    }, [activeTab, page, searchQuery]);
+    }, [activeTab, page, searchQuery, refreshLeadsTrigger]);
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">

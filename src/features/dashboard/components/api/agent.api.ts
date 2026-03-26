@@ -61,6 +61,7 @@ export interface Case {
   requested_amount?: number;
   created_at?: string;
   notes?: string;
+  agent_commission?: string | undefined;
 }
 
 export const sendLeadOtp = async (email: string) => {

@@ -20,6 +20,7 @@ const STATUS_STYLES: Record<string, string> = {
     under_review: 'bg-blue-soft text-blue border-blue/20',
     sent_back_to_telecaller: 'bg-red-soft text-red border-red/20',
     follow_up: 'bg-purple-soft text-purple border-purple/20',
+    
 };
 
 const ALL_STATUSES = [
@@ -52,7 +53,7 @@ function ViewModal({ caseData, onClose }: { caseData: OwnerCase; onClose: () => 
         { label: 'Product', value: caseData.product?.product_name ?? '—' },
         { label: 'Bank', value: caseData.bank?.name ?? '—' },
         { label: 'Requested Amount', value: `AED ${caseData.requested_amount.toLocaleString()}` },
-        { label: 'Salary', value: `AED ${caseData.salary.toLocaleString()}` },
+        { label: 'Salary', value: `AED ${caseData?.salary?.toLocaleString()}` },
         {
             label: 'Status', value: (
                 <span className={`px-2.5 py-1 text-xs font-bold rounded-md border ${STATUS_STYLES[caseData.status] ?? 'bg-muted text-text-secondary border-border'}`}>
@@ -463,11 +464,12 @@ export function AllCasesTab() {
     const [loading, setLoading] = useState(true);
     const [viewCase, setViewCase] = useState<OwnerCase | null>(null);
     const [editCase, setEditCase] = useState<OwnerCase | null>(null);
+    const [request, setRequest] = useState('');
 
     const fetchCases = useCallback(async (p: number, q: string) => {
         setLoading(true);
         try {
-            const res = await getAllCases(p, LIMIT, q || undefined);
+            const res = await getAllCases(p, LIMIT, q || undefined, request || undefined);
             setCases(res.items);
             setTotal(res.total);
         } catch (err) {
@@ -475,11 +477,11 @@ export function AllCasesTab() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [request]);
 
     useEffect(() => {
         fetchCases(page, search);
-    }, [page, search, fetchCases]);
+    }, [page, search, fetchCases, request]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -490,7 +492,6 @@ export function AllCasesTab() {
     }, [inputValue]);
 
     const totalPages = Math.ceil(total / LIMIT);
-
     return (
         <>
             {viewCase && <ViewModal caseData={viewCase} onClose={() => setViewCase(null)} />}
@@ -509,17 +510,43 @@ export function AllCasesTab() {
                         <h3 className="text-lg font-bold text-foreground">All Cases</h3>
                         {!loading && <p className="text-xs text-text-muted mt-0.5">{total} total cases</p>}
                     </div>
-                    <div className="w-full sm:w-64 relative">
-                        <input
-                            type="text"
-                            placeholder="Search cases..."
-                            className="w-full pl-10 pr-4 py-2.5 bg-muted/30 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand/50 transition-all font-medium"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                        />
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3.5 top-3 text-text-muted">
-                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-                        </svg>
+                    <div className="flex gap-2">
+                        <div className='relative'>
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="absolute left-3.5 top-3 text-text-muted"
+                            >
+                                <polygon points="22 3 2 3 10 12 10 19 14 21 14 12 22 3" />
+                            </svg>
+                            <select
+                                value={request}
+                                onChange={(e) => setRequest(e.target.value)}
+                                className="w-full pl-8 pr-3 py-2.5 bg-muted/30 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand/50 transition-all font-medium"
+                            >
+                                <option value="">All</option>
+                                <option value="cases">Cases</option>
+                                <option value="leads">Leads</option>
+                            </select>
+                        </div>
+                        <div className="w-full sm:w-64 relative">
+                            <input
+                                type="text"
+                                placeholder="Search cases..."
+                                className="w-full pl-10 pr-4 py-2.5 bg-muted/30 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand/50 transition-all font-medium"
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                            />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3.5 top-3 text-text-muted">
+                                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
@@ -542,20 +569,28 @@ export function AllCasesTab() {
                         <table className="w-full text-left min-w-[1100px]">
                             <thead>
                                 <tr className="border-b border-border bg-muted/20">
-                                    <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">Case ID</th>
+                                    <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">S.No.</th>
                                     <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">Customer</th>
                                     <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">Product</th>
                                     <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">Bank</th>
                                     <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">Amount</th>
                                     <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">Status</th>
                                     <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">Created</th>
+                                    <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold">Team</th>
                                     <th className="py-4 px-5 text-xs text-text-secondary uppercase tracking-widest font-semibold text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
-                                {cases.map((row) => (
+                                {cases.map((row, index) => (
                                     <tr key={row.id} className="hover:bg-muted/30 transition-colors group">
-                                        <td className="py-4 px-5 text-sm font-bold text-orange">#{row.id}</td>
+                                        <td className="py-4 px-5">
+                                            <div className="text-sm font-bold text-orange"># {(page - 1) * LIMIT + index + 1}</div>
+                                            {row.lead_id && (
+                                                <span className="mt-1 inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-soft text-purple border border-purple/20">
+                                                    Lead
+                                                </span>
+                                            )}
+                                        </td>
                                         <td className="py-4 px-5">
                                             <div className="text-sm font-medium text-adaptive">{row.customer_name}</div>
                                             <div className="text-xs text-text-muted">{row.mobile_number}</div>
@@ -569,6 +604,31 @@ export function AllCasesTab() {
                                             </span>
                                         </td>
                                         <td className="py-4 px-5 text-sm text-text-secondary">{formatDate(row.created_at)}</td>
+                                        <td className="py-4 px-5">
+                                            <div className="flex flex-col gap-1 mt-1 text-xs text-adaptive">
+                                                {row.agent_name && (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-md border bg-blue-soft text-blue border-blue/20">
+                                                        Agent
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-blue shrink-0" />
+                                                        {row.agent_name}
+                                                    </span>
+                                                )}
+                                                {row.coordinator_name && (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-md border bg-green-soft text-green border-green/20">
+                                                        Coordinator
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-green shrink-0" />
+                                                        {row.coordinator_name}
+                                                    </span>
+                                                )}
+                                                {row.telecaller_name && (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-md border bg-orange-soft text-orange border-orange/20">
+                                                        Telecaller
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-orange shrink-0" />
+                                                        {row.telecaller_name}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="py-4 px-5">
                                             <div className="flex items-center justify-end gap-2">
                                                 {/* View */}

@@ -68,6 +68,10 @@ export interface OwnerCase {
     coordinator_id: number | null;
     telecaller_id: number | null;
     documents: OwnerCaseDocument[];
+    agent_name: string | null;
+    coordinator_name: string | null;
+    telecaller_name: string | null;
+    lead_id: number | null;
 }
 
 export interface OwnerCasesResponse {
@@ -80,10 +84,11 @@ export interface OwnerCasesResponse {
 export const getAllCases = async (
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
+    request?: string
 ): Promise<OwnerCasesResponse> => {
     const response = await apiClient.get("/cases/", {
-        params: { page, limit, search: search || undefined },
+        params: { page, limit, search: search || undefined, request: request || undefined },
     });
     return response.data;
 };
