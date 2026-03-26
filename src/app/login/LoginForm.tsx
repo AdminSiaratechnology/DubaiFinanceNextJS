@@ -28,7 +28,9 @@ export function LoginForm() {
         try {
             const response = await adminLogin(formData);
             const token = await getFcmToken();
+            console.log("token", token);
             if (token) {
+                console.log("token", token);
                 const device_id = getDeviceId();
                 const device_type = "web";
                 await saveFcmToken(device_id, device_type, token);
