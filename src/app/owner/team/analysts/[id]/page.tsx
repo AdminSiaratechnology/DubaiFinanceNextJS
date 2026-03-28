@@ -15,7 +15,7 @@ export default async function EditAnalystPage({
     if (!member) {
         return (
             <div className="flex flex-col items-center justify-center h-96 text-text-muted">
-                <p>Analyst not found</p>
+                <p>Coordinator not found</p>
                 <Link
                     href="/owner/team/analysts"
                     className="mt-4 text-brand font-bold hover:underline underline-offset-4"
@@ -30,7 +30,7 @@ export default async function EditAnalystPage({
         <MemberForm
             member={member}
             memberId={Number(id)}
-            title={`Edit Analyst: ${member.name}`}
+            title={`Edit Coordinator: ${member.name}`}
             role="analyst"
         />
     );

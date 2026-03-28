@@ -9,13 +9,17 @@ import { Pagination } from '@/components/ui/Pagination';
 
 interface TeamTableProps {
     members: (Coordinator | Telecaller | Agent)[];
-    role: 'analyst' | 'telecaller' | 'agent';
+    role: 'coordinator' | 'telecaller' | 'agent' | 'analyst';
     page: number;
     total: number;
     limit: number;
 }
 
 export function TeamTable({ members, role, page, total, limit }: TeamTableProps) {
+    let adjustedRole = role;
+    if (role === 'coordinator') {
+        adjustedRole = 'analyst';
+    }
     return (
         <>
             <div className="space-y-6 bg-card p-4 sm:p-6 rounded-2xl">
@@ -24,7 +28,7 @@ export function TeamTable({ members, role, page, total, limit }: TeamTableProps)
                         <TeamSearch role={role} />
                     </div>
                     <Link
-                        href={`/owner/team/${role}s/new`}
+                        href={`/owner/team/${adjustedRole}s/new`}
                         className="flex items-center justify-center gap-2 px-6 py-3 bg-foreground text-background rounded-xl font-bold text-sm hover:bg-foreground/90 transition-all shadow-md active:scale-95 w-full sm:w-auto"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>

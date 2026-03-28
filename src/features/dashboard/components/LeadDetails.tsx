@@ -78,6 +78,7 @@ const getStatusOptions = (currentStatus?: string, hasCase?: boolean) => {
     { value: "follow_up", label: "Follow Up Required" },
     { value: "documents_required", label: "Documents Required" },
     { value: "submitted_to_coordinator", label: "Submitted to Coordinator" },
+    { value: "sent_back_to_agent", label: "Sent Back to Agent" },
   ] : [
     { value: "sent_back_to_agent", label: "Sent Back to Agent" },
     { value: "documents_collected", label: "Documents Collected" },
@@ -117,7 +118,7 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
   const [status, setStatus] = useState("sent_back_to_agent");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isLocked = lockedStatuses.includes(status);
+  const isLocked = !!(caseData?.status && lockedStatuses.includes(caseData.status));
 
   // ✅ Optimized update function
   const updateField = (name: keyof typeof formData, value: string) => {
@@ -223,7 +224,28 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
     }
   };
 
-  const isFormValid = !!(formData.name.trim() && formData.mobile.trim() && formData.email.trim());
+  const isFormValid = () => {
+    if (status !== "submitted_to_coordinator") return true;
+    const { name, mobile, email, emirates_id, employer_name, salary, bank_id, product_id, amount } = formData;
+    const basicValid = !!(name && mobile && email && emirates_id && employer_name && salary && bank_id && product_id && amount);
+
+    const mandatoryIds = requiredDocs.filter(doc => doc.label.includes('*')).map(doc => doc.id);
+    
+    const docsValid = mandatoryIds.every(id => {
+      if (files[id]) return true;
+      if (caseData?.documents && caseData.documents.length > 0) {
+        const docData = caseData.documents[0];
+        const expectedKey = `${id}_url`;
+        const alternateKey = id === "residence_visa" ? "residencevisa_url" : expectedKey;
+        return !!docData[alternateKey];
+      }
+      return false;
+    });
+
+    return basicValid && docsValid;
+  };
+
+  const isValid = isFormValid();
 
   return (
     <Card noPadding className="h-full flex flex-col relative border-none shadow-soft bg-card ">
@@ -425,75 +447,79 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
         </section>
 
         {/* Documentation Section */}
-        <section className="space-y-8">
-          <div className="flex items-center gap-3 border-b border-border pb-3">
-            <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+        {caseData?.status !== 'sent_back_to_agent' && (
+          <section className="space-y-8">
+            <div className="flex items-center gap-3 border-b border-border pb-3">
+              <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+              </div>
+              <h4 className="text-[13px] uppercase font-black tracking-widest text-foreground">Documentation Vault</h4>
             </div>
-            <h4 className="text-[13px] uppercase font-black tracking-widest text-foreground">Documentation Vault</h4>
-          </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            {requiredDocs.map(doc => {
-              let docUrl = null;
-              if (caseData?.documents && caseData.documents.length > 0) {
-                const docData = caseData.documents[0];
-                const expectedKey = `${doc.id}_url`;
-                const alternateKey = doc.id === "residence_visa" ? "residencevisa_url" : expectedKey;
-                docUrl = docData[alternateKey] || null;
-              }
+            <div className="grid grid-cols-1 gap-4">
+              {requiredDocs.map(doc => {
+                let docUrl = null;
+                if (caseData?.documents && caseData.documents.length > 0) {
+                  const docData = caseData.documents[0];
+                  const expectedKey = `${doc.id}_url`;
+                  const alternateKey = doc.id === "residence_visa" ? "residencevisa_url" : expectedKey;
+                  docUrl = docData[alternateKey] || null;
+                }
 
-              return (
-                <div key={doc.id} className="bg-muted/10 p-4 rounded-2xl border border-border/50 hover:border-foreground/20 transition-all duration-300">
-                  <FileUploader
-                    id={doc.id}
-                    label={doc.label}
-                    file={files[doc.id] || null}
-                    previewUrl={docUrl}
-                    onChange={handleFileChange}
-                    color="foreground"
-                    disabled={readOnly || isLocked}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                return (
+                  <div key={doc.id} className="bg-muted/10 p-4 rounded-2xl border border-border/50 hover:border-foreground/20 transition-all duration-300">
+                    <FileUploader
+                      id={doc.id}
+                      label={doc.label}
+                      file={files[doc.id] || null}
+                      previewUrl={docUrl}
+                      onChange={handleFileChange}
+                      color="foreground"
+                      disabled={readOnly || isLocked}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Workflow Status */}
-        <section className="space-y-8">
-          <div className="flex items-center gap-3 border-b border-border pb-3">
-            <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
-            </div>
-            <h4 className="text-[13px] uppercase font-black tracking-widest text-foreground">Workflow Intelligence</h4>
-          </div>
-
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Stage Alignment</Label>
-              <Select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                options={getStatusOptions(status, !!caseData)}
-                disabled={readOnly || isLocked}
-                className="h-11 rounded-xl! font-bold text-foreground bg-foreground/5 border-border"
-              />
+        {caseData?.status !== 'sent_back_to_agent' && (
+          <section className="space-y-8">
+            <div className="flex items-center gap-3 border-b border-border pb-3">
+              <div className="p-2 rounded-lg bg-foreground/10 text-foreground shrink-0 mt-1 sm:mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+              </div>
+              <h4 className="text-[13px] uppercase font-black tracking-widest text-foreground">Workflow Intelligence</h4>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Internal Notes</Label>
-              <textarea
-                name="notes"
-                value={formData.notes}
-                onChange={handleInputChange as any}
-                disabled={readOnly || !isEditing}
-                placeholder="Describe any specific observations or pending requirements..."
-                className="w-full min-h-[120px] p-4 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-foreground/20 outline-none transition-all resize-none disabled:bg-muted/50 disabled:text-text-muted"
-              />
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Stage Alignment</Label>
+                <Select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  options={getStatusOptions(caseData?.status || "documents_pending", !!caseData)}
+                  disabled={readOnly || isLocked}
+                  className="h-11 rounded-xl! font-bold text-foreground bg-foreground/5 border-border"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[11px] font-black uppercase tracking-wider text-text-primary">Internal Notes</Label>
+                <textarea
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleInputChange as any}
+                  disabled={readOnly || !isEditing}
+                  placeholder="Describe any specific observations or pending requirements..."
+                  className="w-full min-h-[120px] p-4 rounded-xl border border-border bg-card text-sm focus:ring-2 focus:ring-foreground/20 outline-none transition-all resize-none disabled:bg-muted/50 disabled:text-text-muted"
+                />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </div>
 
       {!readOnly && (
@@ -501,16 +527,16 @@ export function LeadDetails({ lead, caseData, onClose, readOnly = false }: LeadD
           <div className="w-full grid grid-cols-2 gap-4">
             <button
               onClick={() => handleSubmitCase(status)}
-              disabled={isSubmitting || !isFormValid}
-              className="h-12 flex items-center justify-center gap-2 border-2 border-foreground bg-transparent text-foreground rounded-[14px] text-xs font-black uppercase tracking-widest hover:bg-foreground/5 transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+              disabled={isSubmitting || !isValid}
+              className="h-12 flex items-center justify-center gap-2 border-2 border-foreground bg-transparent text-foreground rounded-[14px] text-xs font-black uppercase tracking-widest hover:bg-foreground/5 transition-all active:scale-95 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Syncing..." : "Update Progress"}
             </button>
 
             <button
               onClick={() => handleSubmitCase("submitted_to_coordinator")}
-              disabled={isSubmitting || !isFormValid || status !== "submitted_to_coordinator"}
-              className="h-12 flex items-center justify-center gap-2 bg-foreground text-background rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg shadow-foreground/20 hover:bg-foreground/90 transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
+              disabled={isSubmitting || !isValid || status !== "submitted_to_coordinator"}
+              className="h-12 flex items-center justify-center gap-2 bg-foreground text-background rounded-[14px] text-xs font-black uppercase tracking-widest shadow-lg shadow-foreground/20 hover:bg-foreground/90 transition-all active:scale-95 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed"
             >
               Submit to Coordinator
             </button>

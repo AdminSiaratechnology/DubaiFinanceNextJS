@@ -20,8 +20,8 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
     const roleTitle: Record<string, string> = {
         agent: 'Agent Portal',
         telecaller: 'Telecaller Portal',
-        analyst: 'Analyst Portal',
-        coordinator: 'Analyst Portal',
+        analyst: 'Coordinator Portal',
+        coordinator: 'Coordinator Portal',
         owner: 'Executive Portal',
     };
 
@@ -45,7 +45,7 @@ export function TopHeader({ onMenuClick }: TopHeaderProps) {
             router.push('/login');
             toast.success('Logged out successfully');
         } catch (error) {
-            toast.error('Logout failed');
+            // toast.error('Logout failed');
             // Even if API fails, clear local state
             clearUser();
             router.push('/login');

@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
-import { StatCard } from '@/features/dashboard/components/StatCard';
 import { TabSwitcher } from '@/features/dashboard/components/TabSwitcher';
 import { CaseCard } from '@/features/dashboard/components/CaseCard';
 import { CommissionCalculator } from '@/features/dashboard/components/CommissionCalculator';
@@ -27,6 +26,7 @@ function AgentDashboardContent() {
     const activeTab = params.get('tab') || 'dashboard';
     const viewType = params.get('view') || 'cases';
     const searchQuery = params.get('q') || '';
+    const statusFilter = params.get('status') || '';
     const page = Number(params.get('page')) || 1;
     const limit = 5;
 
@@ -41,7 +41,7 @@ function AgentDashboardContent() {
             try {
                 const skip = (page - 1) * limit;
                 if (viewType === 'cases') {
-                    const casesData = await getMyCases(page, limit, searchQuery);
+                    const casesData = await getMyCases(page, limit, searchQuery, statusFilter || undefined);
                     setCases(casesData?.items || []);
                     setTotalCases(casesData?.total || 0);
                 } else {
@@ -55,7 +55,7 @@ function AgentDashboardContent() {
             }
         };
         fetchData();
-    }, [viewType, page, searchQuery]);
+    }, [viewType, page, searchQuery, statusFilter]);
 
     const totalLeads = leads.length >= limit ? (page * limit) + 1 : (page - 1) * limit + leads.length;
 
@@ -85,7 +85,7 @@ function AgentDashboardContent() {
                                 {/* Segmented Control */}
                                 <div className="flex bg-muted/50 p-1.5 rounded-2xl border border-border/50 backdrop-blur-sm self-start sm:self-auto">
                                     <Link
-                                        href={`/dashboard/agent/main?tab=dashboard&view=cases${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
+                                        href={`/dashboard/agent/main?tab=dashboard&view=cases${statusFilter ? `&status=${statusFilter}` : ''}${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`}
                                         className={`
                                             px-6 py-2 text-[13px] font-bold rounded-xl transition-all duration-300 flex items-center gap-2
                                             ${viewType === 'cases'

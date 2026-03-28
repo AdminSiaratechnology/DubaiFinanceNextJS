@@ -112,6 +112,7 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
     const underReview = normalizedStatus === 'under_review';
     const approvedByBank = normalizedStatus === 'approved';
     const rejectedByBank = normalizedStatus === 'rejected';
+    const isFinalized = approvedByBank || rejectedByBank;
 
     const caseId = Number(caseData.id);
 
@@ -262,12 +263,22 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                                     <span className={`text-[11px] font-bold ${doc.url ? 'text-foreground' : 'text-text-muted'}`}>{doc.label}</span>
                                                 </div>
                                                 {doc.url ? (
-                                                    <button
-                                                        onClick={() => window.open(doc.url!, '_blank')}
-                                                        className="flex items-center gap-1.5 px-3 py-2 bg-foreground/5 border border-border rounded-xl text-[9px] font-black uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all active:scale-95"
-                                                    >
-                                                        👁️ View
-                                                    </button>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => window.open(doc.url!, '_blank')}
+                                                            className="flex items-center gap-1.5 px-3 py-2 bg-foreground/5 border border-border rounded-xl text-[9px] font-black uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all active:scale-95 whitespace-nowrap"
+                                                        >
+                                                            👁️ View
+                                                        </button>
+                                                        <a
+                                                            href={doc.url}
+                                                            download
+                                                            className="flex items-center gap-1.5 px-3 py-2 bg-foreground/5 border border-border rounded-xl text-[9px] font-black uppercase tracking-widest text-foreground hover:bg-foreground hover:text-background transition-all active:scale-95 whitespace-nowrap cursor-pointer decoration-none!"
+                                                        >
+                                                            ⬇️ Download
+                                                        </a>
+
+                                                    </div>
                                                 ) : (
                                                     <span className="px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-text-muted/50">
                                                         Not Uploaded
@@ -283,61 +294,78 @@ export function CaseDetailsAnalyst({ caseData, onClose, onStatusUpdate }: CaseDe
                                 </div>
                             </div>
 
-                            <div className="space-y-6 pt-4 border-t border-border">
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Update Case Status</Label>
-                                        <Select
-                                            value={selectedStatus}
-                                            onChange={(e) => setSelectedStatus(e.target.value)}
-                                            options={statusOptions}
-                                            className="h-11 rounded-xl! transition-all focus:ring-foreground/20"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Analysis Notes</Label>
-                                        <textarea
-                                            value={notes}
-                                            onChange={(e) => setNotes(e.target.value)}
-                                            placeholder="Add your review notes..."
-                                            className="w-full h-32 p-4 bg-muted dark:bg-slate-900/50 border border-border rounded-xl text-xs font-medium focus:ring-2 focus:ring-foreground/20 outline-none transition-all resize-none no-scrollbar"
-                                        />
+                            {isFinalized ? (
+                                <div className="space-y-6 pt-4 border-t border-border">
+                                    <div className="p-6 rounded-2xl bg-muted/30 border border-border/50 text-center space-y-2">
+                                        <div className={`w-12 h-12 rounded-full mx-auto flex items-center justify-center ${approvedByBank ? 'bg-green/10 text-green' : 'bg-red/10 text-red'}`}>
+                                            {approvedByBank ? '✓' : '✕'}
+                                        </div>
+                                        <h4 className="text-sm font-black uppercase tracking-widest text-foreground">
+                                            Case {approvedByBank ? 'Approved' : 'Rejected'}
+                                        </h4>
+                                        <p className="text-xs text-text-muted font-medium">This case has reached a final status and can no longer be modified.</p>
                                     </div>
                                 </div>
-                                {statusMessage && (
-                                    <div className={`p-3 rounded-md text-xs font-bold uppercase tracking-wider text-center ${statusMessage.type === 'success' ? 'bg-green/10 text-green border border-green/20' : 'bg-red/10 text-red border border-red/20'}`}>
-                                        {statusMessage.text}
-                                    </div>
-                                )}
+                            ) : (
+                                <div className="space-y-6 pt-4 border-t border-border">
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Update Case Status</Label>
+                                            <select
+                                                value={selectedStatus}
+                                                onChange={(e) => setSelectedStatus(e.target.value)}
+                                                className="w-full h-11 px-4 bg-muted border border-border rounded-xl text-xs font-bold focus:ring-2 focus:ring-foreground/20 outline-none transition-all"
+                                            >
+                                                {statusOptions.map(opt => (
+                                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                ))}
+                                            </select>
+                                        </div>
 
-                                <div className="space-y-4 pt-6 border-t border-border">
-                                    <button
-                                        onClick={handleStatusUpdate}
-                                        disabled={updating}
-                                        className="w-full h-14 bg-foreground text-background rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-foreground/90 shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {updating ? <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" /> : null}
-                                        {updating ? 'Updating...' : 'Submit Status Update'}
-                                    </button>
-                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Analysis Notes</Label>
+                                            <textarea
+                                                value={notes}
+                                                onChange={(e) => setNotes(e.target.value)}
+                                                placeholder="Add your review notes..."
+                                                className="w-full h-32 p-4 bg-muted dark:bg-slate-900/50 border border-border rounded-xl text-xs font-medium focus:ring-2 focus:ring-foreground/20 outline-none transition-all resize-none no-scrollbar"
+                                            />
+                                        </div>
+                                    </div>
+                                    {statusMessage && (
+                                        <div className={`p-3 rounded-md text-xs font-bold uppercase tracking-wider text-center ${statusMessage.type === 'success' ? 'bg-green/10 text-green border border-green/20' : 'bg-red/10 text-red border border-red/20'}`}>
+                                            {statusMessage.text}
+                                        </div>
+                                    )}
+
+                                    <div className="space-y-4 pt-6 border-t border-border">
                                         <button
-                                            onClick={() => handleStatusChange(caseData.telecaller_id ? 'sent_back_to_telecaller' : 'sent_back_to_agent')}
+                                            onClick={handleStatusUpdate}
                                             disabled={updating}
-                                            className="h-12 bg-muted text-text-muted rounded-xl font-bold uppercase tracking-widest text-[9px] hover:bg-foreground/5 hover:text-foreground border border-border transition-all active:scale-95 shadow-sm"
+                                            className="w-full h-14 bg-foreground text-background rounded-xl font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-foreground/90 shadow-lg active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            {caseData.telecaller_id ? 'Back to Telecaller' : 'Back to Agent'}
+                                            {updating ? <div className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" /> : null}
+                                            {updating ? 'Updating...' : 'Submit Status Update'}
                                         </button>
-                                        <button
-                                            onClick={() => handleStatusChange('rejected')}
-                                            disabled={updating}
-                                            className="h-12 bg-red/10 text-red border border-red/20 rounded-xl font-bold uppercase tracking-widest text-[9px] hover:bg-red hover:text-white transition-all active:scale-95 shadow-lg shadow-red/20"
-                                        >
-                                            Reject Case
-                                        </button>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <button
+                                                onClick={() => handleStatusChange(caseData.telecaller_id ? 'sent_back_to_telecaller' : 'sent_back_to_agent')}
+                                                disabled={updating}
+                                                className="h-12 bg-muted text-text-muted rounded-xl font-bold uppercase tracking-widest text-[9px] hover:bg-foreground/5 hover:text-foreground border border-border transition-all active:scale-95 shadow-sm"
+                                            >
+                                                {caseData.telecaller_id ? 'Back to Telecaller' : 'Back to Agent'}
+                                            </button>
+                                            <button
+                                                onClick={() => handleStatusChange('rejected')}
+                                                disabled={updating}
+                                                className="h-12 bg-red/10 text-red border border-red/20 rounded-xl font-bold uppercase tracking-widest text-[9px] hover:bg-red hover:text-white transition-all active:scale-95 shadow-lg shadow-red/20"
+                                            >
+                                                Reject Case
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 )}

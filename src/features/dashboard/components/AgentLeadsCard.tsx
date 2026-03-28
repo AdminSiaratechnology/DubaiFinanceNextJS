@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 
 interface LeadCardProps {
   id: number;
@@ -48,23 +47,6 @@ export function AgentLeadsCard({
   }
 
   const formattedStatus = status ? status.replaceAll("_", " ") : null;
-  const handleEdit = () => {
-    const leadData = {
-      id,
-      customer_name,
-      mobile_number,
-      email,
-      requested_amount,
-      bank: { id: bank_id || 0, name: bank_name },
-      product: { id: product_id || 0, product_name: product_name }
-    };
-
-    // If we have actual IDs in props, use them. 
-    // Usually these cards should receive the full lead object or more detailed props.
-    
-    const encodedData = encodeURIComponent(JSON.stringify(leadData));
-    window.location.href = `/dashboard/agent/main?tab=submit-lead&editData=${encodedData}`;
-  }
   return (
     <div className="section-card overflow-hidden bg-card border-border border shadow-sm hover:shadow-md transition-shadow">
 
@@ -73,7 +55,6 @@ export function AgentLeadsCard({
         <div className="flex items-center justify-between relative px-2 mb-8">
           {/* Progress Lines */}
           <div className="absolute top-4 left-10 right-10 h-0.5 bg-border z-0" />
-
           {steps.map((s, i) => {
             const isCompleted = i + 1 < currentStep;
             const isActive = i + 1 === currentStep;
@@ -106,37 +87,15 @@ export function AgentLeadsCard({
               Lead
             </span>
             {isReturned && (
-              <button
-                className="mt-1 flex items-center gap-1 px-3 py-1 rounded-lg bg-purple/10 text-purple text-[11px] font-bold uppercase tracking-widest border border-purple/20 hover:bg-purple/20 transition"
-                onClick={handleEdit}
-              >
-                {/* Edit Icon */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 20h9" />
-                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                </svg>
-
-                Edit
-              </button>
+              <span className="mt-1 flex items-center gap-1 px-3 py-1 rounded-lg bg-purple/10 text-purple text-[11px] font-bold uppercase tracking-widest border border-purple/20">
+                Returned to you
+              </span>
             )}
             {formattedStatus && (
               <span className="px-3 py-1 rounded-lg bg-foreground/10 text-[11px] font-bold text-foreground uppercase tracking-widest border border-foreground/20">
                 {formattedStatus}
               </span>
             )}
-
-            {/* ✅ Show Edit Button if returned */}
-
           </div>
         </div>
       </div>

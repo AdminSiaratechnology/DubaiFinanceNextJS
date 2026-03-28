@@ -9,7 +9,7 @@ export default function NewAnalystPage() {
 
     return (
         <MemberForm
-            title="Create New Analyst"
+            title="Create New Coordinator"
             role="analyst"
         />
     );
