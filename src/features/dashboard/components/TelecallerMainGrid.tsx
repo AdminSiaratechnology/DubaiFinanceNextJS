@@ -5,9 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { LeadCard } from "./LeadCard";
 import { LeadDetails } from "./LeadDetails";
 import { SearchBar } from "@/shared/SearchBar";
-import { Lead } from "./api/agent.api";
+import { Lead, submitCompleteCase, updateCase } from "./api/agent.api";
 import { getLeadById, getCaseByLeadId } from "./api/agent.api";
 import { Pagination } from "@/components/ui/Pagination";
+import { useTelecallerStore } from "@/store/useTelecallerStore";
+import { toast } from "sonner";
+
 interface TelecallerMainGridProps {
   leads: Lead[];
   page: number;
@@ -18,12 +21,54 @@ export function TelecallerMainGrid({ leads, page, limit }: TelecallerMainGridPro
   const router = useRouter();
   const searchParams = useSearchParams();
   const selectedId = searchParams.get("leadId");
+  const { fetchStats, triggerRefreshLeads } = useTelecallerStore();
 
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [selectedCase, setSelectedCase] = useState<any>(null);
-  const handleLeadSelect = (id: number) => {
+
+  const handleLeadSelect = async (lead: Lead) => {
+    const activeTab = searchParams.get('tab') || 'new-leads';
+    
+    // Check if it's a new lead or one sent back to telecaller
+    const isNewLead = !lead.case;
+    const isSentBack = lead.case?.status === 'sent_back_to_telecaller';
+
+    if (activeTab === 'new-leads' && (isNewLead || isSentBack)) {
+      try {
+        const formData = new FormData();
+        formData.append("customer_name", lead.customer_name);
+        formData.append("mobile_number", lead.mobile_number);
+        formData.append("email", lead.email);
+        formData.append("bank_id", String(lead.bank?.id || ""));
+        formData.append("product_id", String(lead.product?.id || ""));
+        formData.append("requested_amount", String(lead.requested_amount || 0));
+        formData.append("status", "working");
+
+        if (isSentBack && lead.case) {
+          await updateCase(lead.case.id, formData);
+        } else {
+          formData.append("lead_id", String(lead.id));
+          await submitCompleteCase(formData);
+        }
+        
+        toast.success("Moved to Working On");
+        fetchStats();
+        triggerRefreshLeads();
+
+        // Redirect to working tab with this lead selected
+        router.push(`/dashboard/telecaller/main?tab=working&leadId=${lead.id}`, {
+          scroll: false,
+        });
+        return;
+      } catch (err) {
+        console.error("Failed to update status:", err);
+        toast.error("Failed to update status");
+      }
+    }
+
+    // Default selection logic
     const params = new URLSearchParams(searchParams.toString());
-    params.set("leadId", String(id));
+    params.set("leadId", String(lead.id));
 
     router.push(`/dashboard/telecaller/main?${params.toString()}`, {
       scroll: false,
@@ -73,7 +118,7 @@ export function TelecallerMainGrid({ leads, page, limit }: TelecallerMainGridPro
     'working': 'Working On',
     'submitted': 'Submitted',
     'docs-required': 'Docs Required',
-    'sent_back_to_telecaller': 'Sent Back To You',
+    'sent_back_to_agent': 'Sent Back To Agent',
   };
 
   const activeTab = searchParams.get('tab') || 'new-leads';
@@ -126,7 +171,7 @@ export function TelecallerMainGrid({ leads, page, limit }: TelecallerMainGridPro
                     email={lead.email}
                     number={index + 1}
                     isActive={Number(selectedId) === lead.id}
-                    onClick={() => handleLeadSelect(lead.id)}
+                    onClick={() => handleLeadSelect(lead)}
                 />
               </div>
             ))
@@ -152,7 +197,7 @@ export function TelecallerMainGrid({ leads, page, limit }: TelecallerMainGridPro
             lead={selectedLead}
             caseData={selectedCase}
             onClose={handleClose}
-            readOnly={searchParams.get('tab') === 'submitted'}
+            readOnly={activeTab === 'submitted' || activeTab === 'sent_back_to_agent'}
           />
         ) : (
           <div className="section-card bg-card border-border border shadow-soft rounded-[24px] h-full flex flex-col items-center justify-center p-12 text-center text-text-muted">

@@ -1,13 +1,13 @@
 import { apiClient } from "@/lib/api/client";
 
 interface SubmitLeadPayload {
-    customer_name: string;
-    mobile_number: string;
-    email: string;
-    bank_id: string | number;
-    product_id: string | number;
-    requested_amount: number;
-    status?: string;
+  customer_name: string;
+  mobile_number: string;
+  email: string;
+  bank_id: string | number;
+  product_id: string | number;
+  requested_amount: number;
+  status?: string;
 }
 
 export interface Lead {
@@ -65,43 +65,43 @@ export interface Case {
 }
 
 export const sendLeadOtp = async (email: string) => {
-    const response = await apiClient.post(`/leads/send-otp?email=${encodeURIComponent(email)}`);
-    return response.data;
+  const response = await apiClient.post(`/leads/send-otp?email=${encodeURIComponent(email)}`);
+  return response.data;
 }
 
 export const submitLead = async (payload: SubmitLeadPayload, otp: string) => {
-    const response = await apiClient.post(`/leads?otp=${otp}`, payload);
-    return response.data;
+  const response = await apiClient.post(`/leads?otp=${otp}`, payload);
+  return response.data;
 }
 
 export const updateLead = async (leadId: number, payload: SubmitLeadPayload) => {
-    const response = await apiClient.put(`/leads/${leadId}`, payload);
-    return response.data;
+  const response = await apiClient.put(`/leads/${leadId}`, payload);
+  return response.data;
 }
 
 export const sendCaseOtp = async (email: string) => {
-    const formData = new FormData();
-    formData.append("email", email);
+  const formData = new FormData();
+  formData.append("email", email);
 
-    return apiClient.post("/cases/case-otp", formData);
+  return apiClient.post("/cases/case-otp", formData);
 };
 
 export const submitCompleteCase = async (formData: FormData) => {
-    const response = await apiClient.post('/cases/submit-complete', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    });
-    return response.data;
+  const response = await apiClient.post('/cases/submit-complete', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
 }
 
 export const updateCase = async (caseId: number, formData: FormData) => {
-    const response = await apiClient.put(`/cases/update-case/${caseId}`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
-    });
-    return response.data;
+  const response = await apiClient.put(`/cases/update-case/${caseId}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
 }
 
 
@@ -117,7 +117,7 @@ export const getLeads = async (
   search?: string,
   lead_type?: string
 ): Promise<Lead[]> => {
-    console.log(lead_type)
+  console.log(lead_type)
   const response = await apiClient.get("/leads", {
     params: {
       skip,
@@ -140,13 +140,15 @@ export interface MyCasesResponse {
 export const getMyCases = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  status?: string
 ): Promise<MyCasesResponse> => {
   const response = await apiClient.get("/cases/my-cases", {
     params: {
       page,
       limit,
-      search,
+      search: search || undefined,
+      status: status || undefined,
     },
   });
 

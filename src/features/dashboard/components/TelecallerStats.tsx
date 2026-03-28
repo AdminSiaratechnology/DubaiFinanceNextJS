@@ -62,15 +62,15 @@ export function TelecallerStats() {
     },
     {
       id: 'docs-required',
-      title: 'Docs Required',
+      title: 'Documents Required',
       value: stats.docs_required_leads,
       color: 'red' as const,
       icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
     },
     {
-      id: 'sent_back_to_telecaller',
-      title: 'Sent Back',
-      value: stats.sent_back_to_telecaller_leads,
+      id: 'sent_back_to_agent',
+      title: 'Sent Back To Agent',
+      value: stats.sent_back_to_agent_leads,
       color: 'dark' as const,
       icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
     },

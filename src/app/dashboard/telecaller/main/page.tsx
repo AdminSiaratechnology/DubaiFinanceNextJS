@@ -12,7 +12,7 @@ function TelecallerDashboardContent() {
     const params = useSearchParams();
     const activeTab = params.get('tab') || 'new-leads';
     const page = Number(params.get('page')) || 1;
-    const limit = 5;
+    const limit = 10;
     const searchQuery = params.get('q') || "";
 
     const [leads, setLeads] = useState<Lead[]>([]);
@@ -28,7 +28,7 @@ function TelecallerDashboardContent() {
                 else if (activeTab === "working") lead_type = "working";
                 else if (activeTab === "submitted") lead_type = "submitted";
                 else if (activeTab === "docs-required") lead_type = "docs_required";
-                else if (activeTab === "sent_back_to_telecaller") lead_type = "sent_back_to_telecaller";
+                else if (activeTab === "sent_back_to_agent") lead_type = "sent_back_to_agent";
 
                 const skip = (page - 1) * limit;
                 const data = await getLeads(skip, limit, searchQuery, lead_type);

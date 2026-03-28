@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useConfirmAction } from '@/hooks/use-confirm-action';
@@ -10,7 +9,7 @@ import { deleteAgent } from '../api/agent.api';
 
 interface TeamActionsProps {
     id: string;
-    role: 'analyst' | 'telecaller' | 'agent';
+    role: 'coordinator' | 'telecaller' | 'agent' | 'analyst';
     userId?: number;
 }
 
@@ -18,11 +17,15 @@ export function TeamActions({ id, role, userId }: TeamActionsProps) {
     const router = useRouter();
     const { confirmAction } = useConfirmAction();
 
+    let adjustedRole = role;
+    if (role === 'coordinator') {
+        adjustedRole = 'analyst';
+    }
     const handleDelete = async () => {
-        if (role === 'analyst') {
+        if (role === 'coordinator') {
             await confirmAction({
                 title: 'Delete Team Member',
-                description: 'Are you sure you want to delete this analyst? This action cannot be undone.',
+                description: 'Are you sure you want to delete this coordinator? This action cannot be undone.',
                 confirmText: 'Delete',
                 action: () => deleteCoordinator(Number(id)),
                 successMessage: 'Analyst deleted successfully.',
@@ -61,7 +64,7 @@ export function TeamActions({ id, role, userId }: TeamActionsProps) {
     return (
         <div className="flex justify-end gap-2">
             <Link
-                href={`/owner/team/${role}s/${id}`}
+                href={`/owner/team/${adjustedRole}s/${id}`}
                 className="p-2 rounded-lg hover:bg-brand/10 text-brand transition-all group-hover:scale-110"
                 title="Edit Member"
             >

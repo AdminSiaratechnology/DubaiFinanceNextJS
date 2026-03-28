@@ -23,13 +23,13 @@ export default async function AnalystsPage({
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
             <PageHeader
-                title="Analysts Management"
-                description="Review and manage your credit analysts and case handlers."
+                title="Coordinators Management"
+                description="Review and manage your credit coordinators and case handlers."
             />
 
             <TeamTable
                 members={response.items}
-                role="analyst"
+                role="coordinator"
                 page={response.page}
                 total={response.total}
                 limit={response.limit}

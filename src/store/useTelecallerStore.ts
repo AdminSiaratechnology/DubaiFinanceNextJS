@@ -7,7 +7,7 @@ type Stats = {
   working_leads: number;
   submitted_leads: number;
   docs_required_leads: number;
-  sent_back_to_telecaller_leads: number;
+  sent_back_to_agent_leads: number;
 };
 
 type Store = {
@@ -24,7 +24,7 @@ export const useTelecallerStore = create<Store>((set) => ({
     working_leads: 0,
     submitted_leads: 0,
     docs_required_leads: 0,
-    sent_back_to_telecaller_leads: 0,
+    sent_back_to_agent_leads: 0,
   },
   loading: true,
   refreshLeadsTrigger: 0,

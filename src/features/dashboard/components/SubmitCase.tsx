@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/Card';
-import { Label, Input, Select } from '@/components/ui/Form';
+import { Label, Input } from '@/components/ui/Form';
 
 import { FileUploader } from '@/shared/FileUploader';
 
@@ -22,26 +22,26 @@ const requiredDocs = [
     { id: 'bank_statement_last_3_months', label: 'Bank Statements (Last 3 Months) *' },
     { id: 'bank_statement_last_6_months', label: 'Bank Statements (Last 6 Months) *' },
     { id: 'trade_license', label: 'Trade License *' },
-    { id: 'liability_letter', label: 'Liability Letter' },
-    { id: 'noc_from_employer', label: 'NOC From Employer' },
-    { id: 'security_cheque', label: 'Security Cheque' },
-    { id: 'utility_bill', label: 'Utility Bill' },
-    { id: 'tenancy_contract', label: 'Tenancy Contract' },
-    { id: 'proof_of_address', label: 'Proof of Address' },
-    { id: 'last_3_month_payslips', label: 'Last 3 Months Payslip' },
-    { id: 'last_6_month_payslips', label: 'Last 6 Months Payslip' },
-    { id: 'company_id_card', label: 'Company ID Card' },
-    { id: 'labor_contract', label: 'Labor Contract' },
-    { id: 'employment_letter', label: "Employment Letter" },
-    { id: 'bank_account_statement', label: 'Bank Account Statement (Personal)' },
-    { id: 'credit_report', label: 'Credit Report' },
-    { id: 'existing_loan_statement', label: 'Existing Loan Statements' },
-    { id: 'property_document', label: 'Property Documents (if applicable)' },
-    { id: 'vehicle_registration', label: 'Vehicle Registration (for Auto Loan)' },
-    { id: 'business_plan', label: 'Business Plan (for Business Loan)' },
-    { id: 'financial_statement', label: 'Financial Statements (Last 2 Years)' },
-    { id: 'tax_return', label: 'Tax Returns' },
-    { id: 'memorandum_of_association', label: '(MOA) Memorandum of Association' },
+    { id: 'liability_letter', label: 'Liability Letter *' },
+    { id: 'noc_from_employer', label: 'NOC From Employer *' },
+    { id: 'security_cheque', label: 'Security Cheque *' },
+    { id: 'utility_bill', label: 'Utility Bill *' },
+    { id: 'tenancy_contract', label: 'Tenancy Contract *' },
+    { id: 'proof_of_address', label: 'Proof of Address *' },
+    { id: 'last_3_month_payslips', label: 'Last 3 Months Payslip *' },
+    { id: 'last_6_month_payslips', label: 'Last 6 Months Payslip *' },
+    { id: 'company_id_card', label: 'Company ID Card *' },
+    { id: 'labor_contract', label: 'Labor Contract *' },
+    { id: 'employment_letter', label: "Employment Letter *" },
+    { id: 'bank_account_statement', label: 'Bank Account Statement (Personal) *' },
+    { id: 'credit_report', label: 'Credit Report *' },
+    { id: 'existing_loan_statement', label: 'Existing Loan Statements *' },
+    { id: 'property_document', label: 'Property Documents (if applicable) *' },
+    { id: 'vehicle_registration', label: 'Vehicle Registration (for Auto Loan) *' },
+    { id: 'business_plan', label: 'Business Plan (for Business Loan) *' },
+    { id: 'financial_statement', label: 'Financial Statements (Last 2 Years) *' },
+    { id: 'tax_return', label: 'Tax Returns *' },
+    { id: 'memorandum_of_association', label: '(MOA) Memorandum of Association *' },
 ];
 
 export function SubmitCase() {
@@ -244,6 +244,23 @@ export function SubmitCase() {
         }
     };
 
+    const isFormValid = () => {
+        // Basic fields check (everything except notes)
+        const { fullName, mobileNumber, email, emiratesId, employerName, monthlySalary, bank_id, product_id, amount } = formData;
+        const basicFieldsFilled = !!(fullName && mobileNumber && email && emiratesId && employerName && monthlySalary && bank_id && product_id && amount);
+
+        // Required documents check (only those marked with *)
+        const mandatoryDocIds = requiredDocs
+            .filter(doc => doc.label.includes('*'))
+            .map(doc => doc.id);
+
+        const docsUploaded = mandatoryDocIds.every(id => files[id] || existingDocUrls[id]);
+
+        return basicFieldsFilled && docsUploaded;
+    };
+
+    const isValid = isFormValid();
+
     return (
         <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
             <Card noPadding className="border-border">
@@ -340,7 +357,7 @@ export function SubmitCase() {
                                 </div>
                                 <div className='space-y-1'>
                                     <Label>Notes</Label>
-                                    <Input name="notes" value={formData.notes} onChange={handleChange} placeholder="Notes" />
+                                    <Input name="notes" value={formData.notes} onChange={handleChange} placeholder="Notes (Optional)" />
                                 </div>
                             </div>
                         </div>
@@ -350,7 +367,7 @@ export function SubmitCase() {
                                 <div className="p-2 rounded-lg bg-foreground/10 text-foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
                                 </div>
-                                <h4 className="text-[12px] uppercase font-bold tracking-widest text-foreground">Documents (Upload All)</h4>
+                                <h4 className="text-[12px] uppercase font-bold tracking-widest text-foreground">Documents (Upload All Required Files)</h4>
                             </div>
 
                             <div className="space-y-3">
@@ -370,8 +387,8 @@ export function SubmitCase() {
 
                         <button
                             type="submit"
-                            disabled={isSubmitting}
-                            className={`w-full py-4 bg-foreground text-background rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:bg-foreground/90 hover:shadow-xl active:scale-[0.98]'}`}
+                            disabled={isSubmitting || !isValid}
+                            className={`w-full py-4 bg-foreground text-background rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 transition-all ${isSubmitting || !isValid ? 'opacity-30 cursor-not-allowed grayscale' : 'hover:bg-foreground/90 hover:shadow-xl active:scale-[0.98]'}`}
                         >
                             {isSubmitting ? <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" /> : <><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg> {initialData.id ? 'Update & Submit Case' : 'Send OTP to Verify'}</>}
                         </button>

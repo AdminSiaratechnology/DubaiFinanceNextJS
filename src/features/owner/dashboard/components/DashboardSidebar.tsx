@@ -31,7 +31,7 @@ const navItems = [
             </svg>
         ),
         subItems: [
-            { name: 'Analysts', href: '/owner/team/analysts' },
+            { name: 'Coordinators', href: '/owner/team/analysts' },
             { name: 'Telecallers', href: '/owner/team/telecallers' },
             { name: 'Agents', href: '/owner/team/agents' },
         ]
